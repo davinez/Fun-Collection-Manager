@@ -1,4 +1,4 @@
-import type { FunctionComponent } from "../common/types";
+import type { FunctionComponent } from "common/types/global-types";
 
 const Home = (): FunctionComponent => {
 	return (

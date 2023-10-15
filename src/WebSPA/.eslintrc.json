@@ -27,7 +27,7 @@
 	"parserOptions": {
 		"ecmaVersion": "latest",
 		"sourceType": "module",
-		"project": ["./tsconfig.json"]
+		"project": ["./src/WebSPA/tsconfig.json"]
 	},
 	"plugins": ["@typescript-eslint", "react-refresh", "unicorn"],
 	"rules": {

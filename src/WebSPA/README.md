@@ -1,6 +1,5 @@
 # FunCollectionManager Playground
 
-
 Playground of a collection manager web app made with .Net + React!
 
 ## Table of Contents
@@ -16,7 +15,7 @@ Playground of a collection manager web app made with .Net + React!
 
 ## Overview
 
-- [pnpm](https://pnpm.io) - An lternative to npm with up to 3x faster performance
+- [pnpm](https://pnpm.io) - An alternative to npm with up to 3x faster performance
 - [TypeScript](https://www.typescriptlang.org) - A typed superset of JavaScript
 - [ESLint](https://eslint.org) - Static code analysis to help find problems within a codebase
 - [Prettier](https://prettier.io) - An opinionated code formatter
@@ -66,19 +65,13 @@ If you'd like to use the included Dockerfile then [Docker](https://www.docker.co
 
 ## Getting Started
 
-
-
 **Note**: This project comes with two git hooks added by [husky](https://typicode.github.io/husky/). A prepare-commit-msg hook to run the [Commitizen](https://github.com/commitizen/cz-cli#readme) cli for those nice commit messages and a commit-msg hook to run [Commitlint](https://commitlint.js.org/#/) on the message itself. Commitlint will ensure the commit message follows the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/) (it will if you used commitizen).
 
 If you wish to remove any hooks, simply delete the corresponding file in the .husky directory.
 
 ## Important Note
 
-1. This boilerplate project does not include a demo. At most, a few utilities (types, devtools, initial home page routes) are included. There is no glue to get in your way when trying to modify the template.
-
-2. Due to empty directories not being included in git commits, placeholder README files have been added to these empty directories. These README files contain simple descriptions about how the different directories in the accompanying folder structure may be used. As an example check out the [recommended component organizational structure](src/components/README.md) as well as the [recommended folder structure](src/features/README.md).
-
-3. [Faker](https://fakerjs.dev/) is included to encourage more isolated testing and allow for rapid development of demos and MVPs. However, please make note that, [due to a bug](https://github.com/faker-js/faker/issues/1791), importing Faker from the main package (without a locale) will result in the entire Faker lib being imported causing bundle sizes to increase up to 2+ MB. Instead prefer [localized imports](https://fakerjs.dev/guide/localization.html#individual-localized-packages) as shown below.
+1. [Faker](https://fakerjs.dev/) is included to encourage more isolated testing and allow for rapid development of demos and MVPs. However, please make note that, [due to a bug](https://github.com/faker-js/faker/issues/1791), importing Faker from the main package (without a locale) will result in the entire Faker lib being imported causing bundle sizes to increase up to 2+ MB. Instead prefer [localized imports](https://fakerjs.dev/guide/localization.html#individual-localized-packages) as shown below.
 
    ```
    // import { faker } from '@faker-js/faker';
@@ -175,27 +168,14 @@ A Dockerfile with an [NGINX](https://www.nginx.com) base image is also provided 
 
 ### Continuous Integration
 
-Due to the vast array of tools, opinions, requirements and preferences a CI template is not included in this project.
+-- Pending
 
 ## Devtools
 
-This project includes a set of Devtools. Some are additional package dependencies whereas others come built-in to the packages themselves.
-
-### Devtool dependencies:
-
 - [@hookform/DevTools](https://react-hook-form.com/dev-tools) - React Hook Form Devtools to help debug forms with validation
 
-A set of utility components are provided in `src/components/utils/development-tools/`. These [wrapper components](https://tanstack.com/router/v1/docs/devtools#only-importing-and-using-devtools-in-developmentgit) check whether the application is running in development or production mode and render the component or null respectively. In other words, you can confidently use them during development without having to worry about them showing up for end users in production.
-`
 **React Hook Form DevTools** icon can be recognized in the top right corner of the page by the pink React Hook Form clipboard logo. A utility component has also provided. Like the TanStack Table Devtools component above, a prop must be passed from a specific hook. In this case, it is the control prop from the `useForm()` hook. Similar to TanStack Table, use of React Hook Form DevTools requires the component be added to each unique form. More information can be found in the [React Hook Form DevTools documentation](https://react-hook-form.com/dev-tools).
 
-To reiterate, if you wish to restrict the Devtools to development builds use the provided components found at `src/components/utils/development-tools` instead of the built-in components from their respective modules.
-
-### Built-in Devtools:
-
-- Zustand
-
-**Zustand** provides a built-in [devtools middleware](https://github.com/pmndrs/zustand#redux-devtools) for use with [Redux DevTools](https://github.com/reduxjs/redux-devtools#redux-devtools).
 
 ## Installed Packages
 
@@ -209,7 +189,7 @@ A simplified list can be found in the [Overview](#overview) section.
 
 ### Routing
 
-- [TanStack Router](https://tanstack.com/router/v1)
+- 
 
 ### Linting & Formatting
 
@@ -225,8 +205,7 @@ A simplified list can be found in the [Overview](#overview) section.
 
 ### State Management
 
-- [TanStack Query (React Query)](https://tanstack.com/query/latest)
-- [Zustand](https://zustand-demo.pmnd.rs)
+- [Rematch](https://rematchjs.org/)
 
 ### UI
 
