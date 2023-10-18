@@ -1,6 +1,27 @@
+/***** Main Chakra custom theme entrypoint *****/
+
 import { extendTheme } from "@chakra-ui/react";
 
-import { config } from "./config";
+// Foundational style overrides
+//import borders from './foundations/borders'
+
+// Component style overrides
+import { Button } from './components/button'
+
+const overrides = {
+  // Foundational style overrides go here
+  //borders,
+  // Components overrides go here
+  components: {
+    Button,
+
+  }
+}
+
+// More Info for styling component none existing in Chakra UI https://chakra-ui.com/docs/styled-system/component-style#styling-single-part-components
+
+export const customChakraUITheme = extendTheme(overrides)
+
 
 // const myCustomTheme = {
 //   // Color palette
@@ -41,21 +62,3 @@ import { config } from "./config";
 //   },
 // };
 
-export const theme = extendTheme({
-  // fonts: {
-  //   heading: "Plus Jakarta Sans, sans-serif",
-  //   body: "Plus Jakarta Sans, sans-serif",
-  // },
-  // color: {
-  //   brand: {
-  //     900: '#1a365d',
-  //     800: '#153e75',
-  //     700: '#2a69ac',
-  //   },
-  // },
-  components: {
-    // Button: {
-    // }
-  },
-  config,
-});
