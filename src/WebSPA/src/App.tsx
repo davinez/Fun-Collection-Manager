@@ -12,6 +12,8 @@ import {
 // import { ProfilePage } from "./pages/Profile";
 // import { SettingsPage } from "./pages/Settings";
 import AppLayout from "components/layout/AppLayout";
+import HomeLayout from "components/layout/HomeLayout";
+import Home from "@/routes/Home";
 
 // ideally this would be an API call to server to get logged in user data
 
@@ -33,12 +35,14 @@ import AppLayout from "components/layout/AppLayout";
 
 export const App = createBrowserRouter(
 	createRoutesFromElements(
-		<Route
-			element={<AppLayout />}
-			//	loader={(): any => defer({ userPromise: getUserData() })}
-		>
-			<Route path="/" element={<TicTacToe />} />
-		</Route>
+		<>
+			<Route element={<AppLayout />}>
+				<Route path="/App" element={<TicTacToe />} />
+			</Route>
+			<Route element={<HomeLayout />}>
+				<Route path="/Home" element={<Home />} />
+			</Route>
+		</>
 	)
 );
 

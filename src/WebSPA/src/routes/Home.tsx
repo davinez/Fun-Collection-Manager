@@ -1,11 +1,10 @@
-import type { FunctionComponent } from "common/types/global-types";
+import { Image, Box } from "@chakra-ui/react";
+import imgUrl from '@/assets/images/naboo.jpg'
 
-const Home = (): FunctionComponent => {
+export default function Home(): React.ReactElement {
 	return (
-		<div className="bg-blue-300  font-bold w-screen h-screen flex flex-col justify-center items-center ">
-			<p className="text-white text-6xl">Hello, world!</p>
-		</div>
+		<Box>
+			<Image src={imgUrl} alt="Dan" />
+		</Box>
 	);
-};
-
-export default Home;
+}

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-//import { Outlet } from "react-router-dom";
 import type * as React from "react";
 import {
 	Text,
@@ -159,6 +158,7 @@ const SidebarContent = ({
 };
 
 export default function BaseLayout(): JSX.Element {
+
 	const sidebar = useDisclosure();
 	const outlet = useOutlet();
 
