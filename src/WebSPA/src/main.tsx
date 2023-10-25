@@ -12,7 +12,7 @@ import "shared/styles/styles.css";
 // Custom Theme
 import { customChakraUITheme } from "shared/styles/theme/index";
 
-import App from "@/App.tsx";
+import router from "@/App.tsx";
 
 const rootElement = document.querySelector("#root") as Element;
 if (!rootElement.innerHTML) {
@@ -20,7 +20,7 @@ if (!rootElement.innerHTML) {
 	root.render(
 		<React.StrictMode>
 			<ChakraProvider theme={customChakraUITheme}>
-				<RouterProvider router={App} />
+				<RouterProvider router={router} />
 			</ChakraProvider>
 		</React.StrictMode>
 	);

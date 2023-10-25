@@ -1,6 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
-
-pnpm format
-pnpm lint
+cd ./src/WebSPA && pnpm format && pnpm lint
 

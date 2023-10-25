@@ -10,7 +10,7 @@
 	"private": true,
 	"version": "1.0.0",
 	"scripts": {
-		"prepare": "cd ../.. && husky install src/WebSPA/.husky",
+		"prepare": "cd ../../ && husky install ./src/WebSPA/.husky",
 		"commitlint": "commitlint --edit",
 		"commitizen": "exec < /dev/tty && git cz --hook || true",
 		"setup:e2e": "npx playwright install",
@@ -25,7 +25,8 @@
 		"test:e2e": "playwright test",
 		"test:e2e:report": "playwright show-report",
 		"build": "tsc && vite build",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"server:mock": "json-server -w ./data/mock/db.json"
 	},
 	"dependencies": {
 		"@chakra-ui/icons": "^2.1.1",
@@ -40,11 +41,14 @@
 		"@rematch/core": "^2.2.0",
 		"dayjs": "^1.11.9",
 		"framer-motion": "^10.16.4",
+		"immer": "^10.0.3",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"react-hook-form": "^7.45.2",
+		"react-hook-form": "^7.47.0",
+		"react-query": "^3.39.3",
 		"react-router-dom": "^6.16.0",
-		"zod": "^3.21.4"
+		"zod": "^3.21.4",
+		"zustand": "^4.4.4"
 	},
 	"devDependencies": {
 		"@chakra-ui/storybook-addon": "^5.0.1",

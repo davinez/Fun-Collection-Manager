@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import type * as React from "react";
 import {
 	Text,
@@ -19,15 +16,16 @@ import {
 	useDisclosure,
 	useColorModeValue,
 	type FlexProps,
-	type BoxProps,
+	type BoxProps
 } from "@chakra-ui/react";
 import { PhoneIcon } from "@chakra-ui/icons";
 import { Suspense } from "react";
-import { useLoaderData, useOutlet, Await } from "react-router-dom";
+import { useOutlet } from "react-router-dom";
+// import { useAuth } from "@/hooks/useAuth";
 
 // function generic and type props explicitly.
 type TNavItemProps = {
-	icon?: any; // Third party icon
+	icon?: React.ElementType; // Third party icon
 	children: React.ReactNode;
 	onClick?: () => void;
 };
@@ -110,6 +108,7 @@ const SidebarContent = ({
 			w="60"
 			{...rest}
 		>
+      {/*  */}
 			<Flex px="4" py="5" align="center">
 				<PhoneIcon /> {/* Should be replace by logo component*/}
 				<Text
@@ -157,10 +156,13 @@ const SidebarContent = ({
 	);
 };
 
-export default function BaseLayout(): JSX.Element {
+export default function ProtectedLayout(): JSX.Element {
 
 	const sidebar = useDisclosure();
 	const outlet = useOutlet();
+
+    // Implement zustand store for auth
+    // const { user } = useAuth();
 
 	return (
 		<Box
