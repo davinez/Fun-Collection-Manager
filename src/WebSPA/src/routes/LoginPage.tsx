@@ -42,11 +42,7 @@ export default function LoginPage(): React.ReactElement {
 				</Stack>
 			</Flex>
 			<Flex flex={1}>
-				<Image
-					alt="Login Image"
-					objectFit="cover"
-					src={imgUrl}
-				/>
+				<Image alt="Login Image" objectFit="cover" src={imgUrl} />
 			</Flex>
 		</Stack>
 	);

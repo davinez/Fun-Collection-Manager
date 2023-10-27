@@ -39,6 +39,7 @@
 		"@nivo/line": "^0.83.0",
 		"@nivo/pie": "^0.83.0",
 		"@rematch/core": "^2.2.0",
+		"@tanstack/react-query": "^5.0.5",
 		"dayjs": "^1.11.9",
 		"framer-motion": "^10.16.4",
 		"immer": "^10.0.3",

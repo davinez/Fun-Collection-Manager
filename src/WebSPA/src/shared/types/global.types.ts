@@ -1,4 +1,3 @@
-
 type HeroIconSVGProps = React.PropsWithoutRef<React.SVGProps<SVGSVGElement>> &
 	React.RefAttributes<SVGSVGElement>;
 

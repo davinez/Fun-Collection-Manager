@@ -16,7 +16,7 @@ import {
 	useDisclosure,
 	useColorModeValue,
 	type FlexProps,
-	type BoxProps
+	type BoxProps,
 } from "@chakra-ui/react";
 import { PhoneIcon } from "@chakra-ui/icons";
 import { Suspense } from "react";
@@ -108,7 +108,7 @@ const SidebarContent = ({
 			w="60"
 			{...rest}
 		>
-      {/*  */}
+			{/*  */}
 			<Flex px="4" py="5" align="center">
 				<PhoneIcon /> {/* Should be replace by logo component*/}
 				<Text
@@ -157,12 +157,11 @@ const SidebarContent = ({
 };
 
 export default function ProtectedLayout(): JSX.Element {
-
 	const sidebar = useDisclosure();
 	const outlet = useOutlet();
 
-    // Implement zustand store for auth
-    // const { user } = useAuth();
+	// Implement zustand store for auth
+	// const { user } = useAuth();
 
 	return (
 		<Box
@@ -235,13 +234,7 @@ export default function ProtectedLayout(): JSX.Element {
 
 					<Flex align="center">
 						<Icon color="gray.500" as={PhoneIcon} cursor="pointer" />
-						<Avatar
-							ml="4"
-							size="sm"
-							name="davinez"
-							src=""
-							cursor="pointer"
-						/>
+						<Avatar ml="4" size="sm" name="davinez" src="" cursor="pointer" />
 					</Flex>
 				</Flex>
 

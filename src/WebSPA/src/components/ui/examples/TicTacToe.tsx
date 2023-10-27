@@ -53,11 +53,11 @@ const Board = ({
 	onPlay,
 }: TBoardProps): FunctionComponent => {
 	const handleClick = (index: number): void => {
-		if (calculateWinner(squares) || squares !== null && squares[index]) {
+		if (calculateWinner(squares) || (squares !== null && squares[index])) {
 			return;
 		}
 
-		const nextSquares = [...squares as string] as Array<string | null>;
+		const nextSquares = [...(squares as string)] as Array<string | null>;
 		nextSquares[index] = xIsNext ? "X" : "O";
 		onPlay(nextSquares);
 	};
