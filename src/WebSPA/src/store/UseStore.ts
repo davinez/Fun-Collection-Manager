@@ -44,9 +44,8 @@ export const useStore = create<TCombinedStore>()(
 					fooSlice: currentState.fooSlice,
 				};
 			},
-			onRehydrateStorage: (state) => {
+			onRehydrateStorage: () => {
 				console.log("hydration starts");
-				state.authSlice.setHasHydrated(false);
 
 				// optional
 				return (state, error): void => {

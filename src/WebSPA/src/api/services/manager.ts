@@ -1,41 +1,45 @@
-import {
-	useFetch,
-	useLoadMore,
-	usePrefetch,
-	useUpdate,
-} from "@/api/reactQueryGenerics";
 import type {
-	AppointmentInterface,
-	CarDetailInterface,
-	InsuranceDetailsInterface,
-} from "../interfaces/appointments";
+  TCategory
+} from "@/shared/types/api/manager.types";
+import type { TApiResponse } from "@/shared/types/api/responses.types";
+import { useQuery, useMutation, type UseQueryResult, type UseMutationResult } from "react-query";
+import apiClient from "@/hooks/UseApiClient"
 
-const API_URL = "http://localhost:8080/api";
+const API_BASE_URL = "http://localhost:8080/api";
 
-export const useGetAppointmentsList = () =>
-	useLoadMore<Array<AppointmentInterface>>(API_URL + "/signup");
+const $apiClient = apiClient(API_BASE_URL);
 
-export const useGetAppointment = (id: number) =>
-	useFetch<AppointmentInterface>(pathToUrl(apiRoutes.appointment, { id }));
+export const QUERY_CATEGORIES_KEY = 'categories';
 
-export const usePatchAppointment = (id: number) =>
-	useUpdate<AppointmentInterface, AppointmentInterface>(
-		pathToUrl(apiRoutes.appointment, { id })
-	);
+/*
+A query function / queryFn can be literally any function that returns a promise.
+The promise that is returned should either resolve the data or throw an error.
+*/
 
-export const useGetCarDetail = (id: number | null) =>
-	useFetch<CarDetailInterface>(
-		pathToUrl(apiRoutes.getCarDetail, { id }),
-		undefined,
-		{ staleTime: 2000 }
-	);
+ /*
+  The key you provide ('QUERY_CATEGORIES_KEY') is used as the identifier for this cache.
+  If useQuery is called again with the same key while the data is still in the cache,
+  React Query will return the cached data instead of performing a new fetch.
+ */
 
-export const useGetInsurance = (id: number | null) =>
-	useFetch<InsuranceDetailsInterface>(
-		id ? pathToUrl(apiRoutes.getInsurance, { id }) : null
-	);
+export const useGetUserQuery = (): UseQueryResult<TApiResponse, unknown> => {
+return useQuery({
+  queryKey: [QUERY_CATEGORIES_KEY],
+  queryFn: async () => {
+   const apiResponse = await $apiClient.get<TApiResponse>("/manager/categories");
+   return apiResponse.data
+  },
+  staleTime: 20_000,
+});
+}
 
-export const usePrefetchCarDetails = (id: number | null) =>
-	usePrefetch<InsuranceDetailsInterface>(
-		id ? pathToUrl(apiRoutes.getCarDetail, { id }) : null
-	);
+export const useAddCategoryMutation = (newCategory: TCategory): UseMutationResult<TApiResponse, unknown, void, unknown> => {
+  return useMutation({
+    mutationFn: async () => {
+      const apiResponse = await $apiClient.post<TApiResponse>("/manager/categories", newCategory);
+      return apiResponse.data;
+  },
+  });
+}
+
+

@@ -64,6 +64,11 @@
 			"warn",
 			{ "allowConstantExport": true }
 		],
+    "@typescript-eslint/no-misused-promises": [2, {
+      "checksVoidReturn": {
+        "attributes": false
+      }
+    }],
 		"unicorn/custom-error-definition": "error",
 		"unicorn/empty-brace-spaces": "error",
 		"unicorn/no-array-for-each": "off",

@@ -12,11 +12,11 @@ type TAlertComponentProps = {
 	status: string;
 };
 
-export default function GeneralAlertComponent({
+export const GeneralAlertComponent = ({
 	title,
 	description,
 	...rest
-}: TAlertComponentProps & AlertProps): JSX.Element {
+}: TAlertComponentProps & AlertProps): JSX.Element => {
 	return (
 		<Alert {...rest}>
 			<AlertIcon />

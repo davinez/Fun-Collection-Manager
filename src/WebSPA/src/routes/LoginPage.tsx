@@ -9,41 +9,129 @@ import {
 	Input,
 	Stack,
 	Image,
+	FormErrorMessage,
+	useDisclosure,
 } from "@chakra-ui/react";
+import { GeneralAlertComponent } from "components/ui/alert/index";
+import { useSubmitLoginMutation } from "@/api/services/auth";
 import imgUrl from "@/assets/images/login-image.jpg";
+import { useNavigate } from "react-router-dom";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import type { TSubmitLogin } from "@/shared/types/api/auth.types";
+import { useState } from "react";
 
 export default function LoginPage(): React.ReactElement {
+	const navigate = useNavigate();
+	const mutationLogin = useSubmitLoginMutation();
+	const {
+		handleSubmit,
+		register,
+		formState: { errors, isSubmitting },
+	} = useForm<TSubmitLogin>();
+	const {
+		isOpen: isAlertOpen,
+		onClose,
+		onOpen: onOpenAlert,
+	} = useDisclosure({ defaultIsOpen: true });
+	const [errorAuthService, setErrorAuthService] = useState<string>("");
+
+	// const onLogin = async () => {
+	//   try {
+	//     await mutationLogin.mutateAsync();
+
+	//     setJobName('');
+	//   } catch {
+	//     pushNotification(`Cannot add the job: ${jobName}`);
+	//   }
+	// };
+
+	const onSubmit: SubmitHandler<TSubmitLogin> = (
+		values: TSubmitLogin
+	): void => {
+		mutationLogin.mutate(values, {
+			onSuccess: () => {
+				navigate("/manager/dashboard");
+			},
+			onError: (error) => {
+				// Activate error modal
+				setErrorAuthService("mensaje error api" + ` ${error as string}`);
+				onOpenAlert();
+			},
+		});
+	};
+
 	return (
-		<Stack minH={"100vh"} direction={{ base: "column", md: "row" }}>
-			<Flex p={8} flex={1} alignItems="center" justifyContent="center">
-				<Stack spacing={4} w="full" maxW="md">
-					<Heading fontSize={"2xl"}>Sign in to your account</Heading>
-					<FormControl id="email">
-						<FormLabel>Email address</FormLabel>
-						<Input type="email" />
-					</FormControl>
-					<FormControl id="password">
-						<FormLabel>Password</FormLabel>
-						<Input type="password" />
-					</FormControl>
-					<Stack spacing={6}>
-						<Stack
-							direction={{ base: "column", sm: "row" }}
-							alignItems="start"
-							justifyContent="space-between"
-						>
-							<Checkbox>Remember me</Checkbox>
-							<Text color={"blue.500"}>Forgot password?</Text>
-						</Stack>
-						<Button colorScheme="blue" variant="solid">
-							Sign in
-						</Button>
+		<>
+			{isAlertOpen ? (
+				<GeneralAlertComponent
+					description={errorAuthService}
+					status="error"
+					onClick={onClose}
+				/>
+			) : (
+				<></>
+			)}
+			<Stack minH={"100vh"} direction={{ base: "column", md: "row" }}>
+				<Flex p={8} flex={1} alignItems="center" justifyContent="center">
+					<Stack spacing={4} w="full" maxW="md">
+						<Heading fontSize={"2xl"}>Sign in to your account</Heading>
+
+						<form onSubmit={handleSubmit(onSubmit)}>
+							<FormControl id="email" isInvalid={errors.email !== undefined}>
+								<FormLabel htmlFor="email">Email address</FormLabel>
+								<Input
+									id="email"
+									placeholder="example@example.com"
+									type="email"
+									{...register("email", {
+										required: "This is required",
+									})}
+								/>
+								<FormErrorMessage>
+									{errors.email && errors.email.message}
+								</FormErrorMessage>
+							</FormControl>
+							<FormControl
+								id="password"
+								isInvalid={errors.password !== undefined}
+							>
+								<FormLabel htmlFor="password">Password</FormLabel>
+								<Input
+									id="password"
+									placeholder="..."
+									type="password"
+									{...register("password", {
+										required: "This is required",
+									})}
+								/>
+								<FormErrorMessage>
+									{errors.password && errors.password.message}
+								</FormErrorMessage>
+							</FormControl>
+							<Stack spacing={6}>
+								<Stack
+									direction={{ base: "column", sm: "row" }}
+									alignItems="start"
+									justifyContent="space-between"
+								>
+									<Checkbox>Remember me</Checkbox>
+									<Text color={"blue.500"}>Forgot password?</Text>
+								</Stack>
+								<Button
+									colorScheme="blue"
+									variant="solid"
+									isLoading={isSubmitting}
+								>
+									Sign in
+								</Button>
+							</Stack>
+						</form>
 					</Stack>
-				</Stack>
-			</Flex>
-			<Flex flex={1}>
-				<Image alt="Login Image" objectFit="cover" src={imgUrl} />
-			</Flex>
-		</Stack>
+				</Flex>
+				<Flex flex={1}>
+					<Image alt="Login Image" objectFit="cover" src={imgUrl} />
+				</Flex>
+			</Stack>
+		</>
 	);
 }

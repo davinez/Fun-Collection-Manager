@@ -12,7 +12,7 @@ import ProtectedLayout from "components/layout/ProtectedLayout";
 import HomePage from "@/routes/HomePage";
 import LoginPage from "@/routes/LoginPage";
 import SignupPage from "@/routes/SignupPage";
-import GeneralAlertComponent from "components/ui/alert/GeneralAlertComponent";
+import { GeneralAlertComponent } from "components/ui/alert/index";
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
