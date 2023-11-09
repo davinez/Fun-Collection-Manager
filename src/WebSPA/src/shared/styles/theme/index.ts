@@ -3,23 +3,23 @@
 import { extendTheme } from "@chakra-ui/react";
 
 // Foundational style overrides
-//import borders from './foundations/borders'
+import colors  from "shared/styles/theme/foundations/colors";
 
 // Component style overrides
-import { Button } from "./components/button";
+//import { Button } from "./components/button";
 
 const overrides = {
 	// Foundational style overrides go here
-	//borders,
+	...colors
 	// Components overrides go here
-	components: {
-		Button,
-	},
+	// components: {
+	// 	Button,
+	// },
 };
 
 // More Info for styling component none existing in Chakra UI https://chakra-ui.com/docs/styled-system/component-style#styling-single-part-components
 
-export const customChakraUITheme = extendTheme(overrides);
+export default extendTheme(overrides);
 
 // const myCustomTheme = {
 //   // Color palette

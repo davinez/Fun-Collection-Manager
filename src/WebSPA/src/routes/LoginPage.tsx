@@ -17,7 +17,7 @@ import { useSubmitLoginMutation } from "@/api/services/auth";
 import imgUrl from "@/assets/images/login-image.jpg";
 import { useNavigate } from "react-router-dom";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import type { TSubmitLogin } from "@/shared/types/api/auth.types";
+import type { TLoginPayload } from "@/shared/types/api/auth.types";
 import { useState } from "react";
 
 export default function LoginPage(): React.ReactElement {
@@ -27,26 +27,16 @@ export default function LoginPage(): React.ReactElement {
 		handleSubmit,
 		register,
 		formState: { errors, isSubmitting },
-	} = useForm<TSubmitLogin>();
+	} = useForm<TLoginPayload>();
 	const {
 		isOpen: isAlertOpen,
 		onClose,
 		onOpen: onOpenAlert,
-	} = useDisclosure({ defaultIsOpen: true });
+	} = useDisclosure({ defaultIsOpen: false });
 	const [errorAuthService, setErrorAuthService] = useState<string>("");
 
-	// const onLogin = async () => {
-	//   try {
-	//     await mutationLogin.mutateAsync();
-
-	//     setJobName('');
-	//   } catch {
-	//     pushNotification(`Cannot add the job: ${jobName}`);
-	//   }
-	// };
-
-	const onSubmit: SubmitHandler<TSubmitLogin> = (
-		values: TSubmitLogin
+	const onSubmit: SubmitHandler<TLoginPayload> = (
+		values: TLoginPayload
 	): void => {
 		mutationLogin.mutate(values, {
 			onSuccess: () => {
@@ -67,17 +57,18 @@ export default function LoginPage(): React.ReactElement {
 					description={errorAuthService}
 					status="error"
 					onClick={onClose}
+          color="black"
+          variant='left-accent'
 				/>
 			) : (
 				<></>
 			)}
 			<Stack minH={"100vh"} direction={{ base: "column", md: "row" }}>
 				<Flex p={8} flex={1} alignItems="center" justifyContent="center">
-					<Stack spacing={4} w="full" maxW="md">
+					<Stack as="form" onSubmit={handleSubmit(onSubmit)} spacing={4} w="full" maxW="md">
 						<Heading fontSize={"2xl"}>Sign in to your account</Heading>
 
-						<form onSubmit={handleSubmit(onSubmit)}>
-							<FormControl id="email" isInvalid={errors.email !== undefined}>
+							<FormControl id="email" isInvalid={errors.email !== undefined} >
 								<FormLabel htmlFor="email">Email address</FormLabel>
 								<Input
 									id="email"
@@ -114,18 +105,19 @@ export default function LoginPage(): React.ReactElement {
 									alignItems="start"
 									justifyContent="space-between"
 								>
-									<Checkbox>Remember me</Checkbox>
+									<Checkbox marginLeft={1}>Remember me</Checkbox>
 									<Text color={"blue.500"}>Forgot password?</Text>
 								</Stack>
 								<Button
 									colorScheme="blue"
 									variant="solid"
 									isLoading={isSubmitting}
+                  type='submit'
 								>
 									Sign in
 								</Button>
 							</Stack>
-						</form>
+
 					</Stack>
 				</Flex>
 				<Flex flex={1}>

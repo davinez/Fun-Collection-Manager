@@ -1,0 +1,9 @@
+{
+  "/auth/login": "/login",
+  "/manager/collections": "/collections",
+  "/manager/collection/:id": "/collection/:id",
+  "/manager/collection/create": "/collection",
+  "/manager/bookmarks/:id": "/bookmarks/:id",
+  "/manager/bookmark/:id": "/bookmark/:id",
+  "/manager/bookmark/create": "/bookmark"
+}

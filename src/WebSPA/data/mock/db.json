@@ -1,10 +1,60 @@
 {
-  "userData": [
+  "login": {
+    "userId": 1,
+    "userName": "davinez",
+    "token": "aaaaaaa",
+    "refreshtoken": "bbbbbb"
+  },
+  "collections": [
     {
-       "id":1,
-       "username":"davinez",
-       "token":"dfsfdsfdsfsdfdsfds",
-       "refreshtoken":"sdfsdfsdfds"
+      "id": 1,
+      "name": "Deportes",
+      "collectionNodes": [
+        {
+          "id": 789,
+          "name": "Futbol Americano",
+          "collectionNodes": [
+            {
+              "id": 783,
+              "name": "Partidos Americano",
+              "collectionNodes": []
+            }
+          ]
+        },
+        {
+          "id": 787,
+          "name": "Futbol Soccer",
+          "collectionNodes": []
+        }
+      ]
+    },
+    {
+      "id": 874,
+      "name": "Comida",
+      "collectionNodes": []
     }
- ]
+  ],
+  "bookmarks": [
+    {
+      "collectionId": 1,
+      "id": 7423,
+      "name": "Jugadas 2022",
+      "imageSrc": "adsdadsdsd",
+      "description": "Mejores jugadas del 2022..."
+    },
+    {
+      "collectionId": 1,
+      "id": 7424,
+      "name": "Jugadas 2019",
+      "imageSrc": "adsdadsdsd",
+      "description": "Mejores jugadas del 2019..."
+    },
+    {
+      "collectionId": 1,
+      "id": 7425,
+      "name": "Jugadas 2018",
+      "imageSrc": "adsdadsdsd",
+      "description": "Mejores jugadas del 2018..."
+    }
+  ]
 }

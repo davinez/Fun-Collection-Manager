@@ -12,7 +12,7 @@ export default function HomeLayout(): JSX.Element {
 			direction="column"
 			minH="100vh"
 			overflow="hidden"
-			bgColor="gray.900"
+			bgColor="brandPrimary.900"
 			textColor="gray.200"
 			letterSpacing="0.025em"
 			w="100%"

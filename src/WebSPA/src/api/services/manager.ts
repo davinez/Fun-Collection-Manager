@@ -1,8 +1,8 @@
 import type {
   TCategory
 } from "@/shared/types/api/manager.types";
-import type { TApiResponse } from "@/shared/types/api/responses.types";
-import { useQuery, useMutation, type UseQueryResult, type UseMutationResult } from "react-query";
+import type { TApiResponse } from "@/shared/types/api/api-responses.types";
+import { useQuery, useMutation, type UseQueryResult, type UseMutationResult } from '@tanstack/react-query';
 import apiClient from "@/hooks/UseApiClient"
 
 const API_BASE_URL = "http://localhost:8080/api";
