@@ -7,9 +7,9 @@
 //   "message": null /* Or optional success message */
 // }
 
-export type TApiResponse<T extends object> = {
+export type TApiResponse<T extends object | undefined = undefined> = {
   code: number;
   status: string;
-  data: T | null;
-  messsage: string | null;
+  data: T;
+  messsage: string | undefined;
 }

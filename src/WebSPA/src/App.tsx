@@ -8,11 +8,16 @@ import AuthLayout from "@/components/layout/AuthLayout/AuthLayout";
 //import { getUserDataLoader } from "components/layout/AuthLayout/AuthLayout.loader";
 import HomeLayout from "components/layout/HomeLayout";
 import ProtectedLayout from "components/layout/ProtectedLayout";
+import ManagerLayout from "components/layout/ManagerLayout";
 // Pages
 import HomePage from "@/routes/HomePage";
 import LoginPage from "@/routes/LoginPage";
 import SignupPage from "@/routes/SignupPage";
+import ManagerDashboardPage from "@/routes/manager/ManagerDashboardPage";
 import { GeneralAlertComponent } from "components/ui/alert/index";
+
+
+// set a fallback route/page if error ocurrs or enter an invalid route, that page should show and error alert
 
 export const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -33,9 +38,11 @@ export const router = createBrowserRouter(
 			</Route>
 
 			<Route path="/my" element={<ProtectedLayout />}>
-				{/* <Route path="/manager/dashboard" element={<ManagerDashboardPage />} /> */}
-				{/*<Route path="/manager/settings/dashboard" element={<SettingsDashboardPage />} /> */}
-				{/* <Route path="/manager/profile" element={<SettingsProfilePage />} /> */}
+				<Route path="manager" element={<ManagerLayout />}>
+					<Route path="dashboard" element={<ManagerDashboardPage />} />
+				</Route>
+				{/* <Route path="/settings" element={<SettingsPage />} />
+				<Route path="/profile" element={<ProfilePage />} /> */}
 			</Route>
 		</Route>
 	)

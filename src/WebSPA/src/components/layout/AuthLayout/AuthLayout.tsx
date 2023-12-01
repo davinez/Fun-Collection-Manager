@@ -1,20 +1,20 @@
 import { Suspense, useEffect } from "react";
-import { useOutlet, useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 import { CircularProgress } from "@chakra-ui/react";
-//import useAuth from "@/hooks/UseAuth";
 import { useStore } from "@/store/UseStore";
 
 export default function AuthLayout(): React.ReactElement {
 	//const userData = useLoaderData(); // Check if is necessary or just use hydration
-  //const { currentUser } = useAuth();
-	const outlet = useOutlet();
-	const navigate = useNavigate();
-
 	const { authSlice } = useStore();
+  const navigate = useNavigate();
 
 	useEffect(() => {
 		//Runs on the first render
 		//And any time any dependency value changes
+    if (authSlice.hasHydrated && authSlice.username) {
+      navigate('/my/manager/dashboard');
+    }
+
 	}, [authSlice.hasHydrated]);
 
 	// Manage state when hydrated changes
@@ -22,13 +22,9 @@ export default function AuthLayout(): React.ReactElement {
 		return <CircularProgress isIndeterminate color="green.300" />;
 	}
 
-	if (authSlice.user !== null) {
-		navigate("/manager/dashboard");
-	}
-
 	return (
 		<Suspense fallback={<CircularProgress isIndeterminate color="green.300" />}>
-			{outlet}
+			<Outlet />
 		</Suspense>
 	);
 }

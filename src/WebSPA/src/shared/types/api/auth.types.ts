@@ -4,8 +4,8 @@ export type TLoginPayload = {
 }
 
 export type TLoginResponse = {
-  userId: number;
   userName: string;
+  userEmail: string;
   token: string;
   refreshtoken: string;
 }

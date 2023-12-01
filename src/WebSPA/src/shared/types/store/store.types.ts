@@ -10,7 +10,7 @@ export type TCombinedStore = {
 };
 
 export type TStateSlice<T> = StateCreator<
-	TCombinedStore,
+   TCombinedStore,
 	[
 		["zustand/persist", unknown],
 		["zustand/immer", never],

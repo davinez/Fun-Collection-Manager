@@ -1,5 +1,9 @@
-import axios, {type AxiosResponse} from "axios";
+import axios, {type AxiosResponse, type AxiosError} from "axios";
 import { useStore } from "@/store/UseStore";
+
+export const isAxiosError = <T>(error: unknown): error is AxiosError<T> => {
+  return axios.isAxiosError(error);
+}
 
 type TApi = {
   get: <T>(url: string, parameters?: object) => Promise<AxiosResponse<T, unknown>>;

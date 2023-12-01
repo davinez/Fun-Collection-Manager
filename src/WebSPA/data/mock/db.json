@@ -1,9 +1,15 @@
 {
   "login": {
-    "userId": 1,
-    "userName": "davinez",
-    "token": "aaaaaaa",
-    "refreshtoken": "bbbbbb"
+    "code:": 200,
+    "status": "success",
+    "data": {
+      "userId": 1,
+      "userName": "davinez",
+      "userEmail": "dasdsa@gmail.com",
+      "token": "aaaaaaa",
+      "refreshtoken": "bbbbbb"
+    },
+    "message": null
   },
   "collections": [
     {
