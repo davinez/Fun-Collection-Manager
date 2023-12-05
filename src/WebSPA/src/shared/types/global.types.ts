@@ -7,3 +7,14 @@ type IconProps = HeroIconSVGProps & {
 };
 
 export type Heroicon = React.FC<IconProps>;
+
+
+type TDynamicCollapseStateSettings = {
+   id: number,
+	 open: boolean
+} 
+
+export type TDynamicCollapseState = {
+	settings: TDynamicCollapseStateSettings[]; 
+};
+

@@ -6,9 +6,9 @@ import {
 // Layouts and Auth
 import AuthLayout from "@/components/layout/AuthLayout/AuthLayout";
 //import { getUserDataLoader } from "components/layout/AuthLayout/AuthLayout.loader";
-import HomeLayout from "components/layout/HomeLayout";
-import ProtectedLayout from "components/layout/ProtectedLayout";
-import ManagerLayout from "components/layout/ManagerLayout";
+import HomeLayout from "@/components/layout/HomeLayout/HomeLayout";
+import ProtectedLayout from "components/layout/ProtectedLayout/ProtectedLayout";
+import ManagerLayout from "components/layout/ManagerLayout/ManagerLayout";
 // Pages
 import HomePage from "@/routes/HomePage";
 import LoginPage from "@/routes/LoginPage";

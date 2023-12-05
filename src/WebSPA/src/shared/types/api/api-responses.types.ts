@@ -1,15 +1,16 @@
 // {
-//   "code:": 200
-//   "status": "success",
-//   "data": {
-//     /* Application-specific data would go here. */
-//   },
-//   "message": null /* Or optional success message */
+//   "statusCode": 200,
+//   "message": "Data retrieved successfully",
+//   "data": ["Item 1", "Item 2", "Item 3"]
+// }
+// {
+//   "statusCode": 404,
+//   "message": "Resource not found",
+//   "data": null
 // }
 
 export type TApiResponse<T extends object | undefined = undefined> = {
-  code: number;
-  status: string;
-  data: T;
+  statusCode: number;
   messsage: string | undefined;
+  data: T;
 }

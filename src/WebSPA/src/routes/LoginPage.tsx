@@ -1,3 +1,4 @@
+// Design
 import {
 	Button,
 	Checkbox,
@@ -12,16 +13,23 @@ import {
 	FormErrorMessage,
 	useDisclosure,
 } from "@chakra-ui/react";
+// Components
 import { GeneralAlertComponent } from "components/ui/alert/index";
-import { useSubmitLoginMutation } from "@/api/services/auth";
+// Assets
 import imgUrl from "@/assets/images/login-image.jpg";
-import { useNavigate } from "react-router-dom";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import type { TLoginPayload } from "@/shared/types/api/auth.types";
-import { useState } from "react";
+// Hooks
 import { useStore } from "@/store/UseStore";
 import { isAxiosError } from "@/hooks/UseApiClient";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { useSubmitLoginMutation } from "@/api/services/auth";
+// Types
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
+import type { TLoginPayload } from "@/shared/types/api/auth.types";
+// General
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+
+
 
 export default function LoginPage(): React.ReactElement {
 	const navigate = useNavigate();
@@ -37,7 +45,7 @@ export default function LoginPage(): React.ReactElement {
 		onOpen: onOpenAlert,
 	} = useDisclosure({ defaultIsOpen: false });
 	const [errorAuthService, setErrorAuthService] = useState<string>("");
-	const { setLoginUser } = useStore().authSlice;
+	const { authSlice } = useStore();
 
 	const onSubmit: SubmitHandler<TLoginPayload> = (
 		values: TLoginPayload
@@ -45,7 +53,7 @@ export default function LoginPage(): React.ReactElement {
 		mutationLogin.mutate(values, {
 			onSuccess: (data, variables, context) => {
 				// Add data to store authslice
-				setLoginUser(data.data);
+			authSlice.setLoginUser(data.data);
 
 				navigate("/my/manager/dashboard");
 			},

@@ -1,8 +1,8 @@
 import { Box, Flex } from "@chakra-ui/react";
 import { useOutlet } from "react-router-dom";
 import MainPanel from "components/layout/MainPanel/MainPanel";
-import Footer from "components/layout/HomeFooter/HomeFooter";
-import HomeNavbar from "components/layout/HomeNavbar/HomeNavbar";
+import Footer from "components/layout/HomeLayout/HomeFooter";
+import HomeNavbar from "components/layout/HomeLayout/HomeNavbar";
 
 export default function HomeLayout(): JSX.Element {
 	const outlet = useOutlet();

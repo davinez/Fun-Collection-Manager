@@ -1,66 +1,75 @@
 {
-  "login": {
-    "code:": 200,
-    "status": "success",
-    "data": {
-      "userId": 1,
-      "userName": "davinez",
-      "userEmail": "dasdsa@gmail.com",
-      "token": "aaaaaaa",
-      "refreshtoken": "bbbbbb"
-    },
-    "message": null
-  },
-  "collections": [
-    {
-      "id": 1,
-      "name": "Deportes",
-      "collectionNodes": [
-        {
-          "id": 789,
-          "name": "Futbol Americano",
-          "collectionNodes": [
-            {
-              "id": 783,
-              "name": "Partidos Americano",
-              "collectionNodes": []
-            }
-          ]
-        },
-        {
-          "id": 787,
-          "name": "Futbol Soccer",
-          "collectionNodes": []
-        }
-      ]
-    },
-    {
-      "id": 874,
-      "name": "Comida",
-      "collectionNodes": []
-    }
-  ],
-  "bookmarks": [
-    {
-      "collectionId": 1,
-      "id": 7423,
-      "name": "Jugadas 2022",
-      "imageSrc": "adsdadsdsd",
-      "description": "Mejores jugadas del 2022..."
-    },
-    {
-      "collectionId": 1,
-      "id": 7424,
-      "name": "Jugadas 2019",
-      "imageSrc": "adsdadsdsd",
-      "description": "Mejores jugadas del 2019..."
-    },
-    {
-      "collectionId": 1,
-      "id": 7425,
-      "name": "Jugadas 2018",
-      "imageSrc": "adsdadsdsd",
-      "description": "Mejores jugadas del 2018..."
-    }
-  ]
+	"login": {
+		"statusCode": 200,
+		"message": "Successful request",
+		"data": {
+			"userId": 1,
+			"userName": "davinez",
+			"userEmail": "dasdsa@gmail.com",
+			"token": "aaaaaaa",
+			"refreshtoken": "bbbbbb"
+		}
+	},
+	"collections": {
+		"statusCode": 200,
+		"message": "Successful request",
+		"data": [
+			{
+				"id": 1,
+				"name": "Deportes",
+				"childCollections": [
+					{
+						"id": 789,
+						"name": "Futbol Americano",
+						"childCollections": [
+							{
+								"id": 783,
+								"name": "Partidos Americano",
+								"childCollections": []
+							}
+						]
+					},
+					{
+						"id": 787,
+						"name": "Futbol Soccer",
+						"childCollections": [
+              {
+								"id": 781,
+								"name": "Partidos Soccer",
+								"childCollections": []
+							}
+            ]
+					}
+				]
+			},
+			{
+				"id": 874,
+				"name": "Comida",
+				"childCollections": []
+			}
+		]
+	},
+	"bookmarks": [
+		{
+			"collectionId": 1,
+			"id": 7423,
+			"name": "Jugadas 2022",
+			"imageSrc": "adsdadsdsd",
+			"description": "Mejores jugadas del 2022..."
+		},
+		{
+			"collectionId": 1,
+			"id": 7424,
+			"name": "Jugadas 2019",
+			"imageSrc": "adsdadsdsd",
+			"description": "Mejores jugadas del 2019..."
+		},
+		{
+			"collectionId": 1,
+			"id": 7425,
+			"name": "Jugadas 2018",
+			"imageSrc": "adsdadsdsd",
+			"description": "Mejores jugadas del 2018..."
+		}
+	]
 }
