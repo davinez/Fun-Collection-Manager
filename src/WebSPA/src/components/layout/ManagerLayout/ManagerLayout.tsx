@@ -27,6 +27,7 @@ import {
 import { DeleteIcon } from "@chakra-ui/icons";
 import {
 	AiFillCaretRight,
+	AiFillCaretDown,
 	AiFillFolder,
 	AiFillFolderOpen,
 	AiOutlineEllipsis,
@@ -231,29 +232,24 @@ const SidebarContent = ({
 				<Menu>
 					<MenuButton
 						as={Button}
-						rounded={"full"}
-						variant={"link"}
-						cursor={"pointer"}
-						minW={0}
+						rounded={"base"}
+						variant={"ghost"}	
+						iconSpacing='2px'				
+						leftIcon={<Icon as={AiOutlineUser} />}
+						rightIcon={<Icon as={AiFillCaretDown} />}
 					>
-						<Icon boxSize="sm" as={AiOutlineUser} />
 						<Text
-							fontSize="2xl"
+							textStyle='title'
+							color="brandPrimary.500"
 							ml="2"
-							color="brand.500"
-							_dark={{
-								color: "white",
-							}}
-							fontWeight="semibold"
 						>
 							david.ibanezn
 						</Text>
 					</MenuButton>
 					<MenuList>
-						<MenuItem>Link 1</MenuItem>
-						<MenuItem>Link 2</MenuItem>
+						<MenuItem>Settings</MenuItem>
 						<MenuDivider />
-						<MenuItem>Link 3</MenuItem>
+						<MenuItem>Logout</MenuItem>
 					</MenuList>
 				</Menu>
 			</Flex>
@@ -268,28 +264,6 @@ const SidebarContent = ({
 					// Recursion function
 					getCollectionsResponse && renderCollections(getCollectionsResponse)
 				}
-
-				<NavItem icon={AiOutlineEllipsis}>Home</NavItem>
-				<NavItem icon={AiOutlineEllipsis}>Articles</NavItem>
-				<NavItem icon={AiOutlineEllipsis}>Collections</NavItem>
-				<NavItem icon={AiOutlineEllipsis}>Checklists</NavItem>
-				{/* <NavItem icon={AiOutlineEllipsis} onClick={integrations.onToggle}>
-					Integrations
-					<AiOutlineEllipsis />
-				</NavItem>
-				<Collapse in={integrations.isOpen}>
-					<NavItem pl="12" py="2">
-						Shopify
-					</NavItem>
-					<NavItem pl="12" py="2">
-						Slack
-					</NavItem>
-					<NavItem pl="12" py="2">
-						Zapier
-					</NavItem>
-				</Collapse> */}
-				<NavItem icon={AiOutlineEllipsis}>Changelog</NavItem>
-				<NavItem icon={AiOutlineEllipsis}>Settings</NavItem>
 			</Flex>
 		</Box>
 	);

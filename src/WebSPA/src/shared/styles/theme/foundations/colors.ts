@@ -3,7 +3,7 @@ export default {
     brandPrimary: {
       50: '#c9c9c9',
       100: '#c5c4c4',
-      150: '#999',
+      150: '#9f9f9f',
       800: '#343434',
       900: '#2b2b2b',
     },
@@ -15,10 +15,6 @@ export default {
       50: '#fffff9',
       800: '#70bcd2',
       900: '#3ea6ff'
-    },
-    brandText: {
-      100: '#f9f9f9',
-      900: '#000000'
     }
   }
 }
