@@ -19,6 +19,8 @@ import {
 	MenuButton,
 	MenuItem,
 	MenuDivider,
+	Grid,
+	GridItem,
 	useDisclosure,
 	useColorModeValue,
 	type FlexProps,
@@ -219,13 +221,8 @@ const SidebarContent = ({
 			pb="10"
 			overflowX="hidden"
 			overflowY="auto"
-			bg="white"
-			_dark={{
-				bg: "gray.800",
-			}}
-			color="inherit"
-			borderRightWidth="1px"
-			w="60"
+			w="300px"
+			bg="brandPrimary.900"
 			{...rest}
 		>
 			<Flex px="4" py="5" alignItems="center">
@@ -233,16 +230,12 @@ const SidebarContent = ({
 					<MenuButton
 						as={Button}
 						rounded={"base"}
-						variant={"ghost"}	
-						iconSpacing='2px'				
+						variant={"ghost"}
+						iconSpacing="2px"
 						leftIcon={<Icon as={AiOutlineUser} />}
 						rightIcon={<Icon as={AiFillCaretDown} />}
 					>
-						<Text
-							textStyle='title'
-							color="brandPrimary.500"
-							ml="2"
-						>
+						<Text textStyle="title" color="brandPrimary.500" ml="2">
 							david.ibanezn
 						</Text>
 					</MenuButton>
@@ -272,88 +265,184 @@ const SidebarContent = ({
 // 2 secciones en navitem, la fecha despliega submenus y el resto seleccioan esa coleccion
 
 export default function ManagerLayout(): JSX.Element {
-	const sidebar = useDisclosure();
 	const outlet = useOutlet();
 
 	return (
-		<Box
-			as="section"
-			bg="gray.50"
-			_dark={{
-				bg: "gray.700",
-			}}
+		// <Box
+		// 	as="section"
+		// 	bg="pink"
+		// 	minH="100vh"
+		// >
+		// 	<SidebarContent
+		// 		display={{
+		// 			base: "none",
+		// 			md: "unset",
+		// 		}}
+		// 	/>
+		// 	<Drawer
+		// 		isOpen={sidebar.isOpen}
+		// 		onClose={sidebar.onClose}
+		// 		placement="left"
+		// 	>
+		// 		<DrawerOverlay />
+		// 		<DrawerContent>
+		// 			<SidebarContent w="full" borderRight="none" />
+		// 		</DrawerContent>
+		// 	</Drawer>
+		// 	<Box
+		// 		ml={{
+		// 			base: 0,
+		// 			md: 60,
+		// 		}}
+		// 		transition=".3s ease"
+		// 	>
+		// 		<Flex
+		// 			as="header"
+		// 			align="center"
+		// 			justify="space-between"
+		// 			w="full"
+		// 			px="4"
+		// 			bg="white"
+		// 			h="3rem"
+		// 		>
+		// 			<IconButton
+		// 				aria-label="Menu"
+		// 				display={{
+		// 					base: "inline-flex",
+		// 					md: "none",
+		// 				}}
+		// 				onClick={sidebar.onOpen}
+		// 				icon={<AiOutlineEllipsis />}
+		// 				size="sm"
+		// 			/>
+		// 			<InputGroup
+		// 				w="96"
+		// 				display={{
+		// 					base: "none",
+		// 					md: "flex",
+		// 				}}
+		// 			>
+		// 				<InputLeftElement color="gray.500">
+		// 					<AiOutlineEllipsis />
+		// 				</InputLeftElement>
+		// 				<Input placeholder="Search for articles..." />
+		// 			</InputGroup>
+
+		// 			<Flex align="center">
+		// 				<Icon color="gray.500" as={AiOutlineEllipsis} cursor="pointer" />
+		// 				<Avatar ml="4" size="sm" name="davinez" src="" cursor="pointer" />
+		// 			</Flex>
+		// 		</Flex>
+
+		// 		<Box as="main" p="4">
+		// 			<Suspense>{outlet}</Suspense>
+		// 		</Box>
+		// 	</Box>
+		// </Box>
+
+		// <Box aria-label="page-full-div" as="section" bg="pink" minH="100vh">
+		// 	<SidebarContent
+		// 	aria-label="page-sidebar"
+		// 		display={{
+		// 			base: "none",
+		// 			md: "unset",
+		// 		}}
+		// 	/>
+		// 	<Box
+		// 	  aria-label="page-mainandnavbar-div"
+		// 		ml={{
+		// 			base: 0,
+		// 			md: 60,
+		// 		}}
+		// 		transition=".3s ease"
+		// 	>
+		// 		<Flex
+		// 		  aria-label="page-navbar-div"
+		// 			as="header"
+		// 			align="center"
+		// 			justify="space-between"
+		// 			w="full"
+		// 			px="4"
+		// 			bg="white"
+		// 			h="3rem"
+		// 		>
+		// 			<InputGroup
+		// 			aria-label="page-navbar-leftbuttons-div"
+		// 				w="96"
+		// 				display={{
+		// 					base: "none",
+		// 					md: "flex",
+		// 				}}
+		// 			>
+		// 				<InputLeftElement color="gray.500">
+		// 					<AiOutlineEllipsis />
+		// 				</InputLeftElement>
+		// 				<Input placeholder="Search for articles..." />
+		// 			</InputGroup>
+
+		// 			<Flex aria-label="page-navbar-rightbuttons-div" align="center">
+		// 				<Icon color="gray.500" as={AiOutlineEllipsis} cursor="pointer" />
+		// 				<Avatar ml="4" size="sm" name="davinez" src="" cursor="pointer" />
+		// 			</Flex>
+		// 		</Flex>
+
+		// 		<Box aria-label="page-main-content" as="main" p="4">
+		// 			<Suspense>{outlet}</Suspense>
+		// 		</Box>
+		// 	</Box>
+		// </Box>
+
+		<Grid
+			templateAreas={`"sidebar navbar" "sidebar main"`}
+			gridTemplateColumns={"300px 1fr"}
+			gridTemplateRows={"3rem 1fr"}
+			gap="0"
 			minH="100vh"
+			bg="gray.50"
 		>
-			<SidebarContent
-				display={{
-					base: "none",
-					md: "unset",
-				}}
-			/>
-			<Drawer
-				isOpen={sidebar.isOpen}
-				onClose={sidebar.onClose}
-				placement="left"
+			<GridItem as="aside" area={"sidebar"} bg="brand.600">
+				<SidebarContent />
+			</GridItem>
+
+			<GridItem 
+			as="header" 
+			display="flex"
+			area={"navbar"}
+			alignItems="center"
+			justifyContent="space-between"
+			position= "sticky"
+			top= "0"
+			w="full"
+			h="full"
+			bg="brandPrimary.900"
 			>
-				<DrawerOverlay />
-				<DrawerContent>
-					<SidebarContent w="full" borderRight="none" />
-				</DrawerContent>
-			</Drawer>
-			<Box
-				ml={{
-					base: 0,
-					md: 60,
-				}}
-				transition=".3s ease"
-			>
-				<Flex
-					as="header"
-					align="center"
-					justify="space-between"
-					w="full"
-					px="4"
-					bg="white"
-					_dark={{
-						bg: "gray.800",
+				<InputGroup
+					aria-label="page-navbar-leftbuttons-div"
+					w="96"
+					display={{
+						base: "none",
+						md: "flex",
 					}}
-					borderBottomWidth="1px"
-					color="inherit"
-					h="14"
 				>
-					<IconButton
-						aria-label="Menu"
-						display={{
-							base: "inline-flex",
-							md: "none",
-						}}
-						onClick={sidebar.onOpen}
-						icon={<AiOutlineEllipsis />}
-						size="sm"
-					/>
-					<InputGroup
-						w="96"
-						display={{
-							base: "none",
-							md: "flex",
-						}}
-					>
-						<InputLeftElement color="gray.500">
-							<AiOutlineEllipsis />
-						</InputLeftElement>
-						<Input placeholder="Search for articles..." />
-					</InputGroup>
+					<InputLeftElement color="gray.500">
+						<AiOutlineEllipsis />
+					</InputLeftElement>
+					<Input placeholder="Search for articles..." />
+				</InputGroup>
 
-					<Flex align="center">
-						<Icon color="gray.500" as={AiOutlineEllipsis} cursor="pointer" />
-						<Avatar ml="4" size="sm" name="davinez" src="" cursor="pointer" />
-					</Flex>
+				<Flex aria-label="page-navbar-rightbuttons-div" align="center">
+					<Icon color="gray.500" as={AiOutlineEllipsis} cursor="pointer" />
+					<Avatar ml="4" size="sm" name="davinez" src="" cursor="pointer" />
 				</Flex>
+			</GridItem>
 
-				<Box as="main" p="4">
-					<Suspense>{outlet}</Suspense>
-				</Box>
-			</Box>
-		</Box>
+			<GridItem 
+			as="main" 
+			area={"main"}
+			w="full"
+			>
+				<Suspense>{outlet}</Suspense>
+			</GridItem>
+		</Grid>
 	);
 }
