@@ -26,7 +26,6 @@ import {
 	type FlexProps,
 	type BoxProps,
 } from "@chakra-ui/react";
-import { DeleteIcon } from "@chakra-ui/icons";
 import {
 	AiFillCaretRight,
 	AiFillCaretDown,
@@ -35,6 +34,10 @@ import {
 	AiOutlineEllipsis,
 	AiOutlineMenu,
 	AiOutlineUser,
+	AiFillCloud,
+	AiFillDelete,
+	AiFillSetting,
+	AiOutlineLogout,
 } from "react-icons/ai";
 // Components
 
@@ -74,38 +77,21 @@ const NavItem = ({
 	return (
 		<Flex
 			align="center"
-			px="4"
-			pl="4"
-			py="3"
+			py="2"
 			cursor="pointer"
-			color="inherit"
-			_dark={{
-				color: "gray.400",
-			}}
 			_hover={{
-				bg: "gray.100",
-				_dark: {
-					bg: "gray.900",
-				},
-				color: "gray.900",
+				bg: "brandPrimary.800",
 			}}
-			fontWeight="semibold"
+			textStyle="primary"
+			color="brandPrimary.100"
 			transition=".15s ease"
 			onClick={(): void => {
 				onClick?.();
 			}}
+			pl="2"
 			{...rest}
 		>
-			{icon && (
-				<Icon
-					mx="2"
-					boxSize="4"
-					_groupHover={{
-						color: "gray.100",
-					}}
-					as={icon}
-				/>
-			)}
+			{icon && <Icon mx="2" boxSize="5" as={icon} />}
 			{children}
 		</Flex>
 	);
@@ -179,7 +165,7 @@ const SidebarContent = ({
 				return (
 					<Fragment key={`RenderedNavItem_${collection.id}`}>
 						<NavItem
-							icon={AiOutlineEllipsis}
+							icon={AiFillFolder}
 							onClick={() => {
 								handleClick(collection.id);
 							}}
@@ -199,10 +185,7 @@ const SidebarContent = ({
 				);
 			} else {
 				return (
-					<NavItem
-						key={`RenderedNavItem_${collection.id}`}
-						icon={AiOutlineEllipsis}
-					>
+					<NavItem key={`RenderedNavItem_${collection.id}`} icon={AiFillFolder}>
 						{collection.name}
 					</NavItem>
 				);
@@ -222,27 +205,55 @@ const SidebarContent = ({
 			overflowX="hidden"
 			overflowY="auto"
 			w="300px"
-			bg="brandPrimary.900"
+			bg="brandPrimary.900"		
 			{...rest}
 		>
-			<Flex px="4" py="5" alignItems="center">
+			<Flex pl="2" py="2" alignItems="center">
 				<Menu>
 					<MenuButton
 						as={Button}
-						rounded={"base"}
-						variant={"ghost"}
+						rounded="base"
+						variant="ghost"
 						iconSpacing="2px"
 						leftIcon={<Icon as={AiOutlineUser} />}
 						rightIcon={<Icon as={AiFillCaretDown} />}
+						textStyle="primary"
+						color="brandPrimary.100"
+						_hover={{
+							bg: "brandPrimary.800",
+						}}
+						_active={{
+							bg: "brandPrimary.800",
+						}}
+						p="1"
 					>
-						<Text textStyle="title" color="brandPrimary.500" ml="2">
-							david.ibanezn
-						</Text>
+						<Text ml="2">david.ibanezn</Text>
 					</MenuButton>
-					<MenuList>
-						<MenuItem>Settings</MenuItem>
+					<MenuList
+						bg="brandPrimary.900"
+						textStyle="primary"
+						color="brandPrimary.100"
+					>
+						<MenuItem
+							bg="brandPrimary.900"
+							_hover={{
+								bg: "brandSecondary.800",
+							}}
+							h="100%"
+							icon={<Icon as={AiFillSetting} />}
+						>
+							Settings
+						</MenuItem>
 						<MenuDivider />
-						<MenuItem>Logout</MenuItem>
+						<MenuItem
+							bg="brandPrimary.900"
+							_hover={{
+								bg: "brandSecondary.800",
+							}}
+							icon={<Icon as={AiOutlineLogout} />}
+						>
+							Logout
+						</MenuItem>
 					</MenuList>
 				</Menu>
 			</Flex>
@@ -253,6 +264,12 @@ const SidebarContent = ({
 				color="gray.600"
 				aria-label="Main Navigation"
 			>
+				<NavItem icon={AiFillCloud}>All Bookmarks</NavItem>
+				<NavItem icon={AiFillDelete}>Trash</NavItem>
+				<Box py="2" pl="3" textStyle="primary" color="brandPrimary.150">
+					Collections
+				</Box>
+
 				{
 					// Recursion function
 					getCollectionsResponse && renderCollections(getCollectionsResponse)
@@ -404,17 +421,17 @@ export default function ManagerLayout(): JSX.Element {
 				<SidebarContent />
 			</GridItem>
 
-			<GridItem 
-			as="header" 
-			display="flex"
-			area={"navbar"}
-			alignItems="center"
-			justifyContent="space-between"
-			position= "sticky"
-			top= "0"
-			w="full"
-			h="full"
-			bg="brandPrimary.900"
+			<GridItem
+				as="header"
+				display="flex"
+				area={"navbar"}
+				alignItems="center"
+				justifyContent="space-between"
+				position="sticky"
+				top="0"
+				w="full"
+				h="full"
+				bg="brandPrimary.900"
 			>
 				<InputGroup
 					aria-label="page-navbar-leftbuttons-div"
@@ -436,11 +453,7 @@ export default function ManagerLayout(): JSX.Element {
 				</Flex>
 			</GridItem>
 
-			<GridItem 
-			as="main" 
-			area={"main"}
-			w="full"
-			>
+			<GridItem as="main" area={"main"} w="full">
 				<Suspense>{outlet}</Suspense>
 			</GridItem>
 		</Grid>
