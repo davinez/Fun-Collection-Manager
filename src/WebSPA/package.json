@@ -29,6 +29,7 @@
 		"server:mock": "json-server --port 7000 --middlewares ./data/mock/middleware.ts --routes ./data/mock/routes.json --watch ./data/mock/db.json"
 	},
 	"dependencies": {
+		"@chakra-ui/anatomy": "^2.2.2",
 		"@chakra-ui/icons": "^2.1.1",
 		"@chakra-ui/react": "^2.8.1",
 		"@emotion/react": "^11.11.1",

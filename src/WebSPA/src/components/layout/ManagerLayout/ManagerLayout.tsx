@@ -11,6 +11,7 @@ import {
 	IconButton,
 	InputGroup,
 	InputLeftElement,
+	InputRightElement,
 	Input,
 	Avatar,
 	Button,
@@ -21,6 +22,7 @@ import {
 	MenuDivider,
 	Grid,
 	GridItem,
+	ButtonGroup,
 	useDisclosure,
 	useColorModeValue,
 	type FlexProps,
@@ -38,7 +40,11 @@ import {
 	AiFillDelete,
 	AiFillSetting,
 	AiOutlineLogout,
+	AiOutlineSearch,
+	AiFillFilter,
 } from "react-icons/ai";
+import textStylesTheme from "shared/styles/theme/foundations/textStyles";
+import colorStylesTheme from "shared/styles/theme/foundations/colors";
 // Components
 
 // Assets
@@ -62,10 +68,6 @@ type TNavItemProps = {
 	icon?: React.ElementType; // Third party icon
 	children: React.ReactNode;
 	onClick?: () => void;
-};
-
-type TSidebarContentProps = {
-	//color: string;
 };
 
 const NavItem = ({
@@ -97,9 +99,7 @@ const NavItem = ({
 	);
 };
 
-const SidebarContent = ({
-	...rest
-}: TSidebarContentProps & BoxProps): React.ReactElement => {
+const SidebarContent = (): React.ReactElement => {
 	const {
 		data: getCollectionsResponse,
 		isLoading: isLoadingGetCollections,
@@ -194,21 +194,8 @@ const SidebarContent = ({
 	};
 
 	return (
-		<Box
-			as="nav"
-			pos="fixed"
-			top="0"
-			left="0"
-			zIndex="sticky"
-			h="full"
-			pb="10"
-			overflowX="hidden"
-			overflowY="auto"
-			w="300px"
-			bg="brandPrimary.900"		
-			{...rest}
-		>
-			<Flex pl="2" py="2" alignItems="center">
+		<>
+			<Flex pl="3" py="2" alignItems="center">
 				<Menu>
 					<MenuButton
 						as={Button}
@@ -217,7 +204,6 @@ const SidebarContent = ({
 						iconSpacing="2px"
 						leftIcon={<Icon as={AiOutlineUser} />}
 						rightIcon={<Icon as={AiFillCaretDown} />}
-						textStyle="primary"
 						color="brandPrimary.100"
 						_hover={{
 							bg: "brandPrimary.800",
@@ -227,30 +213,34 @@ const SidebarContent = ({
 						}}
 						p="1"
 					>
-						<Text ml="2">david.ibanezn</Text>
+						<Text textStyle="primary" ml="2">
+							david.ibanezn
+						</Text>
 					</MenuButton>
 					<MenuList
-						bg="brandPrimary.900"
-						textStyle="primary"
+						bg="brandPrimary.800"
 						color="brandPrimary.100"
+						border="1px solid"
 					>
 						<MenuItem
-							bg="brandPrimary.900"
+							bg="brandPrimary.800"
 							_hover={{
 								bg: "brandSecondary.800",
 							}}
 							h="100%"
 							icon={<Icon as={AiFillSetting} />}
+							textStyle="primary"
 						>
 							Settings
 						</MenuItem>
 						<MenuDivider />
 						<MenuItem
-							bg="brandPrimary.900"
+							bg="brandPrimary.800"
 							_hover={{
 								bg: "brandSecondary.800",
 							}}
 							icon={<Icon as={AiOutlineLogout} />}
+							textStyle="primary"
 						>
 							Logout
 						</MenuItem>
@@ -260,13 +250,12 @@ const SidebarContent = ({
 			<Flex
 				direction="column"
 				as="nav"
-				fontSize="sm"
-				color="gray.600"
+				textStyle="primary"
 				aria-label="Main Navigation"
 			>
 				<NavItem icon={AiFillCloud}>All Bookmarks</NavItem>
 				<NavItem icon={AiFillDelete}>Trash</NavItem>
-				<Box py="2" pl="3" textStyle="primary" color="brandPrimary.150">
+				<Box py="2" pl="3" color="brandPrimary.150">
 					Collections
 				</Box>
 
@@ -275,11 +264,103 @@ const SidebarContent = ({
 					getCollectionsResponse && renderCollections(getCollectionsResponse)
 				}
 			</Flex>
-		</Box>
+		</>
 	);
 };
 
-// 2 secciones en navitem, la fecha despliega submenus y el resto seleccioan esa coleccion
+const NavbarContent = (): React.ReactElement => {
+	return (
+		<>
+			<InputGroup
+				aria-label="page-navbar-leftbuttons-div"
+				h="55%"
+				w={{
+					base: "80%",
+					md: "40%",
+				}}
+			>
+				<InputLeftElement h="100%">
+					<Icon
+						as={AiOutlineSearch}
+						boxSize={textStylesTheme.textStyles.primary.fontSize}
+						color="brandPrimary.150"
+					/>
+				</InputLeftElement>
+
+				<Input variant="navbar" placeholder="Search for articles..." />
+
+				<InputRightElement h="100%">
+					<Menu placement="bottom-end">
+						<MenuButton
+							_hover={{
+								bg: "brandPrimary.800",
+							}}
+							as={Button}
+							bg={colorStylesTheme.colors.brandPrimary[950]}
+							p="5px"
+							w="100%"
+							h="100%"
+							rightIcon={
+								<Icon
+									boxSize={textStylesTheme.textStyles.primary.fontSize}
+									as={AiFillCaretDown}
+									color="brandPrimary.150"
+								/>
+							}
+						>
+							<Icon
+								boxSize={textStylesTheme.textStyles.primary.fontSize}
+								as={AiFillFilter}
+								color="brandPrimary.150"
+							/>
+						</MenuButton>
+						<MenuList
+							bg="brandPrimary.800"
+							color="brandPrimary.100"
+							border="none"
+						>
+							<MenuItem
+								bg="brandPrimary.800"
+								_hover={{
+									bg: "brandSecondary.800",
+								}}
+							>
+								Link 1
+							</MenuItem>
+							<MenuItem
+								bg="brandPrimary.800"
+								_hover={{
+									bg: "brandSecondary.800",
+								}}
+							>
+								Link 2
+							</MenuItem>
+						</MenuList>
+					</Menu>
+				</InputRightElement>
+			</InputGroup>
+
+			<ButtonGroup
+				aria-label="page-navbar-rightbuttons-div"
+				size="sm"
+				isAttached
+				variant="outline"
+			>
+				<Button>Save</Button>
+				<IconButton
+					aria-label="Add to friends"
+					icon={
+						<Icon
+							boxSize={textStylesTheme.textStyles.primary.fontSize}
+							as={AiFillCaretDown}
+							color="brandPrimary.150"
+						/>
+					}
+				/>
+			</ButtonGroup>
+		</>
+	);
+};
 
 export default function ManagerLayout(): JSX.Element {
 	const outlet = useOutlet();
@@ -411,49 +492,50 @@ export default function ManagerLayout(): JSX.Element {
 
 		<Grid
 			templateAreas={`"sidebar navbar" "sidebar main"`}
-			gridTemplateColumns={"300px 1fr"}
-			gridTemplateRows={"3rem 1fr"}
+			gridTemplateColumns="300px 1fr"
+			gridTemplateRows="3rem 1fr"
 			gap="0"
 			minH="100vh"
 			bg="gray.50"
 		>
-			<GridItem as="aside" area={"sidebar"} bg="brand.600">
+			<GridItem
+				as="aside"
+				area="sidebar"
+				pos="fixed"
+				top="0"
+				left="0"
+				zIndex="sticky"
+				h="full"
+				pb="10"
+				overflowX="hidden"
+				overflowY="auto"
+				w="300px"
+				bg="brandPrimary.800"
+				borderRight="1px solid"
+				borderRightColor="brandPrimary.150"
+			>
 				<SidebarContent />
 			</GridItem>
 
 			<GridItem
 				as="header"
 				display="flex"
-				area={"navbar"}
+				area="navbar"
 				alignItems="center"
 				justifyContent="space-between"
 				position="sticky"
 				top="0"
 				w="full"
 				h="full"
-				bg="brandPrimary.900"
+				bg="brandPrimary.800"
+				borderBottom="1px solid"
+				borderBottomColor="brandPrimary.150"
+				pl="15px"
 			>
-				<InputGroup
-					aria-label="page-navbar-leftbuttons-div"
-					w="96"
-					display={{
-						base: "none",
-						md: "flex",
-					}}
-				>
-					<InputLeftElement color="gray.500">
-						<AiOutlineEllipsis />
-					</InputLeftElement>
-					<Input placeholder="Search for articles..." />
-				</InputGroup>
-
-				<Flex aria-label="page-navbar-rightbuttons-div" align="center">
-					<Icon color="gray.500" as={AiOutlineEllipsis} cursor="pointer" />
-					<Avatar ml="4" size="sm" name="davinez" src="" cursor="pointer" />
-				</Flex>
+				<NavbarContent />
 			</GridItem>
 
-			<GridItem as="main" area={"main"} w="full">
+			<GridItem as="main" area="main" w="full">
 				<Suspense>{outlet}</Suspense>
 			</GridItem>
 		</Grid>

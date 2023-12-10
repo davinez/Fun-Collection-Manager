@@ -1,3 +1,5 @@
+import {TColors} from 'shared/types/theme/foundations/colors'
+
 export default {
   colors: {
     brandPrimary: {
@@ -6,6 +8,7 @@ export default {
       150: '#9f9f9f',
       800: '#343434',
       900: '#2b2b2b',
+      950: '#0c0c0c'
     },
     brandSecondary: {
       600: '#c08f43',
@@ -17,4 +20,4 @@ export default {
       900: '#3ea6ff'
     }
   }
-}
+} satisfies TColors;
