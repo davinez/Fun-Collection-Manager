@@ -4,7 +4,7 @@ import MainPanel from "components/layout/MainPanel/MainPanel";
 import Footer from "components/layout/HomeLayout/HomeFooter";
 import HomeNavbar from "components/layout/HomeLayout/HomeNavbar";
 
-export default function HomeLayout(): JSX.Element {
+export const HomeLayout = (): JSX.Element => {
 	const outlet = useOutlet();
 
 	return (

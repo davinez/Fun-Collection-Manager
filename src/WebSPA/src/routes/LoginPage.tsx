@@ -14,7 +14,7 @@ import {
 	useDisclosure,
 } from "@chakra-ui/react";
 // Components
-import { GeneralAlertComponent } from "components/ui/alert/index";
+import { GeneralAlertComponent } from "components/ui/alert";
 // Assets
 import imgUrl from "@/assets/images/login-image.jpg";
 // Hooks
@@ -28,7 +28,6 @@ import type { TLoginPayload } from "@/shared/types/api/auth.types";
 // General
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-
 
 
 export default function LoginPage(): React.ReactElement {

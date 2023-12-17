@@ -4,18 +4,18 @@ import {
 	createRoutesFromElements,
 } from "react-router-dom";
 // Layouts and Auth
-import AuthLayout from "@/components/layout/AuthLayout/AuthLayout";
-//import { getUserDataLoader } from "components/layout/AuthLayout/AuthLayout.loader";
-import HomeLayout from "@/components/layout/HomeLayout/HomeLayout";
-import ProtectedLayout from "components/layout/ProtectedLayout/ProtectedLayout";
-import ManagerLayout from "components/layout/ManagerLayout/ManagerLayout";
+import {
+	AuthLayout,
+	HomeLayout,
+	ProtectedLayout,
+	ManagerLayout,
+} from "@/components/layout";
 // Pages
 import HomePage from "@/routes/HomePage";
 import LoginPage from "@/routes/LoginPage";
 import SignupPage from "@/routes/SignupPage";
 import ManagerDashboardPage from "@/routes/manager/ManagerDashboardPage";
-import { GeneralAlertComponent } from "components/ui/alert/index";
-
+import { GeneralAlertComponent } from "components/ui/alert";
 
 // set a fallback route/page if error ocurrs or enter an invalid route, that page should show and error alert
 

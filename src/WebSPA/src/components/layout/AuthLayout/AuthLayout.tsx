@@ -3,7 +3,7 @@ import { useNavigate, Outlet } from "react-router-dom";
 import { CircularProgress } from "@chakra-ui/react";
 import { useStore } from "@/store/UseStore";
 
-export default function AuthLayout(): React.ReactElement {
+export const AuthLayout = (): React.ReactElement => {
 	//const userData = useLoaderData(); // Check if is necessary or just use hydration
 	const { authSlice } = useStore();
   const navigate = useNavigate();

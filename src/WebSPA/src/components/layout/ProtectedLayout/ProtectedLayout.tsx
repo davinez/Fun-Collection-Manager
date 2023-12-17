@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useStore } from "@/store/UseStore";
 
-export default function ProtectedLayout(): JSX.Element {
+export const ProtectedLayout = (): JSX.Element => {
 	const { username } = useStore().authSlice;
 
 	if (!username) {

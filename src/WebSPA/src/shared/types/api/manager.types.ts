@@ -15,3 +15,6 @@ export type TGetCollections = {
   childCollections: TChildCollection[]
 }
 
+export type TAddURLPayload = {
+  url: string;
+}

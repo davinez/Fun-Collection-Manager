@@ -1,1 +1,1 @@
-export { GeneralAlertComponent } from "components/ui/alert/GeneralAlertComponent";
+export * from "components/ui/alert/GeneralAlertComponent";
