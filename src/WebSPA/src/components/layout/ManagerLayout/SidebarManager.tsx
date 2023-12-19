@@ -28,7 +28,6 @@ import {
 
 // Hooks
 import { useGetCollectionsQuery } from "@/api/services/manager";
-import { isAxiosError } from "@/hooks/UseApiClient";
 // Types
 import type {
 	TGetCollections,

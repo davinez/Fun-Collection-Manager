@@ -63,6 +63,7 @@ export const ManagerLayout = (): JSX.Element => {
 				pl="15px"
 				pr="15px"
 				gap={2}
+				zIndex="sticky"
 			>
 				<NavbarManager />
 			</GridItem>
