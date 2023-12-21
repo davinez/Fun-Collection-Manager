@@ -13,41 +13,51 @@
 	"collections": {
 		"statusCode": 200,
 		"message": "Successful request",
-		"data": [
-			{
-				"id": 1,
-				"name": "Deportes",
-				"childCollections": [
-					{
-						"id": 789,
-						"name": "Futbol Americano",
-						"childCollections": [
-							{
-								"id": 783,
-								"name": "Partidos Americano",
-								"childCollections": []
-							}
-						]
-					},
-					{
-						"id": 787,
-						"name": "Futbol Soccer",
-						"childCollections": [
-              {
-								"id": 781,
-								"name": "Partidos Soccer",
-								"childCollections": []
-							}
-            ]
-					}
-				]
-			},
-			{
-				"id": 874,
-				"name": "Comida",
-				"childCollections": []
-			}
-		]
+		"data": {
+			"allBookmarksCounter": 28,
+			"trashCounter": 3,
+			"collections": [	
+				{
+					"id": 1,
+					"name": "Deportes",
+					"bookmarksCounter": 8,
+					"childCollections": [
+						{
+							"id": 789,
+							"name": "Futbol Americano",
+							"bookmarksCounter": 0,
+							"childCollections": [
+								{
+									"id": 783,
+									"name": "Partidos Americano",
+									"bookmarksCounter": 4,
+									"childCollections": []
+								}
+							]
+						},
+						{
+							"id": 787,
+							"name": "Futbol Soccer",
+							"bookmarksCounter": 3,
+							"childCollections": [
+								{
+									"id": 781,
+									"name": "Partidos Soccer",
+									"bookmarksCounter": 2,
+									"childCollections": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"id": 874,
+					"name": "Comida",
+					"bookmarksCounter": 9,
+					"childCollections": []
+				}
+			]
+		}				
 	},
 	"bookmarks": [
 		{

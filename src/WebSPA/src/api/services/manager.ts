@@ -26,7 +26,7 @@ export const useGetCollectionsQuery = () => {
   return useQuery({
     queryKey: ["collections"],
     queryFn: async () => {
-      const response = await $apiClient.get<TApiResponse<TGetCollections[]>>("/manager/collections");
+      const response = await $apiClient.get<TApiResponse<TGetCollections>>("/manager/collections");
       return response.data.data
     },
     staleTime: 20_000,

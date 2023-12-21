@@ -101,6 +101,7 @@ const AddURLForm = () => {
 					label="URL"
 					id="newURL"
 					errorMessage={errors.newURL ? errors.newURL.message : undefined}
+				  placeholder="https://"
 				/>
 				<Box display='flex' justifyContent='flex-end'>
 				<Button
@@ -221,7 +222,7 @@ export const NavbarManager = (): React.ReactElement => {
 				borderColor="brandSecondary.800"
 				color="brandPrimary.100"
 				>		
-					<PopoverCloseButton />			
+					<PopoverCloseButton p={2} />			
 					<PopoverBody>
 					<AddURLForm />
 					</PopoverBody>		

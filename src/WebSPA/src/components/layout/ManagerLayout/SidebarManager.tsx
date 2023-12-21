@@ -6,12 +6,14 @@ import {
 	Icon,
 	Collapse,
 	Button,
+	IconButton,
 	Menu,
 	MenuList,
 	MenuButton,
 	MenuItem,
 	MenuDivider,
-	type FlexProps
+	useToast,
+	type FlexProps,
 } from "@chakra-ui/react";
 import {
 	AiFillCaretDown,
@@ -20,7 +22,7 @@ import {
 	AiFillCloud,
 	AiFillDelete,
 	AiFillSetting,
-	AiOutlineLogout
+	AiOutlineLogout,
 } from "react-icons/ai";
 // Components
 
@@ -28,75 +30,156 @@ import {
 
 // Hooks
 import { useGetCollectionsQuery } from "@/api/services/manager";
+import { isAxiosError } from "@/hooks/UseApiClient";
 // Types
-import type {
-	TGetCollections,
-	TChildCollection,
-} from "@/shared/types/api/manager.types";
+import type { TCollection } from "@/shared/types/api/manager.types";
 import type { TDynamicCollapseState } from "@/shared/types/global.types";
+import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 // General
-import {  Fragment, useState, useEffect } from "react";
-
+import { Fragment, useState, useEffect } from "react";
 
 // function generic and type props explicitly.
 type TNavItemProps = {
+	leftIcon?: React.ElementType; // Third party icon
 	icon?: React.ElementType; // Third party icon
+	counter?: number;
 	children: React.ReactNode;
 	onNavItemClick?: () => void;
 };
 
 const NavItem = ({
+	leftIcon,
 	icon,
+	counter,
 	onNavItemClick,
 	children,
 	...rest
 }: TNavItemProps & FlexProps): React.ReactElement => {
+	const [isHovering, setIsHovering] = useState(false);
+
+	const handleMouseOver = () => {
+		setIsHovering(true);
+	};
+
+	const handleMouseOut = () => {
+		setIsHovering(false);
+	};
+
 	return (
 		<Flex
 			align="center"
+			justify="space-between"
 			py="2"
+			pl="2"
+			pr="3"
 			cursor="pointer"
 			_hover={{
-				bg: "brandPrimary.800",
+				bg: "brandPrimary.900",
 			}}
 			textStyle="primary"
 			color="brandPrimary.100"
 			transition=".15s ease"
-			onClick={(): void => {
-				onNavItemClick?.();
-			}}
-			pl="2"
+			onMouseOver={handleMouseOver}
+			onMouseOut={handleMouseOut}
 			{...rest}
 		>
-			{icon && <Icon mx="2" boxSize="5" as={icon} />}
-			{children}
+			<Flex align="center" gap="0" p="0">
+				{leftIcon && (
+					<Icon
+						mx="0px"
+						boxSize="3"
+						color="brandPrimary.150"
+						as={leftIcon}
+						onClick={(): void => {
+							onNavItemClick?.();
+						}}
+					/>
+				)}
+				{icon && (
+					<Icon mx="5px" boxSize="5" color="brandPrimary.150" as={icon} />
+				)}
+				{children}
+			</Flex>
+			{isHovering ? (
+				<Menu>
+					<MenuButton
+						as={IconButton}
+						aria-label="NavItem Options"
+						icon={
+							<Icon boxSize="4" color="brandPrimary.150" as={AiFillSetting} />
+						}
+						bg="brandPrimary.900"
+						_hover={{
+							bg: "brandPrimary.950",
+						}}
+						h={5}
+						py={1}
+					/>
+					<MenuList>
+						<MenuItem>Download</MenuItem>
+						<MenuItem>Create a Copy</MenuItem>
+						<MenuItem>Mark as Draft</MenuItem>
+						<MenuItem>Delete</MenuItem>
+						<MenuItem>Attend a Workshop</MenuItem>
+					</MenuList>
+				</Menu>
+			) : (
+				<Text my="auto" textStyle="tertiary" color="brandPrimary.150">
+					{counter}
+				</Text>
+			)}
 		</Flex>
 	);
 };
 
 // function generic and type props explicitly.
-type TSidebarProps = {
+type TSidebarProps = {};
 
-};
-
-export const SidebarManager = ({}: TSidebarProps & FlexProps): React.ReactElement => {
+export const SidebarManager = ({}: TSidebarProps &
+	FlexProps): React.ReactElement => {
+	// Refactor object response, property for colection data and other
+	// porperties for all bookmarks and trash data
 	const {
 		data: getCollectionsResponse,
-		isLoading: isLoadingGetCollections,
+		isSuccess: isSuccesGetCollections,
+		isPending: isPendingGetCollections,
 		error: errorGetCollections,
+		isError: isErrorGetCollections,
 	} = useGetCollectionsQuery();
 	const [collapseState, setCollapseState] = useState<
 		TDynamicCollapseState | undefined
 	>();
+	const toast = useToast();
 
 	useEffect(() => {
 		// Data not loaded or state already created
-		if (!getCollectionsResponse || collapseState) return;
+		if (!isSuccesGetCollections || getCollectionsResponse === undefined) return;
 
-		renderCollectionsState(getCollectionsResponse);
+		// Collections not empty
+		if (getCollectionsResponse.collections)
+			renderCollectionsState(getCollectionsResponse.collections);
 	}, [getCollectionsResponse]);
 
-	const handleClick = (collectionId: number) => {
+	useEffect(() => {
+		if (isErrorGetCollections) {
+			if (isAxiosError<TApiResponse>(errorGetCollections)) {
+				toast({
+					title: "Error",
+					description: "Error in fetching collections",
+					status: "error",
+					duration: 5000,
+					isClosable: true,
+				});
+				console.error(errorGetCollections.response?.data.messsage as string);
+			} else {
+				console.error(
+					`General error: ${errorGetCollections.name} ${errorGetCollections.message}`
+				);
+			}
+		}
+	}, [isErrorGetCollections]);
+
+	const handleClickinCollection = (collectionId: number) => {
 		setCollapseState((prevState) => {
 			if (prevState) {
 				return {
@@ -109,13 +192,15 @@ export const SidebarManager = ({}: TSidebarProps & FlexProps): React.ReactElemen
 		});
 	};
 
-	const renderCollectionsState = (collections: TGetCollections[]) => {
-		const getIds = (collections: TGetCollections[]): number[] =>
+	const renderCollectionsState = (collections: TCollection[]) => {
+		const getIds = (collections: TCollection[]): number[] =>
 			collections
-				.map((collection) => [
-					collection.id,
-					...getIds(collection.childCollections),
-				])
+				.map((collection) => {
+					if (collection.childCollections) {
+						return [collection.id, ...getIds(collection.childCollections)];
+					}
+					return [];
+				})
 				.flat();
 
 		const stateObject = getIds(collections).reduce((accum, current) => {
@@ -130,24 +215,26 @@ export const SidebarManager = ({}: TSidebarProps & FlexProps): React.ReactElemen
 					  { settings: [{ id: current, open: false }] };
 			return accum;
 		}, {} as TDynamicCollapseState);
+
 		setCollapseState(stateObject);
 	};
 
-	const renderCollections = (
-		collections: TGetCollections[] | TChildCollection[]
+	const renderCollectionsNodes = (
+		collections: TCollection[]
 	): React.ReactElement[] => {
 		return collections.map((collection) => {
-			if (collection.childCollections) {
-				if (isLoadingGetCollections) return <NavItem>Loading...</NavItem>;
-
-				if (errorGetCollections) return <NavItem>Error in Collections</NavItem>;
-
+			if (
+				collection.childCollections &&
+				collection.childCollections.length > 0
+			) {
 				return (
 					<Fragment key={`RenderedNavItem_${collection.id}`}>
 						<NavItem
+							leftIcon={AiFillCaretDown}
 							icon={AiFillFolder}
+							counter={collection.bookmarksCounter}
 							onNavItemClick={() => {
-								handleClick(collection.id);
+								handleClickinCollection(collection.id);
 							}}
 						>
 							{collection.name}
@@ -159,13 +246,17 @@ export const SidebarManager = ({}: TSidebarProps & FlexProps): React.ReactElemen
 								)?.open
 							}
 						>
-							{renderCollections(collection.childCollections)}
+							{renderCollectionsNodes(collection.childCollections)}
 						</Collapse>
 					</Fragment>
 				);
 			} else {
 				return (
-					<NavItem key={`RenderedNavItem_${collection.id}`} icon={AiFillFolder}>
+					<NavItem
+						key={`RenderedNavItem_${collection.id}`}
+						icon={AiFillFolder}
+						counter={collection.bookmarksCounter}
+					>
 						{collection.name}
 					</NavItem>
 				);
@@ -175,7 +266,7 @@ export const SidebarManager = ({}: TSidebarProps & FlexProps): React.ReactElemen
 
 	return (
 		<>
-			<Flex pl="3" py="2" alignItems="center">
+			<Flex pl="2" py="2" alignItems="center">
 				<Menu>
 					<MenuButton
 						as={Button}
@@ -186,10 +277,10 @@ export const SidebarManager = ({}: TSidebarProps & FlexProps): React.ReactElemen
 						rightIcon={<Icon as={AiFillCaretDown} />}
 						color="brandPrimary.100"
 						_hover={{
-							bg: "brandPrimary.800",
+							bg: "brandPrimary.900",
 						}}
 						_active={{
-							bg: "brandPrimary.800",
+							bg: "brandPrimary.900",
 						}}
 						p="1"
 					>
@@ -233,15 +324,31 @@ export const SidebarManager = ({}: TSidebarProps & FlexProps): React.ReactElemen
 				textStyle="primary"
 				aria-label="Main Navigation"
 			>
-				<NavItem icon={AiFillCloud}>All Bookmarks</NavItem>
-				<NavItem icon={AiFillDelete}>Trash</NavItem>
-				<Box py="2" pl="3" color="brandPrimary.150">
-					Collections
-				</Box>
-
+				{isPendingGetCollections && <NavItem>Loading...</NavItem>}
+				{isSuccesGetCollections && (
+					<>
+						<NavItem
+							icon={AiFillCloud}
+							counter={getCollectionsResponse.allBookmarksCounter}
+						>
+							All Bookmarks
+						</NavItem>
+						<NavItem
+							icon={AiFillDelete}
+							counter={getCollectionsResponse.trashCounter}
+						>
+							Trash
+						</NavItem>
+						<Box py="2" pl="3" color="brandPrimary.150">
+							Collections
+						</Box>
+					</>
+				)}
 				{
 					// Recursion function
-					getCollectionsResponse && renderCollections(getCollectionsResponse)
+					isSuccesGetCollections &&
+						getCollectionsResponse.collections &&
+						renderCollectionsNodes(getCollectionsResponse.collections)
 				}
 			</Flex>
 		</>

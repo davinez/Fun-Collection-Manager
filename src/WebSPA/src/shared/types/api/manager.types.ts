@@ -5,16 +5,18 @@ export type TNewCollection = {
   name: string;
 }
 
-export type TChildCollection = {
-  id: number;
-  name: string;
-  childCollections: TChildCollection[]
+export type TGetCollections = {
+  allBookmarksCounter: number;
+  trashCounter: number;
+  bookmarksCounter: number;
+  collections: TCollection[] | undefined
 }
 
-export type TGetCollections = {
+export type TCollection = {
   id: number;
   name: string;
-  childCollections: TChildCollection[]
+  bookmarksCounter: number;
+  childCollections: TCollection[] | undefined
 }
 
 export const addURLFormPayload = z.object({
