@@ -1,6 +1,6 @@
 {
   "api/auth/login": "/login",
-  "api/manager/collections": "/collections",
+  "api/manager/collection-groups": "/collection-groups",
   "api/manager/collection/:id": "/collection/:id",
   "api/manager/collection/create": "/collection",
   "api/manager/bookmarks/:id": "/bookmarks/:id",

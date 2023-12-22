@@ -1,6 +1,6 @@
 import type {
   TNewCollection,
-  TGetCollections,
+  TGetCollectionGroups,
   TAddURLPayload
 } from "@/shared/types/api/manager.types";
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
@@ -24,9 +24,9 @@ The promise that is returned should either resolve the data or throw an error.
 
 export const useGetCollectionsQuery = () => {
   return useQuery({
-    queryKey: ["collections"],
+    queryKey: ["collection-groups"],
     queryFn: async () => {
-      const response = await $apiClient.get<TApiResponse<TGetCollections>>("/manager/collections");
+      const response = await $apiClient.get<TApiResponse<TGetCollectionGroups>>("/manager/collection-groups");
       return response.data.data
     },
     staleTime: 20_000,

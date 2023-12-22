@@ -10,51 +10,102 @@
 			"refreshtoken": "bbbbbb"
 		}
 	},
-	"collections": {
+	"collection-groups": {
 		"statusCode": 200,
 		"message": "Successful request",
 		"data": {
 			"allBookmarksCounter": 28,
 			"trashCounter": 3,
-			"collections": [	
+			"groups": [
 				{
 					"id": 1,
-					"name": "Deportes",
-					"bookmarksCounter": 8,
-					"childCollections": [
+					"name": "Grupo A",
+					"collections": [	
 						{
-							"id": 789,
-							"name": "Futbol Americano",
-							"bookmarksCounter": 0,
+							"id": 1,
+							"name": "Deportes",
+							"bookmarksCounter": 8,
 							"childCollections": [
 								{
-									"id": 783,
-									"name": "Partidos Americano",
-									"bookmarksCounter": 4,
-									"childCollections": []
+									"id": 789,
+									"name": "Futbol Americano",
+									"bookmarksCounter": 0,
+									"childCollections": [
+										{
+											"id": 783,
+											"name": "Partidos Americano",
+											"bookmarksCounter": 4,
+											"childCollections": []
+										}
+									]
+								},
+								{
+									"id": 787,
+									"name": "Futbol Soccer",
+									"bookmarksCounter": 3,
+									"childCollections": [
+										{
+											"id": 781,
+											"name": "Partidos Soccer",
+											"bookmarksCounter": 2,
+											"childCollections": []
+										}
+									]
 								}
 							]
 						},
 						{
-							"id": 787,
-							"name": "Futbol Soccer",
-							"bookmarksCounter": 3,
-							"childCollections": [
-								{
-									"id": 781,
-									"name": "Partidos Soccer",
-									"bookmarksCounter": 2,
-									"childCollections": []
-								}
-							]
+							"id": 874,
+							"name": "Comida",
+							"bookmarksCounter": 9,
+							"childCollections": []
 						}
 					]
 				},
 				{
-					"id": 874,
-					"name": "Comida",
-					"bookmarksCounter": 9,
-					"childCollections": []
+					"id": 2,
+					"name": "Grupo B",
+					"collections": [	
+						{
+							"id": 12,
+							"name": "Deportes 2",
+							"bookmarksCounter": 8,
+							"childCollections": [
+								{
+									"id": 7892,
+									"name": "Futbol Americano 2",
+									"bookmarksCounter": 0,
+									"childCollections": [
+										{
+											"id": 7832,
+											"name": "Partidos Americano 2",
+											"bookmarksCounter": 4,
+											"childCollections": []
+										}
+									]
+								},
+								{
+									"id": 7872,
+									"name": "Futbol Soccer 2",
+									"bookmarksCounter": 3,
+									"childCollections": [
+										{
+											"id": 7812,
+											"name": "Partidos Soccer 2",
+											"bookmarksCounter": 2,
+											"childCollections": []
+										}
+									]
+								}
+							]
+						},
+						{
+							"id": 8742,
+							"name": "Comida 2",
+							"bookmarksCounter": 9,
+							"childCollections": []
+						}
+					]
 				}
 			]
 		}				
