@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import {
 	AiFillCaretDown,
+	AiFillCaretRight,
 	AiFillFolder,
 	AiOutlineUser,
 	AiFillCloud,
@@ -25,6 +26,7 @@ import {
 	AiFillSetting,
 	AiOutlineLogout,
 } from "react-icons/ai";
+import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
 
 // Assets
@@ -33,35 +35,46 @@ import {
 import { useGetCollectionsQuery } from "@/api/services/manager";
 import { isAxiosError } from "@/hooks/UseApiClient";
 // Types
-import type {
-	TCollection,
-	TGetCollectionGroups,
-} from "@/shared/types/api/manager.types";
-import type { TDynamicCollapseState } from "@/shared/types/global.types";
+import type { TCollection } from "@/shared/types/api/manager.types";
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 // General
 import { Fragment, useState, useEffect } from "react";
 
+type TMenuOptionsNavItem = {
+	isDivider?: boolean;
+	description?: string;
+	onClickOption?: () => void;
+};
+
 // function generic and type props explicitly.
 type TNavItemProps = {
 	leftIcon?: React.ElementType; // Third party icon
+	leftIconSelected?: React.ElementType; // Third party icon
 	icon?: React.ElementType; // Third party icon
 	counter?: number;
 	isGroup?: boolean;
+	treeDepth?: number;
 	collapseChildren?: TCollection[];
-	renderCollapseChildren?: (collection: TCollection[]) => React.ReactElement[];
+	renderCollapseChildren?: (
+		collection: TCollection[],
+		depth: number
+	) => React.ReactElement[];
+	menuListOptions?: TMenuOptionsNavItem[];
 	children: React.ReactNode;
 	onNavItemClick?: () => void;
 };
 
 const NavItem = ({
 	leftIcon,
+	leftIconSelected,
 	icon,
 	counter,
 	onNavItemClick,
 	isGroup,
+	treeDepth,
 	collapseChildren,
 	renderCollapseChildren,
+	menuListOptions,
 	children,
 	...rest
 }: TNavItemProps & FlexProps): React.ReactElement => {
@@ -76,19 +89,30 @@ const NavItem = ({
 		setIsHovering(false);
 	};
 
+	const handleOnClickGroup = (event: React.SyntheticEvent<EventTarget>) => {
+		// Only activate collapse component if the clicked element it is div or button with show text
+
+		if(event.target instanceof HTMLDivElement)
+		onToggle();
+
+		if(event.target instanceof HTMLButtonElement &&
+			 (event.target as HTMLButtonElement).textContent === "Show"
+			)
+			onToggle();
+	};
+
 	return (
 		<>
 			<Flex
 				align="center"
 				justify="space-between"
 				py="2"
-				pl="2"
 				pr="3"
 				cursor="pointer"
 				textStyle="primary"
 				color="brandPrimary.100"
 				transition=".15s ease"
-				onClick={isGroup ? onToggle : undefined}
+				onClick={isGroup ? handleOnClickGroup : undefined}
 				onMouseOver={handleMouseOver}
 				onMouseOut={handleMouseOut}
 				{...rest}
@@ -99,47 +123,108 @@ const NavItem = ({
 							mx="0px"
 							boxSize="3"
 							color="brandPrimary.150"
-							as={leftIcon}
+							as={isOpen ? leftIconSelected : leftIcon}
 							onClick={onToggle}
 						/>
 					)}
 					{icon && (
-						<Icon mx="5px" boxSize="5" color="brandPrimary.150" as={icon} />
+						<Icon
+							ml="0px"
+							mr="5px"
+							boxSize="5"
+							color="brandPrimary.150"
+							as={icon}
+						/>
 					)}
 					{children}
 				</Flex>
-				{isHovering ? (
-					<Menu>
-						<MenuButton
-							as={IconButton}
-							aria-label="NavItem Options"
-							icon={
-								<Icon boxSize="4" color="brandPrimary.150" as={AiFillSetting} />
-							}
+				{isHovering && menuListOptions !== undefined ? (
+					isGroup && !isOpen ? (
+						<Button
+							color="brandPrimary.100"
 							bg="brandPrimary.900"
 							_hover={{
 								bg: "brandPrimary.950",
 							}}
+							fontSize={textStylesTheme.textStyles.secondary.fontSize}
 							h={5}
 							py={1}
-						/>
-						<MenuList>
-							<MenuItem>Download</MenuItem>
-							<MenuItem>Create a Copy</MenuItem>
-							<MenuItem>Mark as Draft</MenuItem>
-							<MenuItem>Delete</MenuItem>
-							<MenuItem>Attend a Workshop</MenuItem>
-						</MenuList>
-					</Menu>
+							onClick={handleOnClickGroup}
+						>
+							Show
+						</Button>
+					) : (
+						<Menu>
+							<MenuButton
+								as={IconButton}
+								aria-label="NavItem Options"
+								icon={
+									<Icon
+										boxSize="4"
+										color="brandPrimary.150"
+										as={AiFillSetting}
+									/>
+								}
+								bg="brandPrimary.900"
+								color="brandPrimary.100"
+								_hover={{
+									bg: "brandPrimary.950",
+								}}
+								_active={{
+									bg: "brandPrimary.950",
+								}}
+								h={5}
+								py={1}
+							/>
+							<MenuList
+								bg="brandPrimary.900"
+								color="brandPrimary.100"
+								border="1px solid"
+								borderColor="brandPrimary.900"
+							>
+								{menuListOptions.map((option, index) => {
+									return option.isDivider ? (
+										<MenuDivider
+											key={
+												isGroup
+													? `RenderedGroupOptionsDivider_${index}`
+													: `RenderedCollectionOptionsDivider_${index}`
+											}
+											borderColor="brandPrimary.100"
+										/>
+									) : (
+										<MenuItem
+										key={
+											isGroup
+												? `RenderedGroupOptions_${index}`
+												: `RenderedCollectionOptions_${index}`
+										}
+											bg="brandPrimary.900"
+											_hover={{
+												bg: "brandSecondary.800",
+											}}
+											h="100%"
+											textStyle="primary"
+											onClick={
+												option.onClickOption ? option.onClickOption : undefined
+											}
+										>
+											{option.description}
+										</MenuItem>
+									);
+								})}
+							</MenuList>
+						</Menu>
+					)
 				) : (
 					<Text my="auto" textStyle="tertiary" color="brandPrimary.150">
 						{counter}
 					</Text>
 				)}
 			</Flex>
-			{renderCollapseChildren && collapseChildren && (
+			{renderCollapseChildren && collapseChildren && treeDepth != undefined && (
 				<Collapse in={isOpen} animateOpacity>
-					{renderCollapseChildren(collapseChildren)}
+					{renderCollapseChildren(collapseChildren, treeDepth)}
 				</Collapse>
 			)}
 		</>
@@ -160,9 +245,6 @@ export const SidebarManager = ({}: TSidebarProps &
 		error: errorGetCollectionGroups,
 		isError: isErrorGetCollectionGroups,
 	} = useGetCollectionsQuery();
-	const [collapseState, setCollapseState] = useState<
-		TDynamicCollapseState | undefined
-	>();
 	const toast = useToast();
 
 	useEffect(() => {
@@ -186,8 +268,29 @@ export const SidebarManager = ({}: TSidebarProps &
 		}
 	}, [isErrorGetCollectionGroups]);
 
+	const handleOnClickCreateCollectionRootGroup = () => {};
+
+	const handleOnClickCollapseAllCollections = () => {};
+
+	const handleOnClickRemoveAllEmptyCollection = () => {};
+
+	const handleOnClickCreateGroup = () => {};
+
+	const handleOnClickRenameGroup = () => {};
+
+	const handleOnClickRemoveGroup = () => {};
+
+	const handleOnClickCreateNestedCollection = () => {};
+
+	const handleOnClickRenameCollection = () => {};
+
+	const handleOnClickChangeIconCollection = () => {};
+
+	const handleOnClickRemoveCollection = () => {};
+
 	const renderCollectionsNodes = (
-		collections: TCollection[]
+		collections: TCollection[],
+		treeDepth: number
 	): React.ReactElement[] => {
 		return collections.map((collection) => {
 			if (
@@ -197,11 +300,35 @@ export const SidebarManager = ({}: TSidebarProps &
 				return (
 					<NavItem
 						key={`RenderedCollection_${collection.id}`}
-						leftIcon={AiFillCaretDown}
+						leftIcon={AiFillCaretRight}
+						leftIconSelected={AiFillCaretDown}
 						icon={AiFillFolder}
 						counter={collection.bookmarksCounter}
+						pl={treeDepth === 5 ? 20 : treeDepth}
+						treeDepth={treeDepth + 3}
 						collapseChildren={collection.childCollections}
 						renderCollapseChildren={renderCollectionsNodes}
+						menuListOptions={[
+							{
+								description: "Create nested collection",
+								onClickOption: handleOnClickCreateNestedCollection,
+							},
+							{
+								isDivider: true,
+							},
+							{
+								description: "Rename",
+								onClickOption: handleOnClickRenameCollection,
+							},
+							{
+								description: "Change Icon",
+								onClickOption: handleOnClickChangeIconCollection,
+							},
+							{
+								description: "Remove",
+								onClickOption: handleOnClickRemoveCollection,
+							},
+						]}
 						_hover={{
 							bg: "brandPrimary.900",
 						}}
@@ -215,6 +342,28 @@ export const SidebarManager = ({}: TSidebarProps &
 						key={`RenderedCollection_${collection.id}`}
 						icon={AiFillFolder}
 						counter={collection.bookmarksCounter}
+						pl={treeDepth === 5 ? 20 : treeDepth + 3}
+						menuListOptions={[
+							{
+								description: "Create nested collection",
+								onClickOption: handleOnClickCreateNestedCollection,
+							},
+							{
+								isDivider: true,
+							},
+							{
+								description: "Rename",
+								onClickOption: handleOnClickRenameCollection,
+							},
+							{
+								description: "Change Icon",
+								onClickOption: handleOnClickChangeIconCollection,
+							},
+							{
+								description: "Remove",
+								onClickOption: handleOnClickRemoveCollection,
+							},
+						]}
 						_hover={{
 							bg: "brandPrimary.900",
 						}}
@@ -228,7 +377,7 @@ export const SidebarManager = ({}: TSidebarProps &
 
 	return (
 		<>
-			<Flex pl="2" py="2" alignItems="center">
+			<Flex pl="3" py="2" alignItems="center">
 				<Menu>
 					<MenuButton
 						as={Button}
@@ -251,12 +400,13 @@ export const SidebarManager = ({}: TSidebarProps &
 						</Text>
 					</MenuButton>
 					<MenuList
-						bg="brandPrimary.800"
+						bg="brandPrimary.900"
 						color="brandPrimary.100"
 						border="1px solid"
+						borderColor="brandPrimary.900"
 					>
 						<MenuItem
-							bg="brandPrimary.800"
+							bg="brandPrimary.900"
 							_hover={{
 								bg: "brandSecondary.800",
 							}}
@@ -268,7 +418,7 @@ export const SidebarManager = ({}: TSidebarProps &
 						</MenuItem>
 						<MenuDivider />
 						<MenuItem
-							bg="brandPrimary.800"
+							bg="brandPrimary.900"
 							_hover={{
 								bg: "brandSecondary.800",
 							}}
@@ -280,16 +430,12 @@ export const SidebarManager = ({}: TSidebarProps &
 					</MenuList>
 				</Menu>
 			</Flex>
-			<Flex
-				direction="column"
-				as="nav"
-				textStyle="primary"
-				aria-label="Main Navigation"
-			>
+			<Flex direction="column" as="nav" aria-label="Main Navigation">
 				{isPendingGetCollectionGroups && <NavItem>Loading...</NavItem>}
 				{isSuccesGetCollectionGroups && (
 					<>
 						<NavItem
+							pl="3"
 							icon={AiFillCloud}
 							counter={getCollectionGroupsResponse.allBookmarksCounter}
 							_hover={{
@@ -299,6 +445,7 @@ export const SidebarManager = ({}: TSidebarProps &
 							All Bookmarks
 						</NavItem>
 						<NavItem
+							pl="3"
 							icon={AiFillDelete}
 							counter={getCollectionGroupsResponse.trashCounter}
 							_hover={{
@@ -319,10 +466,40 @@ export const SidebarManager = ({}: TSidebarProps &
 									<NavItem
 										py="2"
 										pl="3"
+										treeDepth={0}
 										color="brandPrimary.150"
 										isGroup={true}
 										collapseChildren={group.collections}
 										renderCollapseChildren={renderCollectionsNodes}
+										menuListOptions={[
+											{
+												description: "Create collection",
+												onClickOption: handleOnClickCreateCollectionRootGroup,
+											},
+											{
+												description: "Collapse all collections",
+												onClickOption: handleOnClickCollapseAllCollections,
+											},
+											{
+												description: "Remove all empty collection",
+												onClickOption: handleOnClickRemoveAllEmptyCollection,
+											},
+											{
+												isDivider: true,
+											},
+											{
+												description: "Create group",
+												onClickOption: handleOnClickCreateGroup,
+											},
+											{
+												description: "Rename group",
+												onClickOption: handleOnClickRenameGroup,
+											},
+											{
+												description: "Remove group",
+												onClickOption: handleOnClickRemoveGroup,
+											},
+										]}
 									>
 										{group.name}
 									</NavItem>

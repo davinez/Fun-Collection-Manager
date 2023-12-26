@@ -217,9 +217,9 @@ export const NavbarManager = (): React.ReactElement => {
 				<PopoverContent 
 				p={2} 
 				w="25.4rem"
-				bg="brandPrimary.800"
+				bg="brandPrimary.900"
 				border="1px"
-				borderColor="brandSecondary.800"
+				borderColor="brandPrimary.900"
 				color="brandPrimary.100"
 				>		
 					<PopoverCloseButton p={2} />			
