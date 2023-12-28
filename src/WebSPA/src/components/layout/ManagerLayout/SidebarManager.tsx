@@ -28,7 +28,7 @@ import {
 } from "react-icons/ai";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
-
+import { GroupModal } from "@/components/ui/modal/GroupModal";
 // Assets
 
 // Hooks
@@ -37,8 +37,10 @@ import { isAxiosError } from "@/hooks/UseApiClient";
 // Types
 import type { TCollection } from "@/shared/types/api/manager.types";
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
+import { ReusableFormActionEnum } from "@/shared/types/global.types";
 // General
 import { Fragment, useState, useEffect } from "react";
+import { useStore } from "@/store/UseStore";
 
 type TMenuOptionsNavItem = {
 	isDivider?: boolean;
@@ -92,12 +94,12 @@ const NavItem = ({
 	const handleOnClickGroup = (event: React.SyntheticEvent<EventTarget>) => {
 		// Only activate collapse component if the clicked element it is div or button with show text
 
-		if(event.target instanceof HTMLDivElement)
-		onToggle();
+		if (event.target instanceof HTMLDivElement) onToggle();
 
-		if(event.target instanceof HTMLButtonElement &&
-			 (event.target as HTMLButtonElement).textContent === "Show"
-			)
+		if (
+			event.target instanceof HTMLButtonElement &&
+			(event.target as HTMLButtonElement).textContent === "Show"
+		)
 			onToggle();
 	};
 
@@ -194,11 +196,11 @@ const NavItem = ({
 										/>
 									) : (
 										<MenuItem
-										key={
-											isGroup
-												? `RenderedGroupOptions_${index}`
-												: `RenderedCollectionOptions_${index}`
-										}
+											key={
+												isGroup
+													? `RenderedGroupOptions_${index}`
+													: `RenderedCollectionOptions_${index}`
+											}
 											bg="brandPrimary.900"
 											_hover={{
 												bg: "brandSecondary.800",
@@ -236,8 +238,16 @@ type TSidebarProps = {};
 
 export const SidebarManager = ({}: TSidebarProps &
 	FlexProps): React.ReactElement => {
-	// Falta pasar como prop el contenido del menu para cada NavItem
-
+	// State Hooks
+	const [groupModalFormAction, setGroupModalFormAction] =
+		useState<ReusableFormActionEnum>(ReusableFormActionEnum.Add);
+	const { managerSlice } = useStore();
+	const {
+		isOpen: isOpenGroupModal,
+		onOpen: onOpenGroupModal,
+		onClose: onCloseGroupModal,
+	} = useDisclosure();
+	// General Hooks
 	const {
 		data: getCollectionGroupsResponse,
 		isSuccess: isSuccesGetCollectionGroups,
@@ -274,9 +284,16 @@ export const SidebarManager = ({}: TSidebarProps &
 
 	const handleOnClickRemoveAllEmptyCollection = () => {};
 
-	const handleOnClickCreateGroup = () => {};
+	const handleOnClickCreateGroup = () => {
+		setGroupModalFormAction(ReusableFormActionEnum.Add);
+		onOpenGroupModal();
+	};
 
-	const handleOnClickRenameGroup = () => {};
+	const handleOnClickRenameGroup = (id: number) => {
+		setGroupModalFormAction(ReusableFormActionEnum.Update);
+		managerSlice.setSelectedSidebarGroup(id);
+		onOpenGroupModal();
+	};
 
 	const handleOnClickRemoveGroup = () => {};
 
@@ -377,6 +394,11 @@ export const SidebarManager = ({}: TSidebarProps &
 
 	return (
 		<>
+			<GroupModal
+				isOpen={isOpenGroupModal}
+				onClose={onCloseGroupModal}
+				formAction={groupModalFormAction}
+			/>
 			<Flex pl="3" py="2" alignItems="center">
 				<Menu>
 					<MenuButton
@@ -493,7 +515,7 @@ export const SidebarManager = ({}: TSidebarProps &
 											},
 											{
 												description: "Rename group",
-												onClickOption: handleOnClickRenameGroup,
+												onClickOption: () => handleOnClickRenameGroup(group.id),
 											},
 											{
 												description: "Remove group",

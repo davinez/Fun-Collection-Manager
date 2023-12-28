@@ -4,7 +4,7 @@ import {
 	FormLabel,
 	Input,
 	FormErrorMessage,
-	InputProps
+	InputProps,
 } from "@chakra-ui/react";
 // Components
 
@@ -15,13 +15,11 @@ import {
 // Types
 
 // General
-import {
-	useFormContext,
-} from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 type TInputFieldProps = {
 	id: string;
-	label: string;
+	label?: string;
 	errorMessage?: string;
 };
 
@@ -44,10 +42,9 @@ export const InputField = ({
 		// 	<FormErrorMessage>{errorMessage}</FormErrorMessage>
 		// </FormControl>
 		<FormControl isInvalid={errorMessage !== undefined}>
-			<FormLabel htmlFor={id}>{label}</FormLabel>
+			{label && <FormLabel htmlFor={id}>{label}</FormLabel>}
 			<Input id={id} {...register(id)} {...rest} />
 			<FormErrorMessage>{errorMessage}</FormErrorMessage>
 		</FormControl>
-
 	);
 };

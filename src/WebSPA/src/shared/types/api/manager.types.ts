@@ -24,6 +24,27 @@ export type TCollection = {
   childCollections: TCollection[] | undefined;
 }
 
+export const groupFormPayload = z.object({
+  groupId: z
+  .number()
+  .min(1, { message: "Invalid group id" })
+  .optional(),
+	groupName: z
+  .string()
+  .trim()
+  .min(1, { message: "Group is required" })
+});
+
+export type TGroupPayload = z.infer<typeof groupFormPayload>;
+
+export const deleteGroupFormPayload = z.object({
+  groupId: z
+  .number()
+  .min(1, { message: "Invalid group id" })
+});
+
+export type TDeleteGroupPayload = z.infer<typeof deleteGroupFormPayload>;
+
 export const addURLFormPayload = z.object({
 	newURL: z
   .string()

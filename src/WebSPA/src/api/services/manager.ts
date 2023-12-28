@@ -1,7 +1,9 @@
 import type {
   TNewCollection,
   TGetCollectionGroups,
-  TAddURLPayload
+  TAddURLPayload,
+  TGroupPayload,
+  TDeleteGroupPayload
 } from "@/shared/types/api/manager.types";
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -56,6 +58,40 @@ export const useAddURLMutation = () => {
     },
   });
 }
+
+export const useAddGroupMutation = () => {
+  return useMutation({
+    mutationFn: async (payload: TGroupPayload) => {
+      const response = await $apiClient.post<TApiResponse>(`/manager/group`, payload);
+      return response.data;
+    },
+  });
+}
+
+type TuseUpdateGroupMutationVariables = {
+  groupId: number;
+  payload: TGroupPayload;
+}
+
+export const useUpdateGroupMutation = () => {
+  return useMutation({
+    mutationFn: async ({ groupId, payload }: TuseUpdateGroupMutationVariables) => {
+      const response = await $apiClient.patch<TApiResponse>(`/manager/group/${groupId}`, payload);
+      return response.data;
+    },
+  });
+}
+
+export const useDeleteGroupMutation = () => {
+  return useMutation({
+    mutationFn: async (payload: TDeleteGroupPayload) => {
+      const response = await $apiClient.delete<TApiResponse>(`/manager/group/${payload.groupId}`);
+      return response.data;
+    },
+  });
+}
+
+
 
 
 
