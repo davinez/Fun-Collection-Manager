@@ -8,7 +8,7 @@ type IconProps = HeroIconSVGProps & {
 
 export type Heroicon = React.FC<IconProps>;
 
-export enum ReusableFormActionEnum {
+export enum FormActionEnum {
 	Add = 0,
 	Update = 1,
 	Delete = 2

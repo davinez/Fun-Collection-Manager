@@ -20,7 +20,7 @@
 				{
 					"id": 1,
 					"name": "Grupo A",
-					"collections": [	
+					"collections": [
 						{
 							"id": 1,
 							"name": "Deportes",
@@ -65,7 +65,7 @@
 				{
 					"id": 2,
 					"name": "Grupo B",
-					"collections": [	
+					"collections": [
 						{
 							"id": 12,
 							"name": "Deportes 2",
@@ -108,8 +108,18 @@
 					]
 				}
 			]
-		}				
+		}
 	},
+	"groups": [
+		{
+			"id": 1,
+			"name": "Group A"
+		},
+		{
+			"id": 2,
+			"name": "Group B"
+		}
+	],
 	"bookmarks": [
 		{
 			"collectionId": 1,

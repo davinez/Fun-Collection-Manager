@@ -5,6 +5,7 @@ import { devtools, persist } from "zustand/middleware";
 import { AuthSlice } from "@/store/stores/AuthSlice";
 import { BarSlice } from "@/store/stores/BarSlice";
 import { FooSlice } from "@/store/stores/FooSlice";
+import { ManagerSlice } from "@/store/stores/ManagerSlice";
 import type { TCombinedStore } from "shared/types/store/store.types";
 
 export const useStore = create<TCombinedStore>()(
@@ -16,6 +17,7 @@ export const useStore = create<TCombinedStore>()(
           authSlice: AuthSlice(...args),
           barSlice: BarSlice(...args),
           fooSlice: FooSlice(...args),
+          managerSlice: ManagerSlice(...args),
         }
       )
       )
@@ -47,6 +49,7 @@ export const useStore = create<TCombinedStore>()(
           },
           barSlice: currentState.barSlice,
           fooSlice: currentState.fooSlice,
+          managerSlice: currentState.managerSlice
         };
       },
       onRehydrateStorage: () => {

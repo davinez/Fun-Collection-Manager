@@ -17,7 +17,7 @@ import {
 	PopoverCloseButton,
 	useToast,
 	PopoverBody,
-	Box
+	Box,
 } from "@chakra-ui/react";
 import {
 	AiFillCaretDown,
@@ -34,7 +34,7 @@ import { InputField } from "components/forms";
 // Hooks
 import { useAddURLMutation } from "@/api/services/manager";
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
-import { isAxiosError } from "@/hooks/UseApiClient";
+import { handleApiError } from "@/hooks/UseApiClient";
 // Types
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import {
@@ -48,7 +48,7 @@ import queryClient from "@/api/query-client";
 const AddURLForm = () => {
 	const methods = useForm<TAddURLPayload>({
 		resolver: zodResolver(addURLFormPayload),
-		mode: "onChange"
+		mode: "onChange",
 	});
 	const {
 		reset,
@@ -74,18 +74,14 @@ const AddURLForm = () => {
 					reset();
 				},
 				onError: (error, variables, context) => {
-					if (isAxiosError<TApiResponse>(error)) {
-						toast({
-							title: "Error",
-							description: "Error in adding URL",
-							status: "error",
-							duration: 5000,
-							isClosable: true,
-						});
-						console.error(error.response?.data.messsage as string);
-					} else {
-						console.error(`General error: ${error.name} ${error.message}`);
-					}
+					toast({
+						title: "Error",
+						description: "Error in adding URL",
+						status: "error",
+						duration: 5000,
+						isClosable: true,
+					});
+					handleApiError(error);
 				},
 			}
 		);
@@ -95,33 +91,33 @@ const AddURLForm = () => {
 		<FormProvider {...methods}>
 			<Stack as="form" onSubmit={methods.handleSubmit(onSubmit)} spacing={4}>
 				<InputField
-				  fontSize={textStylesTheme.textStyles.primary.fontSize}
+					fontSize={textStylesTheme.textStyles.primary.fontSize}
 					py={0}
 					px={2}
 					label="URL"
 					id="newURL"
 					errorMessage={errors.newURL ? errors.newURL.message : undefined}
-				  placeholder="https://"
+					placeholder="https://"
 				/>
-				<Box display='flex' justifyContent='flex-end'>
-				<Button
-					bg="brandSecondary.600"
-					_hover={{
-						bg: "brandSecondary.800"
-					}}
-					_disabled={{
-						bg: "brandPrimary.100",
-					}}
-					_empty={{
-						bg: "brandPrimary.100",
-					}}
-					fontSize={textStylesTheme.textStyles.primary.fontSize}
-					isDisabled={!isDirty || !isValid} 
-					type="submit"
-				>
-					Save
-				</Button>
-      </Box>			
+				<Box display="flex" justifyContent="flex-end">
+					<Button
+						bg="brandSecondary.600"
+						_hover={{
+							bg: "brandSecondary.800",
+						}}
+						_disabled={{
+							bg: "brandPrimary.100",
+						}}
+						_empty={{
+							bg: "brandPrimary.100",
+						}}
+						fontSize={textStylesTheme.textStyles.primary.fontSize}
+						isDisabled={!isDirty || !isValid}
+						type="submit"
+					>
+						Save
+					</Button>
+				</Box>
 			</Stack>
 		</FormProvider>
 	);
@@ -214,18 +210,18 @@ export const NavbarManager = (): React.ReactElement => {
 						Add
 					</Button>
 				</PopoverTrigger>
-				<PopoverContent 
-				p={2} 
-				w="25.4rem"
-				bg="brandPrimary.900"
-				border="1px"
-				borderColor="brandPrimary.900"
-				color="brandPrimary.100"
-				>		
-					<PopoverCloseButton p={2} />			
+				<PopoverContent
+					p={2}
+					w="25.4rem"
+					bg="brandPrimary.900"
+					border="1px"
+					borderColor="brandPrimary.900"
+					color="brandPrimary.100"
+				>
+					<PopoverCloseButton p={2} />
 					<PopoverBody>
-					<AddURLForm />
-					</PopoverBody>		
+						<AddURLForm />
+					</PopoverBody>
 				</PopoverContent>
 			</Popover>
 		</>

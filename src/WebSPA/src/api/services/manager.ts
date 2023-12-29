@@ -2,8 +2,10 @@ import type {
   TNewCollection,
   TGetCollectionGroups,
   TAddURLPayload,
-  TGroupPayload,
-  TDeleteGroupPayload
+  TGroupUpdatePayload,
+  TGroupAddPayload,
+  TDeleteGroupPayload,
+  TGroup
 } from "@/shared/types/api/manager.types";
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -24,16 +26,41 @@ The promise that is returned should either resolve the data or throw an error.
  React Query will return the cached data instead of performing a new fetch.
 */
 
+/***** Queries *****/ 
+
 export const useGetCollectionsQuery = () => {
   return useQuery({
     queryKey: ["collection-groups"],
     queryFn: async () => {
-      const response = await $apiClient.get<TApiResponse<TGetCollectionGroups>>("/manager/collection-groups");
+      const response = await $apiClient.get<TApiResponse<TGetCollectionGroups>>("/manager/groups/collection-groups");
       return response.data.data
     },
     staleTime: 20_000,
   });
 }
+
+// export const useGetCollectionsQuery = () => {
+//   return useQuery({
+//     queryKey: ["collection-groups"],
+//     queryFn: () => {
+//       throw new Error('Oh no!');
+//       // const response = $apiClient.get<TApiResponse<TGetCollectionGroups>>("/manager/groups/collection-groups").then(s => s.data.data)
+//       // return response
+//     }
+//   });
+// }
+
+export const useGetGroupByIdQuery = (id: number) => {
+  return useQuery({
+    queryKey: ["group", id],
+    queryFn: async () => {
+      const response = await $apiClient.get<TApiResponse<TGroup>>(`/manager/groups/${id}`);
+      return response.data.data
+    }
+  });
+}
+
+/***** Mutations *****/ 
 
 export const useAddCategoryMutation = () => {
   return useMutation({
@@ -61,7 +88,7 @@ export const useAddURLMutation = () => {
 
 export const useAddGroupMutation = () => {
   return useMutation({
-    mutationFn: async (payload: TGroupPayload) => {
+    mutationFn: async (payload: TGroupAddPayload) => {
       const response = await $apiClient.post<TApiResponse>(`/manager/group`, payload);
       return response.data;
     },
@@ -70,7 +97,7 @@ export const useAddGroupMutation = () => {
 
 type TuseUpdateGroupMutationVariables = {
   groupId: number;
-  payload: TGroupPayload;
+  payload: TGroupUpdatePayload;
 }
 
 export const useUpdateGroupMutation = () => {

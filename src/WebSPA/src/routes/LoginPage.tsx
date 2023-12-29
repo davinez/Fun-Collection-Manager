@@ -19,7 +19,7 @@ import { GeneralAlertComponent } from "components/ui/alert";
 import imgUrl from "@/assets/images/login-image.jpg";
 // Hooks
 import { useStore } from "@/store/UseStore";
-import { isAxiosError } from "@/hooks/UseApiClient";
+import { handleApiError } from "@/hooks/UseApiClient";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useSubmitLoginMutation } from "@/api/services/auth";
 // Types
@@ -43,7 +43,6 @@ export default function LoginPage(): React.ReactElement {
 		onClose,
 		onOpen: onOpenAlert,
 	} = useDisclosure({ defaultIsOpen: false });
-	const [errorAuthService, setErrorAuthService] = useState<string>("");
 	const { authSlice } = useStore();
 
 	const onSubmit: SubmitHandler<TLoginPayload> = (
@@ -57,13 +56,7 @@ export default function LoginPage(): React.ReactElement {
 				navigate("/my/manager/dashboard");
 			},
 			onError: (error, variables, context) => {
-				if (isAxiosError<TApiResponse>(error)) {
-					setErrorAuthService(error.response?.data.messsage as string);
-				} else {
-					setErrorAuthService("GENERIC_ERROR_MESSAGE");
-          console.log(error);
-				}
-
+				handleApiError(error);
 				onOpenAlert();
 			},
 		});
@@ -73,7 +66,7 @@ export default function LoginPage(): React.ReactElement {
 		<>
 			{isAlertOpen ? (
 				<GeneralAlertComponent
-					description={errorAuthService}
+					description="Error on Login"
 					status="error"
 					onClick={onClose}
 					color="black"

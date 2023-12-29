@@ -33,11 +33,10 @@ import { GroupModal } from "@/components/ui/modal/GroupModal";
 
 // Hooks
 import { useGetCollectionsQuery } from "@/api/services/manager";
-import { isAxiosError } from "@/hooks/UseApiClient";
+import { handleApiError } from "@/hooks/UseApiClient";
 // Types
 import type { TCollection } from "@/shared/types/api/manager.types";
-import type { TApiResponse } from "@/shared/types/api/api-responses.types";
-import { ReusableFormActionEnum } from "@/shared/types/global.types";
+import { FormActionEnum } from "@/shared/types/global.types";
 // General
 import { Fragment, useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
@@ -239,8 +238,6 @@ type TSidebarProps = {};
 export const SidebarManager = ({}: TSidebarProps &
 	FlexProps): React.ReactElement => {
 	// State Hooks
-	const [groupModalFormAction, setGroupModalFormAction] =
-		useState<ReusableFormActionEnum>(ReusableFormActionEnum.Add);
 	const { managerSlice } = useStore();
 	const {
 		isOpen: isOpenGroupModal,
@@ -259,22 +256,14 @@ export const SidebarManager = ({}: TSidebarProps &
 
 	useEffect(() => {
 		if (isErrorGetCollectionGroups) {
-			if (isAxiosError<TApiResponse>(errorGetCollectionGroups)) {
-				toast({
-					title: "Error",
-					description: "Error in fetching collection groups",
-					status: "error",
-					duration: 5000,
-					isClosable: true,
-				});
-				console.error(
-					errorGetCollectionGroups.response?.data.messsage as string
-				);
-			} else {
-				console.error(
-					`General error: ${errorGetCollectionGroups.name} ${errorGetCollectionGroups.message}`
-				);
-			}
+			toast({
+				title: "Error",
+				description: "Error in fetching collection groups",
+				status: "error",
+				duration: 5000,
+				isClosable: true,
+			});
+			handleApiError(errorGetCollectionGroups);
 		}
 	}, [isErrorGetCollectionGroups]);
 
@@ -285,12 +274,12 @@ export const SidebarManager = ({}: TSidebarProps &
 	const handleOnClickRemoveAllEmptyCollection = () => {};
 
 	const handleOnClickCreateGroup = () => {
-		setGroupModalFormAction(ReusableFormActionEnum.Add);
+		managerSlice.setGroupModalFormAction(FormActionEnum.Add);
 		onOpenGroupModal();
 	};
 
 	const handleOnClickRenameGroup = (id: number) => {
-		setGroupModalFormAction(ReusableFormActionEnum.Update);
+		managerSlice.setGroupModalFormAction(FormActionEnum.Update);
 		managerSlice.setSelectedSidebarGroup(id);
 		onOpenGroupModal();
 	};
@@ -394,11 +383,7 @@ export const SidebarManager = ({}: TSidebarProps &
 
 	return (
 		<>
-			<GroupModal
-				isOpen={isOpenGroupModal}
-				onClose={onCloseGroupModal}
-				formAction={groupModalFormAction}
-			/>
+			<GroupModal isOpen={isOpenGroupModal} onClose={onCloseGroupModal} />
 			<Flex pl="3" py="2" alignItems="center">
 				<Menu>
 					<MenuButton

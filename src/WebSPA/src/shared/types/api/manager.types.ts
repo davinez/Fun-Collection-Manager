@@ -24,18 +24,31 @@ export type TCollection = {
   childCollections: TCollection[] | undefined;
 }
 
-export const groupFormPayload = z.object({
-  groupId: z
-  .number()
-  .min(1, { message: "Invalid group id" })
-  .optional(),
+export type TGroup = {
+  id: number;
+  name: string;
+}
+
+export const groupAddFormPayload = z.object({
 	groupName: z
   .string()
   .trim()
   .min(1, { message: "Group is required" })
 });
 
-export type TGroupPayload = z.infer<typeof groupFormPayload>;
+export type TGroupAddPayload = z.infer<typeof groupAddFormPayload>;
+
+export const groupUpdateFormPayload = z.object({
+  groupId: z
+  .number()
+  .min(1, { message: "Invalid group id" }),
+	groupName: z
+  .string()
+  .trim()
+  .min(1, { message: "Group is required" })
+});
+
+export type TGroupUpdatePayload = z.infer<typeof groupUpdateFormPayload>;
 
 export const deleteGroupFormPayload = z.object({
   groupId: z
