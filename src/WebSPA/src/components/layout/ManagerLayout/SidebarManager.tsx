@@ -1,5 +1,6 @@
 // Design
 import {
+	Image,
 	Text,
 	Box,
 	Flex,
@@ -33,13 +34,13 @@ import { GroupModal } from "@/components/ui/modal/GroupModal";
 
 // Hooks
 import { useGetCollectionsQuery } from "@/api/services/manager";
-import { handleApiError } from "@/hooks/UseApiClient";
 // Types
 import type { TCollection } from "@/shared/types/api/manager.types";
 import { FormActionEnum } from "@/shared/types/global.types";
 // General
 import { Fragment, useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
+import { defaultHandlerApiError } from "@/api/apiClient";
 
 type TMenuOptionsNavItem = {
 	isDivider?: boolean;
@@ -51,7 +52,7 @@ type TMenuOptionsNavItem = {
 type TNavItemProps = {
 	leftIcon?: React.ElementType; // Third party icon
 	leftIconSelected?: React.ElementType; // Third party icon
-	icon?: React.ElementType; // Third party icon
+	icon?: string | React.ElementType; // Third party icon
 	counter?: number;
 	isGroup?: boolean;
 	treeDepth?: number;
@@ -128,15 +129,28 @@ const NavItem = ({
 							onClick={onToggle}
 						/>
 					)}
-					{icon && (
-						<Icon
-							ml="0px"
-							mr="5px"
-							boxSize="5"
-							color="brandPrimary.150"
-							as={icon}
-						/>
-					)}
+					{icon &&
+						(typeof icon === "string" ? (
+							<Image
+								ml="0px"
+								mr="5px"
+								borderRadius="2px"
+								boxSize="5"
+								color="brandPrimary.150"
+								objectFit="contain"
+								src={icon as string}
+								fallbackSrc="/assets/icons/bookmark.svg"
+								alt="Dan Abramov"
+							/>
+						) : (
+							<Icon
+								ml="0px"
+								mr="5px"
+								boxSize="5"
+								color="brandPrimary.150"
+								as={icon as React.ElementType}
+							/>
+						))}
 					{children}
 				</Flex>
 				{isHovering && menuListOptions !== undefined ? (
@@ -263,7 +277,7 @@ export const SidebarManager = ({}: TSidebarProps &
 				duration: 5000,
 				isClosable: true,
 			});
-			handleApiError(errorGetCollectionGroups);
+			defaultHandlerApiError(errorGetCollectionGroups);
 		}
 	}, [isErrorGetCollectionGroups]);
 
@@ -308,7 +322,7 @@ export const SidebarManager = ({}: TSidebarProps &
 						key={`RenderedCollection_${collection.id}`}
 						leftIcon={AiFillCaretRight}
 						leftIconSelected={AiFillCaretDown}
-						icon={AiFillFolder}
+						icon={collection.cover}
 						counter={collection.bookmarksCounter}
 						pl={treeDepth === 5 ? 20 : treeDepth}
 						treeDepth={treeDepth + 3}
@@ -346,7 +360,7 @@ export const SidebarManager = ({}: TSidebarProps &
 				return (
 					<NavItem
 						key={`RenderedCollection_${collection.id}`}
-						icon={AiFillFolder}
+						icon={collection.cover}
 						counter={collection.bookmarksCounter}
 						pl={treeDepth === 5 ? 20 : treeDepth + 3}
 						menuListOptions={[

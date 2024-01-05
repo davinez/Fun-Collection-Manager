@@ -1,20 +1,32 @@
-import axios, { type AxiosResponse, type AxiosError } from "axios";
+import axios, { type AxiosResponse } from "axios";
 import { useStore } from "@/store/UseStore";
-import type { TApiResponse } from "@/shared/types/api/api-responses.types";
+import type { TApiErrorResponse } from "@/shared/types/api/api-responses.types";
 
-const isAxiosError = <T>(error: unknown): error is AxiosError<T> => {
-  return axios.isAxiosError(error);
+export const getApiErrors = (error: Error | unknown) => {
+  if (axios.isAxiosError(error)) {
+    if (error.code === undefined || error.code.includes("5") || error.code === "ERR_NETWORK") {
+      return undefined;
+    }
+
+    if (error.response)
+      // Check response possible undefined error
+      return (error.response.data as TApiErrorResponse).error.errors;
+  }
+
+  return undefined;
 }
 
-export const handleApiError = (error: Error | unknown) => {
-  if (isAxiosError<TApiResponse>(error)) {
+export const defaultHandlerApiError = (error: Error | unknown) => {
+  if (axios.isAxiosError(error)) {
     if (error.code === undefined || error.code.includes("5") || error.code === "ERR_NETWORK") {
       console.error("Unknown error server or connection");
       return;
     }
 
-    // Check response possible undefined error
-    console.error(error.response?.data.messsage as string);
+    if (error.response)
+      // Check response possible undefined error
+      console.error((error.response.data as TApiErrorResponse).error.message);
+
     return;
   }
 
@@ -33,7 +45,7 @@ type TApi = {
   delete: <T>(url: string) => Promise<AxiosResponse<T, unknown>>;
 }
 
-const useApiClient = (baseURL: string): TApi => {
+const apiClient = (baseURL: string): TApi => {
   // Use store outside of component
   const authSlice = useStore.getState().authSlice;
   const apiClient = axios.create({
@@ -75,6 +87,6 @@ const useApiClient = (baseURL: string): TApi => {
 
 // https://stackoverflow.com/questions/55299383/better-aproach-for-destructing-custom-react-hooks-with-multiple-returns
 
-export default useApiClient;
+export default apiClient;
 
 

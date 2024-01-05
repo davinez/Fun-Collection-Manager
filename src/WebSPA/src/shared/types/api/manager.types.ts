@@ -20,6 +20,7 @@ export type TCollectionGroup = {
 export type TCollection = {
   id: number;
   name: string;
+  cover: string;
   bookmarksCounter: number;
   childCollections: TCollection[] | undefined;
 }

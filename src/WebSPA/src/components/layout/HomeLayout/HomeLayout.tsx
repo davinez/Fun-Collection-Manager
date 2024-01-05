@@ -1,11 +1,17 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { useOutlet } from "react-router-dom";
+import { useOutlet, Navigate } from "react-router-dom";
+import { useStore } from "@/store/UseStore";
 import MainPanel from "components/layout/MainPanel/MainPanel";
 import Footer from "components/layout/HomeLayout/HomeFooter";
 import HomeNavbar from "components/layout/HomeLayout/HomeNavbar";
 
 export const HomeLayout = (): JSX.Element => {
 	const outlet = useOutlet();
+	const { authSlice } = useStore();
+
+	if (authSlice.username) {
+    return <Navigate to="/my/manager/dashboard" replace />;
+  }
 
 	return (
 		<Flex

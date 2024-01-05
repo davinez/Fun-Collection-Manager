@@ -5,20 +5,12 @@ import {
 	ModalContent,
 	ModalCloseButton,
 	Text,
-	Icon,
 	Button,
 	Stack,
 	useToast,
 	Flex,
 } from "@chakra-ui/react";
-import {
-	AiFillCaretDown,
-	AiOutlineSearch,
-	AiFillFilter,
-	AiFillStar,
-} from "react-icons/ai";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
-import colorStylesTheme from "shared/styles/theme/foundations/colors";
 // Components
 import { InputField } from "components/forms";
 // Assets
@@ -30,9 +22,8 @@ import {
 	useGetGroupByIdQuery,
 } from "@/api/services/manager";
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
-import { handleApiError } from "@/hooks/UseApiClient";
+import { defaultHandlerApiError } from "@/api/apiClient";
 // Types
-import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import {
 	groupAddFormPayload,
 	groupUpdateFormPayload,
@@ -86,7 +77,7 @@ const GroupAddForm = ({ onClose }: TGroupAddFormProps) => {
 					duration: 5000,
 					isClosable: true,
 				});
-				handleApiError(error);
+				defaultHandlerApiError(error);
 			},
 		});
 	};
@@ -162,7 +153,6 @@ const GroupUpdateForm = ({ onClose }: TGroupUpdateFormProps) => {
 		formState: { errors, isValid, isDirty },
 	} = methods;
 	const UpdateGroupMutation = useUpdateGroupMutation();
-	// Get group data by id using query;
 	const { data: getGroupByIdResponse } = useGetGroupByIdQuery(
 		managerSlice.selectedSidebarGroup as number
 	);
@@ -192,7 +182,7 @@ const GroupUpdateForm = ({ onClose }: TGroupUpdateFormProps) => {
 						duration: 5000,
 						isClosable: true,
 					});
-					handleApiError(error);
+					defaultHandlerApiError(error);
 				},
 			}
 		);
@@ -255,7 +245,15 @@ const GroupUpdateForm = ({ onClose }: TGroupUpdateFormProps) => {
 		);
 	}
 
-	return <Text textStyle="primary">Loading...</Text>;
+	return (
+		<>
+			<Flex align="center" justify="space-between" mb={3}>
+				<Text fontSize="large">Update group</Text>
+				<ModalCloseButton size="lg" position="unset" />
+			</Flex>
+			<Text textStyle="primary">Loading...</Text>
+		</>
+	);
 };
 
 type TAddGroupModalProps = {

@@ -2,9 +2,9 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useStore } from "@/store/UseStore";
 
 export const ProtectedLayout = (): JSX.Element => {
-	const { username } = useStore().authSlice;
+	const { authSlice } = useStore();
 
-	if (!username) {
+	if (!authSlice.username) {
 		return 	<Navigate to="/" />
 	}
 

@@ -34,9 +34,7 @@ import { InputField } from "components/forms";
 // Hooks
 import { useAddURLMutation } from "@/api/services/manager";
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
-import { handleApiError } from "@/hooks/UseApiClient";
 // Types
-import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import {
 	addURLFormPayload,
 	type TAddURLPayload,
@@ -44,6 +42,7 @@ import {
 // General
 import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
+import { defaultHandlerApiError } from "@/api/apiClient";
 
 const AddURLForm = () => {
 	const methods = useForm<TAddURLPayload>({
@@ -81,7 +80,7 @@ const AddURLForm = () => {
 						duration: 5000,
 						isClosable: true,
 					});
-					handleApiError(error);
+					defaultHandlerApiError(error);
 				},
 			}
 		);

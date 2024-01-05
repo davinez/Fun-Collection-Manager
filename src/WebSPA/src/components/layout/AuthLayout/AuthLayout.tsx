@@ -1,19 +1,15 @@
 import { Suspense, useEffect } from "react";
-import { useNavigate, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { CircularProgress } from "@chakra-ui/react";
 import { useStore } from "@/store/UseStore";
 
 export const AuthLayout = (): React.ReactElement => {
 	//const userData = useLoaderData(); // Check if is necessary or just use hydration
 	const { authSlice } = useStore();
-  const navigate = useNavigate();
 
 	useEffect(() => {
 		//Runs on the first render
-		//And any time any dependency value changes
-    if (authSlice.hasHydrated && authSlice.username) {
-      navigate('/my/manager/dashboard');
-    }
+		//And any time any dependency value change
 
 	}, [authSlice.hasHydrated]);
 

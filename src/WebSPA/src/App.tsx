@@ -14,7 +14,8 @@ import {
 import HomePage from "@/routes/HomePage";
 import LoginPage from "@/routes/LoginPage";
 import SignupPage from "@/routes/SignupPage";
-import ManagerDashboardPage from "@/routes/manager/ManagerDashboardPage";
+import { DashboardPage } from "@/routes/manager/DashboardPage";
+import { AllBookmarksPage } from "@/routes/manager/AllBookmarksPage";
 import { GeneralAlertComponent } from "components/ui/alert";
 
 // set a fallback route/page if error ocurrs or enter an invalid route, that page should show and error alert
@@ -39,7 +40,8 @@ export const router = createBrowserRouter(
 
 			<Route path="/my" element={<ProtectedLayout />}>
 				<Route path="manager" element={<ManagerLayout />}>
-					<Route path="dashboard" element={<ManagerDashboardPage />} />
+					<Route index path="dashboard" element={<DashboardPage />} />
+					<Route path="all" caseSensitive element={<AllBookmarksPage />} />
 				</Route>
 				{/* <Route path="/settings" element={<SettingsPage />} />
 				<Route path="/profile" element={<ProfilePage />} /> */}

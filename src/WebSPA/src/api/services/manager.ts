@@ -9,7 +9,7 @@ import type {
 } from "@/shared/types/api/manager.types";
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import { useQuery, useMutation } from '@tanstack/react-query';
-import apiClient from "@/hooks/UseApiClient";
+import apiClient from "@/api/apiClient";
 
 const API_BASE_URL = "http://localhost:7000/api";
 
@@ -39,17 +39,6 @@ export const useGetCollectionsQuery = () => {
   });
 }
 
-// export const useGetCollectionsQuery = () => {
-//   return useQuery({
-//     queryKey: ["collection-groups"],
-//     queryFn: () => {
-//       throw new Error('Oh no!');
-//       // const response = $apiClient.get<TApiResponse<TGetCollectionGroups>>("/manager/groups/collection-groups").then(s => s.data.data)
-//       // return response
-//     }
-//   });
-// }
-
 export const useGetGroupByIdQuery = (id: number) => {
   return useQuery({
     queryKey: ["group", id],
@@ -65,7 +54,7 @@ export const useGetGroupByIdQuery = (id: number) => {
 export const useAddCategoryMutation = () => {
   return useMutation({
     mutationFn: async (payload: TNewCollection) => {
-      const response = await $apiClient.post<TApiResponse>("/manager/collection", payload);
+      const response = await $apiClient.post<TApiResponse>("/manager/collections", payload);
       return response.data;
     },
   });
@@ -80,7 +69,7 @@ type TuseAddURLMutationVariables = {
 export const useAddURLMutation = () => {
   return useMutation({
     mutationFn: async ({ collectionId, payload }: TuseAddURLMutationVariables) => {
-      const response = await $apiClient.post<TApiResponse>(`/manager/collection/${collectionId}`, payload);
+      const response = await $apiClient.post<TApiResponse>(`/manager/collections/${collectionId}`, payload);
       return response.data;
     },
   });
@@ -89,7 +78,7 @@ export const useAddURLMutation = () => {
 export const useAddGroupMutation = () => {
   return useMutation({
     mutationFn: async (payload: TGroupAddPayload) => {
-      const response = await $apiClient.post<TApiResponse>(`/manager/group`, payload);
+      const response = await $apiClient.post<TApiResponse>(`/manager/groups`, payload);
       return response.data;
     },
   });
@@ -103,7 +92,7 @@ type TuseUpdateGroupMutationVariables = {
 export const useUpdateGroupMutation = () => {
   return useMutation({
     mutationFn: async ({ groupId, payload }: TuseUpdateGroupMutationVariables) => {
-      const response = await $apiClient.patch<TApiResponse>(`/manager/group/${groupId}`, payload);
+      const response = await $apiClient.patch<TApiResponse>(`/manager/groups/${groupId}`, payload);
       return response.data;
     },
   });
@@ -112,7 +101,7 @@ export const useUpdateGroupMutation = () => {
 export const useDeleteGroupMutation = () => {
   return useMutation({
     mutationFn: async (payload: TDeleteGroupPayload) => {
-      const response = await $apiClient.delete<TApiResponse>(`/manager/group/${payload.groupId}`);
+      const response = await $apiClient.delete<TApiResponse>(`/manager/groups/${payload.groupId}`);
       return response.data;
     },
   });

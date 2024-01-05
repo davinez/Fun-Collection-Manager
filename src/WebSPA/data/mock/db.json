@@ -24,16 +24,19 @@
 						{
 							"id": 1,
 							"name": "Deportes",
+							"cover": "url",
 							"bookmarksCounter": 8,
 							"childCollections": [
 								{
 									"id": 789,
 									"name": "Futbol Americano",
+									"cover": "url",
 									"bookmarksCounter": 0,
 									"childCollections": [
 										{
 											"id": 783,
 											"name": "Partidos Americano",
+											"cover": "url",
 											"bookmarksCounter": 4,
 											"childCollections": []
 										}
@@ -42,11 +45,13 @@
 								{
 									"id": 787,
 									"name": "Futbol Soccer",
+									"cover": "url",
 									"bookmarksCounter": 3,
 									"childCollections": [
 										{
 											"id": 781,
 											"name": "Partidos Soccer",
+											"cover": "url",
 											"bookmarksCounter": 2,
 											"childCollections": []
 										}
@@ -57,6 +62,7 @@
 						{
 							"id": 874,
 							"name": "Comida",
+							"cover": "url",
 							"bookmarksCounter": 9,
 							"childCollections": []
 						}
@@ -69,16 +75,19 @@
 						{
 							"id": 12,
 							"name": "Deportes 2",
+							"cover": "url",
 							"bookmarksCounter": 8,
 							"childCollections": [
 								{
 									"id": 7892,
 									"name": "Futbol Americano 2",
+									"cover": "url",
 									"bookmarksCounter": 0,
 									"childCollections": [
 										{
 											"id": 7832,
 											"name": "Partidos Americano 2",
+											"cover": "url",
 											"bookmarksCounter": 4,
 											"childCollections": []
 										}
@@ -87,11 +96,13 @@
 								{
 									"id": 7872,
 									"name": "Futbol Soccer 2",
+									"cover": "url",
 									"bookmarksCounter": 3,
 									"childCollections": [
 										{
 											"id": 7812,
 											"name": "Partidos Soccer 2",
+											"cover": "url",
 											"bookmarksCounter": 2,
 											"childCollections": []
 										}
@@ -102,6 +113,7 @@
 						{
 							"id": 8742,
 							"name": "Comida 2",
+							"cover": "url",
 							"bookmarksCounter": 9,
 							"childCollections": []
 						}
@@ -110,16 +122,20 @@
 			]
 		}
 	},
-	"groups": [
-		{
-			"id": 1,
-			"name": "Group A"
-		},
-		{
-			"id": 2,
-			"name": "Group B"
-		}
-	],
+	"groups": {
+		"statusCode": 200,
+		"message": "Successful request",
+		"data": [
+			{
+				"id": 1,
+				"name": "Group A"
+			},
+			{
+				"id": 2,
+				"name": "Group B"
+			}
+		]
+	},
 	"bookmarks": [
 		{
 			"collectionId": 1,

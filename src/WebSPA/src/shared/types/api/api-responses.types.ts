@@ -1,16 +1,45 @@
+// Google JSON Style Guide https://google.github.io/styleguide/jsoncstyleguide.xml?showone=data#data
+
+// Succes Response
 // {
-//   "statusCode": 200,
-//   "message": "Data retrieved successfully",
-//   "data": ["Item 1", "Item 2", "Item 3"]
+//   "data": {
+//     "id": 1001,
+//     "name": "Wing"
+//   }
 // }
+
+// Error Response
 // {
-//   "statusCode": 404,
-//   "message": "Resource not found",
-//   "data": null
+//   "apiVersion": "2.0",
+//   "error": {
+//     "code": 404,
+//     "message": "File Not Found",
+//     "errors": [{
+//       "domain": "Calendar",
+//       "reason": "ResourceNotFoundException",
+//       "message": "File Not Found
+//     }]
+//   }
 // }
 
 export type TApiResponse<T extends object | undefined = undefined> = {
-  statusCode: number;
-  messsage: string | undefined;
   data: T;
 }
+
+type TApiError = {
+  domain: string;
+  reason: string;
+  message: string;
+}
+
+type TApiTopLevelError = {
+  code: number;
+  message: string;
+  errors: TApiError[];
+}
+
+export type TApiErrorResponse = {
+  apiVersion: string;
+  error: TApiTopLevelError;
+}
+

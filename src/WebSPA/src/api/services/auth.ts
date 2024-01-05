@@ -3,8 +3,8 @@ import type {
   TLoginResponse
 } from "@/shared/types/api/auth.types";
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
-import { useMutation, type UseMutationResult } from '@tanstack/react-query';
-import apiClient from "@/hooks/UseApiClient"
+import { useMutation } from '@tanstack/react-query';
+import apiClient from "@/api/apiClient"
 
 const API_BASE_URL = "http://localhost:7000/api";
 

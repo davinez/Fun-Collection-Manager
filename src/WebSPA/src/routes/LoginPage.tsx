@@ -19,7 +19,6 @@ import { GeneralAlertComponent } from "components/ui/alert";
 import imgUrl from "@/assets/images/login-image.jpg";
 // Hooks
 import { useStore } from "@/store/UseStore";
-import { handleApiError } from "@/hooks/UseApiClient";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useSubmitLoginMutation } from "@/api/services/auth";
 // Types
@@ -28,6 +27,7 @@ import type { TLoginPayload } from "@/shared/types/api/auth.types";
 // General
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { defaultHandlerApiError } from "@/api/apiClient";
 
 
 export default function LoginPage(): React.ReactElement {
@@ -56,7 +56,7 @@ export default function LoginPage(): React.ReactElement {
 				navigate("/my/manager/dashboard");
 			},
 			onError: (error, variables, context) => {
-				handleApiError(error);
+				defaultHandlerApiError(error);
 				onOpenAlert();
 			},
 		});
