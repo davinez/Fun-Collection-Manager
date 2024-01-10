@@ -26,6 +26,7 @@ export const ManagerLayout = (): JSX.Element => {
 			gridTemplateRows="3rem 1fr"
 			gap="0"
 			minH="100vh"
+			maxWidth="100vw"			
 			bg="gray.50"
 		>
 			<GridItem
@@ -42,7 +43,7 @@ export const ManagerLayout = (): JSX.Element => {
 				w="300px"
 				bg="brandPrimary.800"
 				borderRight="1px solid"
-				borderRightColor="brandPrimary.150"
+				borderRightColor="gray"
 			>
 				<SidebarManager />
 			</GridItem>
@@ -59,7 +60,7 @@ export const ManagerLayout = (): JSX.Element => {
 				h="full"
 				bg="brandPrimary.800"
 				borderBottom="1px solid"
-				borderBottomColor="brandPrimary.150"
+				borderBottomColor="gray"
 				pl="15px"
 				pr="15px"
 				gap={2}
@@ -68,7 +69,7 @@ export const ManagerLayout = (): JSX.Element => {
 				<NavbarManager />
 			</GridItem>
 
-			<GridItem as="main" area="main" w="full">
+			<GridItem as="main" area="main">
 				<Suspense>{outlet}</Suspense>
 			</GridItem>
 		</Grid>

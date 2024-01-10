@@ -232,7 +232,7 @@ const NavItem = ({
 						</Menu>
 					)
 				) : (
-					<Text my="auto" textStyle="tertiary" color="brandPrimary.150">
+					<Text mr={2} textStyle="tertiary" color="brandPrimary.150">
 						{counter}
 					</Text>
 				)}
