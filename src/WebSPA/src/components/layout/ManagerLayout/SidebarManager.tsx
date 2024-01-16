@@ -30,6 +30,7 @@ import {
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
 import { GroupModal } from "@/components/ui/modal/GroupModal";
+import { LoadingBox } from "@/components/ui/box";
 // Assets
 
 // Hooks
@@ -140,7 +141,7 @@ const NavItem = ({
 								objectFit="contain"
 								src={icon as string}
 								fallbackSrc="/assets/icons/bookmark.svg"
-								alt="Dan Abramov"
+								alt="Default Icon"
 							/>
 						) : (
 							<Icon
@@ -260,14 +261,14 @@ export const SidebarManager = ({}: TSidebarProps &
 	} = useDisclosure();
 	// General Hooks
 	const {
-		data: getCollectionGroupsResponse,
-		isSuccess: isSuccesGetCollectionGroups,
 		isPending: isPendingGetCollectionGroups,
-		error: errorGetCollectionGroups,
 		isError: isErrorGetCollectionGroups,
+		error: errorGetCollectionGroups,
+		data: getCollectionGroupsResponse,
 	} = useGetCollectionsQuery();
 	const toast = useToast();
 
+	// Handle Error
 	useEffect(() => {
 		if (isErrorGetCollectionGroups) {
 			toast({
@@ -452,8 +453,8 @@ export const SidebarManager = ({}: TSidebarProps &
 				</Menu>
 			</Flex>
 			<Flex direction="column" as="nav" aria-label="Main Navigation">
-				{isPendingGetCollectionGroups && <NavItem>Loading...</NavItem>}
-				{isSuccesGetCollectionGroups && (
+				{isPendingGetCollectionGroups && <LoadingBox />}
+				{getCollectionGroupsResponse !== undefined && (
 					<>
 						<NavItem
 							pl="3"
@@ -479,7 +480,7 @@ export const SidebarManager = ({}: TSidebarProps &
 				)}
 				{
 					// Recursion function
-					isSuccesGetCollectionGroups &&
+					getCollectionGroupsResponse !== undefined &&
 						getCollectionGroupsResponse.groups &&
 						getCollectionGroupsResponse.groups.map((group) => {
 							return group.collections ? (

@@ -2,6 +2,7 @@
   "/api/auth/login": "/login",
   "/api/manager/groups/collection-groups": "/collection-groups",
   "/api/manager/groups/:id": "/groups",
+  "/api/manager/bookmarks": "/bookmarks",
   "/api/manager/collection/:id": "/collection/:id",
   "/api/manager/collection/create": "/collection",
   "/api/manager/bookmarks/:id": "/bookmarks/:id",

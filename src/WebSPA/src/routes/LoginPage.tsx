@@ -14,7 +14,7 @@ import {
 	useDisclosure,
 } from "@chakra-ui/react";
 // Components
-import { GeneralAlertComponent } from "components/ui/alert";
+import { GeneralAlert } from "components/ui/alert";
 // Assets
 import imgUrl from "@/assets/images/login-image.jpg";
 // Hooks
@@ -65,7 +65,7 @@ export default function LoginPage(): React.ReactElement {
 	return (
 		<>
 			{isAlertOpen ? (
-				<GeneralAlertComponent
+				<GeneralAlert
 					description="Error on Login"
 					status="error"
 					onClick={onClose}

@@ -6,17 +6,17 @@ import {
 	type AlertProps,
 } from "@chakra-ui/react";
 
-type TAlertComponentProps = {
+type TGeneralAlertProps = {
 	title?: string;
 	description: string;
 	status: string;
 };
 
-export const GeneralAlertComponent = ({
+export const GeneralAlert = ({
 	title,
 	description,
 	...rest
-}: TAlertComponentProps & AlertProps): JSX.Element => {
+}: TGeneralAlertProps & AlertProps): JSX.Element => {
 	return (
 		<Alert {...rest}>
 			<AlertIcon />

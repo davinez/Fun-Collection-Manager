@@ -22,12 +22,16 @@ export const ManagerLayout = (): JSX.Element => {
 	return (
 		<Grid
 			templateAreas={`"sidebar navbar" "sidebar main"`}
-			gridTemplateColumns="300px 1fr"
+			gridTemplateColumns= {{
+				sm: "200px 1fr",
+				md: "220px 1fr"
+			}}
 			gridTemplateRows="3rem 1fr"
 			gap="0"
 			minH="100vh"
-			maxWidth="100vw"			
+			maxWidth="100vw"		
 			bg="gray.50"
+			overflowX="clip"
 		>
 			<GridItem
 				as="aside"
@@ -40,8 +44,8 @@ export const ManagerLayout = (): JSX.Element => {
 				pb="10"
 				overflowX="hidden"
 				overflowY="auto"
-				w="300px"
-				bg="brandPrimary.800"
+				w={{sm:"200px", md:"220px"}}
+				bg="brandPrimary.900"
 				borderRight="1px solid"
 				borderRightColor="gray"
 			>
@@ -56,20 +60,23 @@ export const ManagerLayout = (): JSX.Element => {
 				justifyContent="space-between"
 				position="sticky"
 				top="0"
+				zIndex="sticky"
 				w="full"
 				h="full"
 				bg="brandPrimary.800"
-				borderBottom="1px solid"
-				borderBottomColor="gray"
 				pl="15px"
 				pr="15px"
-				gap={2}
-				zIndex="sticky"
+				gap={2}	
 			>
 				<NavbarManager />
 			</GridItem>
 
-			<GridItem as="main" area="main">
+			<GridItem 
+			as="main" 
+			w="100%" 
+			area="main"
+			bg="brandPrimary.800"
+			>
 				<Suspense>{outlet}</Suspense>
 			</GridItem>
 		</Grid>

@@ -1,5 +1,7 @@
 import {TTextStyles} from 'shared/types/theme/foundations/textStyles'
 
+// 1 rem = 16px
+
 export default {
   textStyles: {
     title: {

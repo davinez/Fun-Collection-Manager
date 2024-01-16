@@ -1,7 +1,5 @@
 {
 	"login": {
-		"statusCode": 200,
-		"message": "Successful request",
 		"data": {
 			"userId": 1,
 			"userName": "davinez",
@@ -11,8 +9,6 @@
 		}
 	},
 	"collection-groups": {
-		"statusCode": 200,
-		"message": "Successful request",
 		"data": {
 			"allBookmarksCounter": 28,
 			"trashCounter": 3,
@@ -123,8 +119,6 @@
 		}
 	},
 	"groups": {
-		"statusCode": 200,
-		"message": "Successful request",
 		"data": [
 			{
 				"id": 1,
@@ -136,27 +130,50 @@
 			}
 		]
 	},
-	"bookmarks": [
-		{
-			"collectionId": 1,
-			"id": 7423,
-			"name": "Jugadas 2022",
-			"imageSrc": "adsdadsdsd",
-			"description": "Mejores jugadas del 2022..."
-		},
-		{
-			"collectionId": 1,
-			"id": 7424,
-			"name": "Jugadas 2019",
-			"imageSrc": "adsdadsdsd",
-			"description": "Mejores jugadas del 2019..."
-		},
-		{
-			"collectionId": 1,
-			"id": 7425,
-			"name": "Jugadas 2018",
-			"imageSrc": "adsdadsdsd",
-			"description": "Mejores jugadas del 2018..."
-		}
-	]
+	"bookmarks": {
+		"data": [
+			{
+				"collectionId": 1,
+				"cover": "url",
+				"title": "Bookmark Af d sfs dfsd fdsfsdsdsfsdfsd",
+				"description": "Description d dfs fdsf sfdf AsdfsdfdsfsdsdfdsfsfsdfsddfsdW",
+				"bookmarkDetail": {
+					"collection" : {
+						"icon": "url",
+						"name": "Collection AdfsdfsdfdsfdsfdsdsfsdfsW"
+					},
+					"websiteName": "Website d d AsdfsdfsdfsdfdsfsdfsdfsfsfsdW",
+					"createdAt": "01/01/2024"
+				}
+			},
+			{
+				"collectionId": 1,
+				"cover": "url",
+				"title": "Bookmark A",
+				"description": "Description A",
+				"bookmarkDetail": {
+					"collection" : {
+						"icon": "url",
+						"name": "Collection A"
+					},
+					"websiteName": "Website A",
+					"createdAt": "01/01/2024"
+				}
+			},
+			{
+				"collectionId": 1,
+				"cover": "url",
+				"title": "Bookmark A",
+				"description": "Description A",
+				"bookmarkDetail": {
+					"collection" : {
+						"icon": "url",
+						"name": "Collection A"
+					},
+					"websiteName": "Website A",
+					"createdAt": "01/01/2024"
+				}
+			}
+		]
+	}
 }

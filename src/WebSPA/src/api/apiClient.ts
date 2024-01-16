@@ -19,7 +19,7 @@ export const getApiErrors = (error: Error | unknown) => {
 export const defaultHandlerApiError = (error: Error | unknown) => {
   if (axios.isAxiosError(error)) {
     if (error.code === undefined || error.code.includes("5") || error.code === "ERR_NETWORK") {
-      console.error("Unknown error server or connection");
+      console.error("Unknown server error or failed connection");
       return;
     }
 

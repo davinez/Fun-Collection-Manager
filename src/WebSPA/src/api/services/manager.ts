@@ -5,7 +5,8 @@ import type {
   TGroupUpdatePayload,
   TGroupAddPayload,
   TDeleteGroupPayload,
-  TGroup
+  TGroup,
+  TBookmark
 } from "@/shared/types/api/manager.types";
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -44,6 +45,16 @@ export const useGetGroupByIdQuery = (id: number) => {
     queryKey: ["group", id],
     queryFn: async () => {
       const response = await $apiClient.get<TApiResponse<TGroup>>(`/manager/groups/${id}`);
+      return response.data.data
+    }
+  });
+}
+
+export const useGetAllBookmarks = () => {
+  return useQuery({
+    queryKey: ["bookmarks"],
+    queryFn: async () => {
+      const response = await $apiClient.get<TApiResponse<TBookmark[]>>('/manager/bookmarks');
       return response.data.data
     }
   });

@@ -165,7 +165,18 @@ export const HeaderFilters = ({ icon, headerName }: THeaderFiltersProps) => {
 	});
 
 	return (
-		<Flex bg="brandPrimary.900" justify="space-between" p={1}>
+		<Flex
+			bg="brandPrimary.800"
+			justify="space-between"
+			px={1}
+			pt={1}
+			pb={2}
+			borderBottom="1px solid"
+			borderBottomColor="gray"
+			position="sticky"
+			top="3rem" // stacking sticky element, same height from element up
+			zIndex="sticky"
+		>
 			<Flex alignItems="center" gap={3} ml={4}>
 				{typeof icon === "string" ? (
 					<Image
@@ -193,7 +204,9 @@ export const HeaderFilters = ({ icon, headerName }: THeaderFiltersProps) => {
 				<Popover>
 					<PopoverTrigger>
 						<Button
-							bg="brandPrimary.900"
+							bg="brandPrimary.800"
+							px={2}
+							py={2}
 							color="brandPrimary.100"
 							_hover={{
 								bg: "brandPrimary.950",
@@ -256,7 +269,11 @@ export const HeaderFilters = ({ icon, headerName }: THeaderFiltersProps) => {
 														color="brandPrimary.100"
 														as={option.icon}
 													/>
-													<Text textStyle="primary" fontWeight="400" color="brandPrimary.100">
+													<Text
+														textStyle="primary"
+														fontWeight="400"
+														color="brandPrimary.100"
+													>
 														{option.description}
 													</Text>
 												</Flex>
@@ -272,7 +289,9 @@ export const HeaderFilters = ({ icon, headerName }: THeaderFiltersProps) => {
 				<Popover>
 					<PopoverTrigger>
 						<Button
-							bg="brandPrimary.900"
+							bg="brandPrimary.800"
+							px={2}
+							py={2}
 							color="brandPrimary.100"
 							_hover={{
 								bg: "brandPrimary.950",

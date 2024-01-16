@@ -16,7 +16,7 @@ import LoginPage from "@/routes/LoginPage";
 import SignupPage from "@/routes/SignupPage";
 import { DashboardPage } from "@/routes/manager/DashboardPage";
 import { AllBookmarksPage } from "@/routes/manager/AllBookmarksPage";
-import { GeneralAlertComponent } from "components/ui/alert";
+import { GeneralAlert } from "components/ui/alert";
 
 // set a fallback route/page if error ocurrs or enter an invalid route, that page should show and error alert
 
@@ -26,7 +26,7 @@ export const router = createBrowserRouter(
 			element={<AuthLayout />}
 			//loader={getUserDataLoader}
 			errorElement={
-				<GeneralAlertComponent
+				<GeneralAlert
 					description="Something went wrong!"
 					status="error"
 				/>
