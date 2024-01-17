@@ -175,7 +175,7 @@ export const HeaderFilters = ({ icon, headerName }: THeaderFiltersProps) => {
 			borderBottomColor="gray"
 			position="sticky"
 			top="3rem" // stacking sticky element, same height from element up
-			zIndex="sticky"
+			zIndex="1"
 		>
 			<Flex alignItems="center" gap={3} ml={4}>
 				{typeof icon === "string" ? (

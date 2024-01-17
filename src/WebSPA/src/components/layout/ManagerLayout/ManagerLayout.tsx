@@ -60,7 +60,7 @@ export const ManagerLayout = (): JSX.Element => {
 				justifyContent="space-between"
 				position="sticky"
 				top="0"
-				zIndex="sticky"
+				zIndex="2"
 				w="full"
 				h="full"
 				bg="brandPrimary.800"
