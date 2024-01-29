@@ -94,9 +94,9 @@ const NavItem = ({
 
 	const handleOnClickGroup = (event: React.SyntheticEvent<EventTarget>) => {
 		// Only activate collapse component if the clicked element it is div or button with show text
-
 		if (event.target instanceof HTMLDivElement) onToggle();
 
+		// Only activate collapse component if the clicked element it is div or button with show text
 		if (
 			event.target instanceof HTMLButtonElement &&
 			(event.target as HTMLButtonElement).textContent === "Show"
@@ -193,7 +193,7 @@ const NavItem = ({
 								py={1}
 							/>
 							<MenuList
-								bg="brandPrimary.900"
+								bg="brandPrimary.800"
 								color="brandPrimary.100"
 								border="1px solid"
 								borderColor="brandPrimary.900"
@@ -215,7 +215,7 @@ const NavItem = ({
 													? `RenderedGroupOptions_${index}`
 													: `RenderedCollectionOptions_${index}`
 											}
-											bg="brandPrimary.900"
+											bg="brandPrimary.800"
 											_hover={{
 												bg: "brandSecondary.800",
 											}}
@@ -410,10 +410,10 @@ export const SidebarManager = ({}: TSidebarProps &
 						rightIcon={<Icon as={AiFillCaretDown} />}
 						color="brandPrimary.100"
 						_hover={{
-							bg: "brandPrimary.900",
+							bg: "brandPrimary.950",
 						}}
 						_active={{
-							bg: "brandPrimary.900",
+							bg: "brandPrimary.950",
 						}}
 						p="1"
 					>
@@ -422,13 +422,13 @@ export const SidebarManager = ({}: TSidebarProps &
 						</Text>
 					</MenuButton>
 					<MenuList
-						bg="brandPrimary.900"
+						bg="brandPrimary.800"
 						color="brandPrimary.100"
 						border="1px solid"
 						borderColor="brandPrimary.900"
 					>
 						<MenuItem
-							bg="brandPrimary.900"
+							bg="brandPrimary.800"
 							_hover={{
 								bg: "brandSecondary.800",
 							}}
@@ -440,7 +440,7 @@ export const SidebarManager = ({}: TSidebarProps &
 						</MenuItem>
 						<MenuDivider />
 						<MenuItem
-							bg="brandPrimary.900"
+							bg="brandPrimary.800"
 							_hover={{
 								bg: "brandSecondary.800",
 							}}

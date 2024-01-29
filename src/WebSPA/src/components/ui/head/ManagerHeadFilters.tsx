@@ -41,12 +41,12 @@ import {
 import { useState } from "react";
 import { useStore } from "@/store/UseStore";
 
-type THeaderFiltersProps = {
+type TManagerHeadFiltersProps = {
 	icon: string | React.ElementType; // Third party icon
 	headerName: string;
 };
 
-export const HeaderFilters = ({ icon, headerName }: THeaderFiltersProps) => {
+export const ManagerHeadFilters = ({ icon, headerName }: TManagerHeadFiltersProps) => {
 	const sortOptions = [
 		{
 			value: SortEnum.DateAsc,
@@ -115,6 +115,7 @@ export const HeaderFilters = ({ icon, headerName }: THeaderFiltersProps) => {
 		},
 	];
 
+		// State Hooks
 	const { managerSlice } = useStore();
 	const [sortValueRadio, setSortValueRadio] = useState(
 		sortOptions.find(
@@ -128,8 +129,9 @@ export const HeaderFilters = ({ icon, headerName }: THeaderFiltersProps) => {
 				option.value === managerSlice.selectedViewValueCollectionFilter
 		)
 	);
+	 // General Hooks
 
-	const onChangeRadioSortOption = (nextValue: string) => {
+	const handleOnChangeRadioSortOption = (nextValue: string) => {
 		const enumValueExists = Object.values(SortEnum).includes(nextValue);
 		// Only if value of radio option exists in enum value
 		if (enumValueExists) {
@@ -140,7 +142,7 @@ export const HeaderFilters = ({ icon, headerName }: THeaderFiltersProps) => {
 		}
 	};
 
-	const onChangeRadioViewOption = (nextValue: string) => {
+	const handleOnChangeRadioViewOption = (nextValue: string) => {
 		const enumValueExists =
 			Object.values(ViewCollectionsEnum).includes(nextValue);
 		// Only if value of radio option exists in enum value
@@ -152,7 +154,7 @@ export const HeaderFilters = ({ icon, headerName }: THeaderFiltersProps) => {
 		}
 	};
 
-	const onChangeCheckboxShowInOptions = (value: (string | number)[]) => {
+	const handleOnChangeCheckboxShowInOptions = (value: (string | number)[]) => {
 		const checkBoxGroupState = value as string[];
 		managerSlice.setSelectedShowInValueCollectionFilter(checkBoxGroupState);
 	};
@@ -161,7 +163,7 @@ export const HeaderFilters = ({ icon, headerName }: THeaderFiltersProps) => {
 		defaultValue: managerSlice.selectedShowInValueCollectionFilter.map(
 			(value) => value.toString()
 		),
-		onChange: onChangeCheckboxShowInOptions,
+		onChange: handleOnChangeCheckboxShowInOptions,
 	});
 
 	return (
@@ -239,7 +241,7 @@ export const HeaderFilters = ({ icon, headerName }: THeaderFiltersProps) => {
 					>
 						<PopoverBody>
 							<RadioGroup
-								onChange={onChangeRadioSortOption}
+								onChange={handleOnChangeRadioSortOption}
 								defaultValue={managerSlice.selectedSortValueCollectionFilter.toString()}
 							>
 								<Stack direction="column">
@@ -324,7 +326,7 @@ export const HeaderFilters = ({ icon, headerName }: THeaderFiltersProps) => {
 					>
 						<PopoverBody>
 							<RadioGroup
-								onChange={onChangeRadioViewOption}
+								onChange={handleOnChangeRadioViewOption}
 								defaultValue={managerSlice.selectedViewValueCollectionFilter.toString()}
 							>
 								<Stack direction="column">

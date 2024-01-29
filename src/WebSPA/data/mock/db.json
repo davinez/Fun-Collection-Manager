@@ -133,12 +133,13 @@
 	"bookmarks": {
 		"data": [
 			{
-				"collectionId": 1,
+				"id": 1,
 				"cover": "url",
-				"title": "Bookmark Af d sfs dfsd fdsfsdsdsfsdfsd",
+				"title": "A Bookmark Af d sfs dfsd fdsfsdsdsfsdfsd",
 				"description": "Description d dfs fdsf sfdf AsdfsdfdsfsdsdfdsfsfsdfsddfsdW",
 				"bookmarkDetail": {
 					"collection" : {
+						"id": 1,
 						"icon": "url",
 						"name": "Collection AdfsdfsdfdsfdsfdsdsfsdfsW"
 					},
@@ -147,31 +148,33 @@
 				}
 			},
 			{
-				"collectionId": 1,
+				"id": 2,
 				"cover": "url",
-				"title": "Bookmark A",
+				"title": "B Bookmark",
 				"description": "Description A",
 				"bookmarkDetail": {
 					"collection" : {
+						"id": 1,
 						"icon": "url",
 						"name": "Collection A"
 					},
 					"websiteName": "Website A",
-					"createdAt": "01/01/2024"
+					"createdAt": "01/02/2024"
 				}
 			},
 			{
-				"collectionId": 1,
+				"id": 3,
 				"cover": "url",
-				"title": "Bookmark A",
+				"title": "C Bookmark",
 				"description": "Description A",
 				"bookmarkDetail": {
 					"collection" : {
+						"id": 1,
 						"icon": "url",
 						"name": "Collection A"
 					},
 					"websiteName": "Website A",
-					"createdAt": "01/01/2024"
+					"createdAt": "01/03/2024"
 				}
 			}
 		]

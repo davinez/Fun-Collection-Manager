@@ -14,6 +14,8 @@ export type TManagerSliceDefinition = {
   selectedSortValueCollectionFilter: string;
   selectedViewValueCollectionFilter: string;
   selectedShowInValueCollectionFilter: string[];
+  selectedBookmarksCheckbox: number[];
+  showHeadSelectOptions: boolean;
 };
 
 export type TManagerSliceActions = {
@@ -23,6 +25,8 @@ export type TManagerSliceActions = {
   setSelectedSortValueCollectionFilter: (payload: string) => void;
   setSelectedViewValueCollectionFilter: (payload: string) => void;
   setSelectedShowInValueCollectionFilter: (payload: string[]) => void;
+  setSelectedBookmarksCheckbox: (payload: number[]) => void;
+  setShowHeadSelectOptions: (payload: boolean) => void;
 };
 
 export type TManagerSlice = TManagerSliceDefinition & TManagerSliceActions;
@@ -34,6 +38,8 @@ const initialManagerSliceState: TManagerSliceDefinition = {
   selectedSortValueCollectionFilter: SortEnum.DateAsc,
   selectedViewValueCollectionFilter: ViewCollectionsEnum.Card,
   selectedShowInValueCollectionFilter: [ShowInBookmarkEnum.Cover, ShowInBookmarkEnum.Title, ShowInBookmarkEnum.BookmarkInfo],
+  selectedBookmarksCheckbox: [],
+  showHeadSelectOptions: false
 };
 
 export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
@@ -66,6 +72,17 @@ export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
   setSelectedShowInValueCollectionFilter: (payload): void => {
     set((state) => {
       state.managerSlice.selectedShowInValueCollectionFilter = payload;
+    });
+  },
+  setSelectedBookmarksCheckbox: (payload): void => {
+    set((state) => {
+      state.managerSlice.selectedBookmarksCheckbox = payload;
+    });
+  },
+  setShowHeadSelectOptions: (payload): void => {
+    set((state) => {
+      state.managerSlice.selectedBookmarksCheckbox = [];
+      state.managerSlice.showHeadSelectOptions = payload;
     });
   }
 });

@@ -168,12 +168,12 @@ export const NavbarManager = (): React.ReactElement => {
 							/>
 						</MenuButton>
 						<MenuList
-							bg="brandPrimary.800"
+							bg="brandPrimary.900"
 							color="brandPrimary.100"
 							border="none"
 						>
 							<MenuItem
-								bg="brandPrimary.800"
+								bg="brandPrimary.900"
 								_hover={{
 									bg: "brandSecondary.800",
 								}}
@@ -181,7 +181,7 @@ export const NavbarManager = (): React.ReactElement => {
 								Link 1
 							</MenuItem>
 							<MenuItem
-								bg="brandPrimary.800"
+								bg="brandPrimary.900"
 								_hover={{
 									bg: "brandSecondary.800",
 								}}

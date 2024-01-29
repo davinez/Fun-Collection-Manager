@@ -31,6 +31,7 @@ export type TGroup = {
 }
 
 export type TBookmark = {
+  id: number;
   cover: string;
   title: string;
   description: string;
@@ -38,7 +39,7 @@ export type TBookmark = {
 }
 
 type TBookmarkDetail = {
-  collection: { icon: string, name: string };
+  collection: { id: number, icon: string, name: string };
   websiteName: string;
   createdAt: string;
 }
