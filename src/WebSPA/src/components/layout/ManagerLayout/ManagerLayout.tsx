@@ -73,7 +73,8 @@ export const ManagerLayout = (): JSX.Element => {
 
 			<GridItem 
 			as="main" 
-			w="100%" 
+			w="100%"
+			h="100%"
 			area="main"
 			bg="brandPrimary.800"
 			>

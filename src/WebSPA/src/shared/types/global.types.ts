@@ -10,6 +10,12 @@ export type Heroicon = React.FC<IconProps>;
 
 export type EventOrValue = React.ChangeEvent<HTMLInputElement> | string | number;
 
+export type TBreakpointsStyling = {
+  sm: string;
+  md: string;
+  lg: string;
+}
+
 export enum FormActionEnum {
   Add = 0,
   Update = 1,

@@ -43,6 +43,7 @@ import type { TBookmark } from "@/shared/types/api/manager.types";
 import {
 	ViewCollectionsEnum,
 	ShowInBookmarkEnum,
+	TBreakpointsStyling
 } from "@/shared/types/global.types";
 // General
 import { Fragment, useState, useEffect } from "react";
@@ -55,31 +56,36 @@ type TMainContentProps = {
 
 const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
 	// State Hooks
-
+	const [cardHeight, setCardHeight] = useState<TBreakpointsStyling>({ sm: "10rem", md: "12rem", lg: "14rem" });
 	// General Hooks
 	const [sortedData] = useBookmarkSort(bookmarks);
 
 	return (
-		<Flex
+		<Box
 			aria-label="page-maincontent"
 			h="auto"
 			w="100%"
-			flexFlow="row wrap"
-			gap={4}
-			justify="flex-start"
 			px={4}
 			py={4}
-		>
+			display="grid"
+			gridAutoRows="1fr" /* make all rows the same height */
+			gridTemplateColumns={{ sm: "1fr 1fr", md: "1fr 1fr 1fr"}}   
+			gap={4}
+			justifyItems="center"
+			alignItems="center"
+	>
 			{sortedData &&
 				sortedData.map((bookmark) => {
 					return (
 						<ManagerBookmarkCard
 							key={`RenderedCard_${bookmark.id}`}
 							bookmark={bookmark}
+							cardHeight={cardHeight}
+							setCardHeight={setCardHeight}
 						/>
 					);
 				})}
-		</Flex>
+		</Box>
 	);
 };
 

@@ -32,26 +32,23 @@ const initialAuthSliceState: TAuthSliceDefinition = {
 
 export const AuthSlice: TStateSlice<TAuthSlice> = (set) => ({
   ...initialAuthSliceState,
-  setHasHydrated: (value): void => {
+  setHasHydrated: (value): void =>
     set((state) => {
       state.authSlice.hasHydrated = value;
-    });
-  },
-  setAccessToken: (token): void => {
+    }),
+  setAccessToken: (token): void =>
     set((state) => {
       state.authSlice.accessToken = token;
-    });
-  },
-  logout: (): void => {
+    }),
+  logout: (): void =>
     // Logout user code
     set((state) => {
       state.authSlice.accessToken = undefined;
       state.authSlice.refreshToken = undefined;
       state.authSlice.username = undefined;
       state.authSlice.userEmail = undefined;
-    });
-  },
-  setLoginUser: (payload: TLoginResponse): void => {
+    }),
+  setLoginUser: (payload: TLoginResponse): void =>
     set((state) => {
       state.authSlice = {
         ...state.authSlice,
@@ -60,6 +57,5 @@ export const AuthSlice: TStateSlice<TAuthSlice> = (set) => ({
         accessToken: payload.token,
         refreshToken: payload.refreshtoken
       };
-    });
-  }
+    }),
 });
