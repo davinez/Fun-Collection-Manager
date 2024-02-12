@@ -56,7 +56,7 @@ type TMainContentProps = {
 
 const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
 	// State Hooks
-	const [cardHeight, setCardHeight] = useState<TBreakpointsStyling>({ sm: "10rem", md: "12rem", lg: "14rem" });
+
 	// General Hooks
 	const [sortedData] = useBookmarkSort(bookmarks);
 
@@ -80,8 +80,6 @@ const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
 						<ManagerBookmarkCard
 							key={`RenderedCard_${bookmark.id}`}
 							bookmark={bookmark}
-							cardHeight={cardHeight}
-							setCardHeight={setCardHeight}
 						/>
 					);
 				})}

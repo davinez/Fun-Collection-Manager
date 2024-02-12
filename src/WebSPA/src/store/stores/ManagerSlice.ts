@@ -9,6 +9,7 @@ import {
 
 export type TManagerSliceDefinition = {
   groupModalFormAction: FormActionEnum;
+  bookmarkModalFormAction: FormActionEnum | undefined;
   selectedSidebarGroup: number | undefined;
   selectedSidebarCollection: number | undefined;
   selectedSortValueCollectionFilter: string;
@@ -20,6 +21,7 @@ export type TManagerSliceDefinition = {
 
 export type TManagerSliceActions = {
   setGroupModalFormAction: (payload: FormActionEnum) => void;
+  setBookmarkModalFormAction: (payload: FormActionEnum) => void;
   setSelectedSidebarGroup: (payload: number) => void;
   setSelectedSidebarCollection: (payload: number) => void;
   setSelectedSortValueCollectionFilter: (payload: string) => void;
@@ -33,6 +35,7 @@ export type TManagerSlice = TManagerSliceDefinition & TManagerSliceActions;
 
 const initialManagerSliceState: TManagerSliceDefinition = {
   groupModalFormAction: FormActionEnum.Add,
+  bookmarkModalFormAction: undefined,
   selectedSidebarGroup: undefined,
   selectedSidebarCollection: undefined,
   selectedSortValueCollectionFilter: SortEnum.DateAsc,
@@ -44,27 +47,27 @@ const initialManagerSliceState: TManagerSliceDefinition = {
 
 export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
   ...initialManagerSliceState,
-  setSelectedSidebarGroup: (payload): void => 
+  setSelectedSidebarGroup: (payload): void =>
     set((state) => {
       state.managerSlice.selectedSidebarGroup = payload;
     }),
-  setSelectedSidebarCollection: (payload): void => 
+  setSelectedSidebarCollection: (payload): void =>
     set((state) => {
       state.managerSlice.selectedSidebarCollection = payload;
     }),
-  setGroupModalFormAction: (payload): void => 
+  setGroupModalFormAction: (payload): void =>
     set((state) => {
       state.managerSlice.groupModalFormAction = payload;
     }),
-  setSelectedSortValueCollectionFilter: (payload): void => 
+  setSelectedSortValueCollectionFilter: (payload): void =>
     set((state) => {
       state.managerSlice.selectedSortValueCollectionFilter = payload;
     }),
-  setSelectedViewValueCollectionFilter: (payload): void => 
+  setSelectedViewValueCollectionFilter: (payload): void =>
     set((state) => {
       state.managerSlice.selectedViewValueCollectionFilter = payload;
     }),
-  setSelectedShowInValueCollectionFilter: (payload): void => 
+  setSelectedShowInValueCollectionFilter: (payload): void =>
     set((state) => {
       state.managerSlice.selectedShowInValueCollectionFilter = payload;
     }),
@@ -81,6 +84,10 @@ export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
     set((state) => {
       state.managerSlice.selectedBookmarksCheckbox = [];
       state.managerSlice.showHeadSelectOptions = payload;
+    }),
+  setBookmarkModalFormAction: (payload): void =>
+    set((state) => {
+      state.managerSlice.bookmarkModalFormAction = payload;
     }),
   //   updateWallet: (payload) =>
   //   set(

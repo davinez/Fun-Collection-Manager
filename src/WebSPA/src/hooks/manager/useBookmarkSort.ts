@@ -54,9 +54,9 @@ export default function useBookmarkSort(data: TBookmark[]) {
         break;
       case SortEnum.SitesAsc:
         newArray.sort((a, b) => {
-          if (a.bookmarkDetail.websiteName < b.bookmarkDetail.websiteName)
+          if (a.bookmarkDetail.websiteURL < b.bookmarkDetail.websiteURL)
             return -1;
-          if (a.bookmarkDetail.websiteName > b.bookmarkDetail.websiteName)
+          if (a.bookmarkDetail.websiteURL > b.bookmarkDetail.websiteURL)
             return 1;
           return 0;
         });
@@ -64,9 +64,9 @@ export default function useBookmarkSort(data: TBookmark[]) {
         break;
       case SortEnum.SitesDesc:
         newArray.sort((a, b) => {
-          if (b.bookmarkDetail.websiteName < a.bookmarkDetail.websiteName)
+          if (b.bookmarkDetail.websiteURL < a.bookmarkDetail.websiteURL)
             return -1;
-          if (b.bookmarkDetail.websiteName > a.bookmarkDetail.websiteName)
+          if (b.bookmarkDetail.websiteURL > a.bookmarkDetail.websiteURL)
             return 1;
           return 0;
         });

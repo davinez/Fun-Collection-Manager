@@ -1,4 +1,6 @@
 import * as z from "zod";
+import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from "shared/config";
+import { bytesToMegaBytes } from "shared/utils";
 
 export type TNewCollection = {
   id: number;
@@ -40,9 +42,11 @@ export type TBookmark = {
 
 type TBookmarkDetail = {
   collection: { id: number, icon: string, name: string };
-  websiteName: string;
+  websiteURL: string;
   createdAt: string;
 }
+
+// Form Types //
 
 export const groupAddFormPayload = z.object({
   groupName: z
@@ -50,7 +54,6 @@ export const groupAddFormPayload = z.object({
     .trim()
     .min(1, { message: "Group is required" })
 });
-
 export type TGroupAddPayload = z.infer<typeof groupAddFormPayload>;
 
 export const groupUpdateFormPayload = z.object({
@@ -62,7 +65,6 @@ export const groupUpdateFormPayload = z.object({
     .trim()
     .min(1, { message: "Group is required" })
 });
-
 export type TGroupUpdatePayload = z.infer<typeof groupUpdateFormPayload>;
 
 export const deleteGroupFormPayload = z.object({
@@ -70,7 +72,6 @@ export const deleteGroupFormPayload = z.object({
     .number()
     .min(1, { message: "Invalid group id" })
 });
-
 export type TDeleteGroupPayload = z.infer<typeof deleteGroupFormPayload>;
 
 export const addURLFormPayload = z.object({
@@ -79,5 +80,41 @@ export const addURLFormPayload = z.object({
     .min(11, { message: "URL address is required" })
     .url({ message: "URL address format is required" })
 });
-
 export type TAddURLPayload = z.infer<typeof addURLFormPayload>;
+
+export const bookmarkUpdateFormPayload = z.object({
+  cover: z
+    .custom<FileList>()
+    // .refine((files) => {
+    //   console.log(files);
+    //   return Array.from(files ?? []).length !== 0;
+    // }, "Image is required")
+    .refine((files) => {
+      if (Array.from(files ?? []).length === 0) // Only validate if a file exists
+        return true;
+      return Array.from(files ?? []).every(
+        (file) => bytesToMegaBytes(file.size) <= MAX_IMAGE_SIZE
+      );
+    }, `The maximum image size is ${MAX_IMAGE_SIZE}MB`)
+    .refine((files) => {
+      if (Array.from(files ?? []).length === 0) // Only validate if a file exists
+        return true;
+      return Array.from(files ?? []).every((file) =>
+        ACCEPTED_IMAGE_TYPES.includes(file.type)
+      );
+    }, "File type is not supported")
+    .optional()
+    .or(z.literal('')), // cover?: "" | FileList | undefined;
+  title: z
+    .string()
+    .min(2, { message: "Title is required" }),
+  description: z
+    .string()
+    .min(2, { message: "Description is required" }),
+  websiteURL: z
+    .string()
+    .min(11, { message: "URL address is required" })
+    .url({ message: "URL address format is required" })
+});
+export type TBookmarkUpdatePayload = z.infer<typeof bookmarkUpdateFormPayload>;
+

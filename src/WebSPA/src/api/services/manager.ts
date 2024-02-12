@@ -5,6 +5,7 @@ import type {
   TGroupUpdatePayload,
   TGroupAddPayload,
   TDeleteGroupPayload,
+  TBookmarkUpdatePayload,
   TGroup,
   TBookmark
 } from "@/shared/types/api/manager.types";
@@ -113,6 +114,20 @@ export const useDeleteGroupMutation = () => {
   return useMutation({
     mutationFn: async (payload: TDeleteGroupPayload) => {
       const response = await $apiClient.delete<TApiResponse>(`/manager/groups/${payload.groupId}`);
+      return response.data;
+    },
+  });
+}
+
+type TuseUpdateBookmarkMutationVariables = {
+  bookmarkId: number;
+  payload: TBookmarkUpdatePayload;
+}
+
+export const useUpdateBookmarkMutation = () => {
+  return useMutation({
+    mutationFn: async ({ bookmarkId, payload }: TuseUpdateBookmarkMutationVariables) => {
+      const response = await $apiClient.patch<TApiResponse>(`/manager/bookmarks/${bookmarkId}`, payload);
       return response.data;
     },
   });

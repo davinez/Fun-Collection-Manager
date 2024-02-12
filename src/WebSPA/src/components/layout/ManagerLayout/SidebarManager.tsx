@@ -29,7 +29,7 @@ import {
 } from "react-icons/ai";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
-import { GroupModal } from "@/components/ui/modal/GroupModal";
+import { ManagerGroupModal } from "@/components/ui/modal";
 import { LoadingBox } from "@/components/ui/box";
 // Assets
 
@@ -42,6 +42,7 @@ import { FormActionEnum } from "@/shared/types/global.types";
 import { Fragment, useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/apiClient";
+import { useNavigate } from "react-router-dom";
 
 type TMenuOptionsNavItem = {
 	isDivider?: boolean;
@@ -115,7 +116,7 @@ const NavItem = ({
 				textStyle="primary"
 				color="brandPrimary.100"
 				transition=".15s ease"
-				onClick={isGroup ? handleOnClickGroup : undefined}
+				onClick={isGroup ? handleOnClickGroup : onNavItemClick}
 				onMouseOver={handleMouseOver}
 				onMouseOut={handleMouseOut}
 				{...rest}
@@ -254,12 +255,13 @@ export const SidebarManager = ({}: TSidebarProps &
 	FlexProps): React.ReactElement => {
 	// State Hooks
 	const { managerSlice } = useStore();
+	// General Hooks
+	const navigate = useNavigate();
 	const {
 		isOpen: isOpenGroupModal,
 		onOpen: onOpenGroupModal,
 		onClose: onCloseGroupModal,
 	} = useDisclosure();
-	// General Hooks
 	const {
 		isPending: isPendingGetCollectionGroups,
 		isError: isErrorGetCollectionGroups,
@@ -281,6 +283,10 @@ export const SidebarManager = ({}: TSidebarProps &
 			defaultHandlerApiError(errorGetCollectionGroups);
 		}
 	}, [isErrorGetCollectionGroups]);
+
+	const handleOnClickAllbookmarks = () => {
+		navigate("/my/manager/all");
+	};
 
 	const handleOnClickCreateCollectionRootGroup = () => {};
 
@@ -398,7 +404,7 @@ export const SidebarManager = ({}: TSidebarProps &
 
 	return (
 		<>
-			<GroupModal isOpen={isOpenGroupModal} onClose={onCloseGroupModal} />
+			<ManagerGroupModal isOpen={isOpenGroupModal} onClose={onCloseGroupModal} />
 			<Flex pl="3" py="2" alignItems="center">
 				<Menu>
 					<MenuButton
@@ -463,6 +469,7 @@ export const SidebarManager = ({}: TSidebarProps &
 							_hover={{
 								bg: "brandPrimary.900",
 							}}
+							onNavItemClick={handleOnClickAllbookmarks}
 						>
 							All Bookmarks
 						</NavItem>

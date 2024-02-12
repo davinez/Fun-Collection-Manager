@@ -1,73 +1,48 @@
 // Design
 import {
-	Hide,
 	Text,
 	Flex,
 	Card,
 	CardBody,
-	CardFooter,
-	Heading,
-	Divider,
 	Image,
-	Stack,
-	useToast,
-	type FlexProps,
 	Box,
-	CardHeader,
 	Checkbox,
 	IconButton,
 	Icon,
+	useDisclosure,
 } from "@chakra-ui/react";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
-import { FaArrowDownAZ, FaArrowUpAZ } from "react-icons/fa6";
-import textStylesTheme from "shared/styles/theme/foundations/textStyles";
-import colorStylesTheme from "shared/styles/theme/foundations/colors";
 // Components
-import { ManagerHeadFilters } from "components/ui/head";
-import { LoadingBox, ErrorBox } from "@/components/ui/box";
+import { ManagerBookmarkModal } from "components/ui/modal";
 // Assets
 
 // Hooks
-import { useGetAllBookmarks } from "@/api/services/manager";
-import useBookmarkSort from "@/hooks/manager/useBookmarkSort";
+
 // Types
 import type { TBookmark } from "@/shared/types/api/manager.types";
-import {
-	ViewCollectionsEnum,
-	ShowInBookmarkEnum,
-	TBreakpointsStyling
-} from "@/shared/types/global.types";
+import { ShowInBookmarkEnum, FormActionEnum } from "@/shared/types/global.types";
 // General
-import { Fragment, useState, useEffect } from "react";
+import { useState } from "react";
 import { useStore } from "@/store/UseStore";
-import { defaultHandlerApiError } from "@/api/apiClient";
 
 type TManagerBookmarkCardProps = {
 	bookmark: TBookmark;
-	cardHeight: TBreakpointsStyling;
-	setCardHeight: React.Dispatch<React.SetStateAction<TBreakpointsStyling>>;
 };
 
 export const ManagerBookmarkCard = ({
 	bookmark,
-	setCardHeight
 }: TManagerBookmarkCardProps) => {
-  // State Hooks
+	// State Hooks
 	const [isHovering, setIsHovering] = useState(false);
 	const { managerSlice } = useStore();
 	// General Hooks
+	const {
+		isOpen: isOpenBookmarkModal,
+		onOpen: onOpenBookmarkModal,
+		onClose: onCloseBookmarkModal,
+	} = useDisclosure();
 
 	const handleMouseOver = (bookmarkId: number) => {
-		// let updatedIsHovering = isHovering.map((hoveredBookmark) => {
-		// 	if (hoveredBookmark.bookmarkId === bookmarkId) {
-		// 		return { ...hoveredBookmark, isHovering: true };
-		// 	}
-
-		// 	return hoveredBookmark;
-		// });
-
-		// setIsHovering(updatedIsHovering);
-
 		setIsHovering(true);
 	};
 
@@ -94,8 +69,18 @@ export const ManagerBookmarkCard = ({
 		managerSlice.setSelectedBookmarksCheckbox(bookmark.id);
 	};
 
+	const handleOnClickEditBookmark = () => {
+		managerSlice.setBookmarkModalFormAction(FormActionEnum.Update);
+		onOpenBookmarkModal();
+	};
+
 	return (
 		<>
+			<ManagerBookmarkModal
+				isOpen={isOpenBookmarkModal}
+				onClose={onCloseBookmarkModal}
+				bookmark={bookmark}
+			/>
 			<Card
 				w="100%"
 				h="100%"
@@ -105,7 +90,7 @@ export const ManagerBookmarkCard = ({
 				onMouseOver={() => handleMouseOver(bookmark.id)}
 				onMouseOut={() => handleMouseOut(bookmark.id)}
 			>
-				<CardBody w="100%" h="100%"  p={0}>
+				<CardBody w="100%" h="100%" p={0}>
 					{managerSlice.selectedShowInValueCollectionFilter.includes(
 						ShowInBookmarkEnum.Cover
 					) && (
@@ -133,8 +118,8 @@ export const ManagerBookmarkCard = ({
 
 					<Flex
 						aria-label="card-info"
-						w="100%"							
-						h="100%"	
+						w="100%"
+						h="100%"
 						p={
 							managerSlice.selectedShowInValueCollectionFilter.length === 1 &&
 							managerSlice.selectedShowInValueCollectionFilter.includes(
@@ -158,7 +143,7 @@ export const ManagerBookmarkCard = ({
 								fontWeight="500"
 								color="brandPrimary.100"
 							>
-								<Text						
+								<Text
 									overflow="hidden"
 									textOverflow="ellipsis"
 									sx={{
@@ -243,7 +228,7 @@ export const ManagerBookmarkCard = ({
 											WebkitBoxOrient: "vertical",
 										}}
 									>
-										&#x2022; {bookmark.bookmarkDetail.websiteName}
+										&#x2022; {bookmark.bookmarkDetail.websiteURL}
 									</Text>
 								</Box>
 								<Box lineHeight="1.2" color="brandPrimary.150">
@@ -272,7 +257,7 @@ export const ManagerBookmarkCard = ({
 						right="0"
 						bottom="0"
 						bg={isHovering ? "rgba(0, 0, 0, 0.5)" : undefined}
-						borderRadius="6px"						
+						borderRadius="6px"
 						flexFlow="row nowrap"
 						alignItems="start"
 						justifyContent="space-between"
@@ -301,6 +286,7 @@ export const ManagerBookmarkCard = ({
 								mr={2}
 							>
 								<IconButton
+									// Set edit functionality, open right drawer with form
 									aria-label="Search database"
 									size="sm"
 									_hover={{
@@ -317,6 +303,7 @@ export const ManagerBookmarkCard = ({
 										/>
 									}
 									bg="brandPrimary.900"
+									onClick={handleOnClickEditBookmark}
 								/>
 								<IconButton
 									aria-label="Search database"
