@@ -46,7 +46,10 @@ type TManagerHeadFiltersProps = {
 	headerName: string;
 };
 
-export const ManagerHeadFilters = ({ icon, headerName }: TManagerHeadFiltersProps) => {
+export const ManagerHeadFilters = ({
+	icon,
+	headerName,
+}: TManagerHeadFiltersProps) => {
 	const sortOptions = [
 		{
 			value: SortEnum.DateAsc,
@@ -115,8 +118,9 @@ export const ManagerHeadFilters = ({ icon, headerName }: TManagerHeadFiltersProp
 		},
 	];
 
-		// State Hooks
+	// State Hooks
 	const { managerSlice } = useStore();
+	const [isHovering, setIsHovering] = useState(false);
 	const [sortValueRadio, setSortValueRadio] = useState(
 		sortOptions.find(
 			(option) =>
@@ -129,7 +133,7 @@ export const ManagerHeadFilters = ({ icon, headerName }: TManagerHeadFiltersProp
 				option.value === managerSlice.selectedViewValueCollectionFilter
 		)
 	);
-	 // General Hooks
+	// General Hooks
 
 	const handleOnChangeRadioSortOption = (nextValue: string) => {
 		const enumValueExists = Object.values(SortEnum).includes(nextValue);
@@ -154,8 +158,27 @@ export const ManagerHeadFilters = ({ icon, headerName }: TManagerHeadFiltersProp
 		}
 	};
 
-	const handleOnChangeCheckboxShowInOptions = (value: (string | number)[]) => {
-		const checkBoxGroupState = value as string[];
+	const handleMouseOver = () => {
+		setIsHovering(true);
+	};
+
+	const handleMouseOut = () => {
+		setIsHovering(false);
+	};
+
+	const handleOnClickSelectAllCheckbox = () => {
+		// activate head with edit and select options if it is not active
+		if (!managerSlice.showHeadSelectOptions) {
+			managerSlice.resetSelectedBookmarksCheckbox();
+			managerSlice.setShowHeadSelectOptions(true);
+		}
+
+		managerSlice.setSelectAllBookmarks(true);
+	};
+
+	const handleOnChangeCheckboxShowInOptions = (
+		checkBoxGroupState: string[]
+	) => {
 		managerSlice.setSelectedShowInValueCollectionFilter(checkBoxGroupState);
 	};
 
@@ -178,25 +201,42 @@ export const ManagerHeadFilters = ({ icon, headerName }: TManagerHeadFiltersProp
 			position="sticky"
 			top="3rem" // stacking sticky element, same height from element up
 			zIndex="1"
+			onMouseOver={handleMouseOver}
+			onMouseOut={handleMouseOut}
 		>
 			<Flex alignItems="center" gap={3} ml={4}>
-				{typeof icon === "string" ? (
-					<Image
-						borderRadius="2px"
-						boxSize="6"
-						color="brandPrimary.150"
-						objectFit="contain"
-						src={icon as string}
-						fallbackSrc="/assets/icons/bookmark.svg"
-						alt="General Icon"
-					/>
-				) : (
-					<Icon
-						boxSize="6"
-						color="brandPrimary.150"
-						as={icon as React.ElementType}
+				{isHovering && (
+					<Checkbox
+						defaultChecked={false}
+						colorScheme="gray"
+						_focus={{
+							borderColor: "none",
+							outline: "none",
+							boxShadow: "none",
+						}}
+						cursor="default"
+						onChange={handleOnClickSelectAllCheckbox}
 					/>
 				)}
+				{typeof icon === "string"
+					? !isHovering && (
+							<Image
+								borderRadius="2px"
+								boxSize="6"
+								color="brandPrimary.150"
+								objectFit="contain"
+								src={icon as string}
+								fallbackSrc="/assets/icons/bookmark.svg"
+								alt="General Icon"
+							/>
+					  )
+					: !isHovering && (
+							<Icon
+								boxSize="6"
+								color="brandPrimary.150"
+								as={icon as React.ElementType}
+							/>
+					  )}
 				<Text wordBreak="break-word" textStyle="title" color="brandPrimary.150">
 					{headerName}
 				</Text>

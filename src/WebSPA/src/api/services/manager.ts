@@ -6,6 +6,7 @@ import type {
   TGroupAddPayload,
   TDeleteGroupPayload,
   TBookmarkUpdatePayload,
+  TBookmarkDeletePayload,
   TGroup,
   TBookmark
 } from "@/shared/types/api/manager.types";
@@ -133,7 +134,14 @@ export const useUpdateBookmarkMutation = () => {
   });
 }
 
-
+export const useDeleteBookmarkMutation = () => {
+  return useMutation({
+    mutationFn: async (payload: TBookmarkDeletePayload) => {
+      const response = await $apiClient.delete<TApiResponse>('/manager/bookmarks', payload);
+      return response.data;
+    },
+  });
+}
 
 
 

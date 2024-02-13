@@ -118,3 +118,14 @@ export const bookmarkUpdateFormPayload = z.object({
 });
 export type TBookmarkUpdatePayload = z.infer<typeof bookmarkUpdateFormPayload>;
 
+export const bookmarkDeleteFormPayload = z.object({
+  bookmarkIds: z
+  .custom<number[]>()
+  .refine((ids) => {
+    return ids.length < 1 ? false : true;
+  }, "Empty Payload")  
+  .refine((ids) => {
+    return ids.every((id) => id > 0);
+  }, "Invalid Ids")  
+});
+export type TBookmarkDeletePayload = z.infer<typeof bookmarkDeleteFormPayload>;

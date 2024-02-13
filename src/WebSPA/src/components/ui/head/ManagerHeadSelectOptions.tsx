@@ -46,6 +46,16 @@ export const ManagerHeadSelectOptions = ({}: THeaderSelectOptionsProps) => {
 		managerSlice.setShowHeadSelectOptions(false);
 	};
 
+	const handleOnClickSelectAllCheckbox = (
+		event: React.SyntheticEvent<EventTarget>
+	) => {
+		// Only activate collapse component if the clicked element it is div or button with show text
+		if (event.target instanceof HTMLInputElement) {
+			const checkbox = event.target as HTMLInputElement;
+			managerSlice.setSelectAllBookmarks(checkbox.checked);
+		}
+	};
+
 	return (
 		<Flex
 			w="100%"
@@ -61,7 +71,16 @@ export const ManagerHeadSelectOptions = ({}: THeaderSelectOptionsProps) => {
 			zIndex="1"
 		>
 			<Flex w="30%" alignItems="center" gap={3} ml={4}>
-				<Checkbox />
+				<Checkbox
+					colorScheme="gray"
+					_focus={{
+						borderColor: "none",
+						outline: "none",
+						boxShadow: "none",
+					}}
+					defaultChecked={managerSlice.selectAllBookmarks}
+					onChange={handleOnClickSelectAllCheckbox}
+				/>
 				<Text wordBreak="break-word" textStyle="title" color="brandPrimary.150">
 					{managerSlice.selectedBookmarksCheckbox.length}
 				</Text>

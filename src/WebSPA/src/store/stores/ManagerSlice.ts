@@ -16,6 +16,7 @@ export type TManagerSliceDefinition = {
   selectedViewValueCollectionFilter: string;
   selectedShowInValueCollectionFilter: string[];
   selectedBookmarksCheckbox: number[];
+  selectAllBookmarks: boolean;
   showHeadSelectOptions: boolean;
 };
 
@@ -27,7 +28,9 @@ export type TManagerSliceActions = {
   setSelectedSortValueCollectionFilter: (payload: string) => void;
   setSelectedViewValueCollectionFilter: (payload: string) => void;
   setSelectedShowInValueCollectionFilter: (payload: string[]) => void;
-  setSelectedBookmarksCheckbox: (payload: number) => void;
+  setSelectedBookmarksCheckbox: (payload: number | number[]) => void;
+  resetSelectedBookmarksCheckbox: () => void;
+  setSelectAllBookmarks: (payload: boolean) => void;
   setShowHeadSelectOptions: (payload: boolean) => void;
 };
 
@@ -42,6 +45,7 @@ const initialManagerSliceState: TManagerSliceDefinition = {
   selectedViewValueCollectionFilter: ViewCollectionsEnum.Card,
   selectedShowInValueCollectionFilter: [ShowInBookmarkEnum.Cover, ShowInBookmarkEnum.Title, ShowInBookmarkEnum.BookmarkInfo],
   selectedBookmarksCheckbox: [],
+  selectAllBookmarks: false,
   showHeadSelectOptions: false
 };
 
@@ -73,16 +77,27 @@ export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
     }),
   setSelectedBookmarksCheckbox: (payload): void =>
     set((state) => {
-      if (state.managerSlice.selectedBookmarksCheckbox.includes(payload)) {
-        const index = state.managerSlice.selectedBookmarksCheckbox.indexOf(payload);
-        state.managerSlice.selectedBookmarksCheckbox.splice(index, 1);
+      if (Array.isArray(payload)) {
+        state.managerSlice.selectedBookmarksCheckbox = payload;
       } else {
-        state.managerSlice.selectedBookmarksCheckbox = [...state.managerSlice.selectedBookmarksCheckbox, payload]
+        if (state.managerSlice.selectedBookmarksCheckbox.includes(payload)) {
+          const index = state.managerSlice.selectedBookmarksCheckbox.indexOf(payload);
+          state.managerSlice.selectedBookmarksCheckbox.splice(index, 1);
+        } else {
+          state.managerSlice.selectedBookmarksCheckbox = [...state.managerSlice.selectedBookmarksCheckbox, payload]
+        }
       }
+    }),
+  resetSelectedBookmarksCheckbox: (): void =>
+    set((state) => {
+      state.managerSlice.selectedBookmarksCheckbox = [];
+    }),
+  setSelectAllBookmarks: (payload): void =>
+    set((state) => {
+      state.managerSlice.selectAllBookmarks = payload;
     }),
   setShowHeadSelectOptions: (payload): void =>
     set((state) => {
-      state.managerSlice.selectedBookmarksCheckbox = [];
       state.managerSlice.showHeadSelectOptions = payload;
     }),
   setBookmarkModalFormAction: (payload): void =>

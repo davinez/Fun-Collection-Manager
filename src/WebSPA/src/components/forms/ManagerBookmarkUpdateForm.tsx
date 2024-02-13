@@ -6,11 +6,11 @@ import {
 	Button,
 	Stack,
 	useToast,
-	Flex,
+	Flex
 } from "@chakra-ui/react";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
-import { InputField } from "components/forms";
+import { InputField, TextAreaField } from "components/forms";
 // Assets
 
 // Hooks
@@ -28,7 +28,6 @@ import {
 // General
 import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
-import { useStore } from "@/store/UseStore";
 
 type TManagerBookmarkUpdateFormProps = {
 	onClose: () => void;
@@ -40,7 +39,7 @@ export const ManagerBookmarkUpdateForm = ({
 	bookmark
 }: TManagerBookmarkUpdateFormProps) => {
 	// State Hooks
-	const { managerSlice } = useStore();
+
 	// General Hooks
 	const methods = useForm<TBookmarkUpdatePayload>({
 		resolver: zodResolver(bookmarkUpdateFormPayload),
@@ -91,6 +90,8 @@ export const ManagerBookmarkUpdateForm = ({
 					<ModalCloseButton size="lg" position="unset" />
 				</Flex>
 
+			
+
 				<InputField
 					fontSize={textStylesTheme.textStyles.primary.fontSize}
 					py={0}
@@ -111,19 +112,20 @@ export const ManagerBookmarkUpdateForm = ({
 					id="title"
 					label="Title"
 					errorMessage={errors.title ? errors.title.message : undefined}
+				  defaultValue={bookmark.title}
 				/>
 
-				<InputField
+				<TextAreaField
 					fontSize={textStylesTheme.textStyles.primary.fontSize}
 					py={0}
 					px={2}
 					h={8}
 					id="description"
-					type="text"
 					label="Description"
 					errorMessage={
 						errors.description ? errors.description.message : undefined
 					}
+					defaultValue={bookmark.description}
 				/>
 
 				<InputField
@@ -136,6 +138,7 @@ export const ManagerBookmarkUpdateForm = ({
 					errorMessage={
 						errors.websiteURL ? errors.websiteURL.message : undefined
 					}
+					defaultValue={bookmark.bookmarkDetail.websiteURL}
 				/>
 
 				<ModalFooter>

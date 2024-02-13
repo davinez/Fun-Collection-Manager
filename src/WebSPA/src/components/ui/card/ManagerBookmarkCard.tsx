@@ -9,7 +9,7 @@ import {
 	Checkbox,
 	IconButton,
 	Icon,
-	useDisclosure,
+	useDisclosure
 } from "@chakra-ui/react";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 // Components
@@ -20,9 +20,12 @@ import { ManagerBookmarkModal } from "components/ui/modal";
 
 // Types
 import type { TBookmark } from "@/shared/types/api/manager.types";
-import { ShowInBookmarkEnum, FormActionEnum } from "@/shared/types/global.types";
+import {
+	ShowInBookmarkEnum,
+	FormActionEnum,
+} from "@/shared/types/global.types";
 // General
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 
 type TManagerBookmarkCardProps = {
@@ -63,8 +66,10 @@ export const ManagerBookmarkCard = ({
 
 	const handleOnClickCheckbox = () => {
 		// activate head with edit and select options if it is not active
-		if (!managerSlice.showHeadSelectOptions)
+		if (!managerSlice.showHeadSelectOptions) {
+			managerSlice.resetSelectedBookmarksCheckbox();
 			managerSlice.setShowHeadSelectOptions(true);
+		}
 
 		managerSlice.setSelectedBookmarksCheckbox(bookmark.id);
 	};
@@ -73,6 +78,17 @@ export const ManagerBookmarkCard = ({
 		managerSlice.setBookmarkModalFormAction(FormActionEnum.Update);
 		onOpenBookmarkModal();
 	};
+
+	const handleOnClickDeleteBookmark = () => {
+		managerSlice.setBookmarkModalFormAction(FormActionEnum.Delete);
+		managerSlice.resetSelectedBookmarksCheckbox();
+		managerSlice.setSelectedBookmarksCheckbox(bookmark.id);
+		onOpenBookmarkModal();
+	};
+
+	useEffect(() => {
+		console.log(managerSlice.selectAllBookmarks);
+	}, [managerSlice.selectAllBookmarks]);
 
 	return (
 		<>
@@ -276,6 +292,7 @@ export const ManagerBookmarkCard = ({
 								boxShadow: "none",
 							}}
 							cursor="default"
+							isChecked={managerSlice.selectAllBookmarks}
 							onChange={handleOnClickCheckbox}
 						/>
 						{!managerSlice.showHeadSelectOptions && (
@@ -322,6 +339,7 @@ export const ManagerBookmarkCard = ({
 										/>
 									}
 									bg="brandPrimary.900"
+									onClick={handleOnClickDeleteBookmark}
 								/>
 							</Flex>
 						)}

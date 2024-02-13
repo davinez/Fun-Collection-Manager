@@ -43,7 +43,7 @@ import type { TBookmark } from "@/shared/types/api/manager.types";
 import {
 	ViewCollectionsEnum,
 	ShowInBookmarkEnum,
-	TBreakpointsStyling
+	TBreakpointsStyling,
 } from "@/shared/types/global.types";
 // General
 import { Fragment, useState, useEffect } from "react";
@@ -56,9 +56,24 @@ type TMainContentProps = {
 
 const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
 	// State Hooks
-
+	const { managerSlice } = useStore();
 	// General Hooks
 	const [sortedData] = useBookmarkSort(bookmarks);
+
+	// Pending set "All" word in headselect component if all bookmarks are selected, add to store boomarks object to count 
+	// a;so it will be use in the sort and filter/search functionality
+	useEffect(() => {
+		if (managerSlice.selectAllBookmarks) {
+			managerSlice.resetSelectedBookmarksCheckbox();
+
+			managerSlice.setSelectedBookmarksCheckbox(
+				bookmarks.map((bookmark) => bookmark.id)
+			);
+		} else if (!managerSlice.selectAllBookmarks) {
+			managerSlice.resetSelectedBookmarksCheckbox();
+		}
+
+	}, [managerSlice.selectAllBookmarks]);
 
 	return (
 		<Box
@@ -69,11 +84,11 @@ const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
 			py={4}
 			display="grid"
 			gridAutoRows="1fr" /* make all rows the same height */
-			gridTemplateColumns={{ sm: "1fr 1fr", md: "1fr 1fr 1fr"}}   
+			gridTemplateColumns={{ sm: "1fr 1fr", md: "1fr 1fr 1fr" }}
 			gap={4}
 			justifyItems="center"
 			alignItems="center"
-	>
+		>
 			{sortedData &&
 				sortedData.map((bookmark) => {
 					return (

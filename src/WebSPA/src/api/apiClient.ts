@@ -42,7 +42,7 @@ type TApi = {
   get: <T>(url: string, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
   post: <T>(url: string, data: object) => Promise<AxiosResponse<T, unknown>>;
   patch: <T>(url: string, data: object) => Promise<AxiosResponse<T, unknown>>;
-  delete: <T>(url: string) => Promise<AxiosResponse<T, unknown>>;
+  delete: <T>(url: string, data?: object) => Promise<AxiosResponse<T, unknown>>;
 }
 
 const apiClient = (baseURL: string): TApi => {
@@ -53,7 +53,6 @@ const apiClient = (baseURL: string): TApi => {
   });
 
   // Add interceptors
-
 
 
   return {
@@ -76,11 +75,14 @@ const apiClient = (baseURL: string): TApi => {
           token: authSlice.accessToken,
         },
       }),
-    delete: <T>(url: string) =>
+    delete: <T>(url: string, data?: object) =>
       apiClient.delete<T>(url, {
         headers: {
           token: authSlice.accessToken,
         },
+        data: {
+          source: data
+        }
       }),
   };
 }
