@@ -6,7 +6,6 @@ import {
   ShowInBookmarkEnum,
 } from "@/shared/types/global.types";
 
-
 export type TManagerSliceDefinition = {
   groupModalFormAction: FormActionEnum;
   bookmarkModalFormAction: FormActionEnum | undefined;

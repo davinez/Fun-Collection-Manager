@@ -9,7 +9,7 @@ import {
 	Checkbox,
 	IconButton,
 	Icon,
-	useDisclosure
+	useDisclosure,
 } from "@chakra-ui/react";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 // Components
@@ -38,6 +38,7 @@ export const ManagerBookmarkCard = ({
 	// State Hooks
 	const [isHovering, setIsHovering] = useState(false);
 	const { managerSlice } = useStore();
+	const [checkedCard, setCheckedCard] = useState(false);
 	// General Hooks
 	const {
 		isOpen: isOpenBookmarkModal,
@@ -64,13 +65,28 @@ export const ManagerBookmarkCard = ({
 		}
 	};
 
-	const handleOnClickCheckbox = () => {
-		// activate head with edit and select options if it is not active
-		if (!managerSlice.showHeadSelectOptions) {
+	const handleOnClickCheckbox = (event: React.SyntheticEvent<EventTarget>) => {
+		// Last card to uncheck, so remove headselectoptions component
+		if (
+			(event.target as HTMLInputElement).checked === false &&
+			managerSlice.selectedBookmarksCheckbox.length === 1
+		) {
+			setCheckedCard(false);
 			managerSlice.resetSelectedBookmarksCheckbox();
-			managerSlice.setShowHeadSelectOptions(true);
+			managerSlice.setShowHeadSelectOptions(false);
+			return;
 		}
 
+		// activate head with edit and select options if it is not active
+		if (!managerSlice.showHeadSelectOptions) {
+			managerSlice.setSelectedBookmarksCheckbox(bookmark.id);
+			setCheckedCard(true);
+			managerSlice.setShowHeadSelectOptions(true);
+			return;
+		}
+
+		// isChecked now it is a controlled component, we need to manage state
+		setCheckedCard((event.target as HTMLInputElement).checked);
 		managerSlice.setSelectedBookmarksCheckbox(bookmark.id);
 	};
 
@@ -87,8 +103,27 @@ export const ManagerBookmarkCard = ({
 	};
 
 	useEffect(() => {
-		console.log(managerSlice.selectAllBookmarks);
-	}, [managerSlice.selectAllBookmarks]);
+		// Reset checkbox on headselectoptions component unmount
+		if (!managerSlice.showHeadSelectOptions) {
+			setCheckedCard(false);
+		}
+
+		if (managerSlice.showHeadSelectOptions && managerSlice.selectAllBookmarks) {
+			// Trigger on select all bookmarks checkbox
+			if (!managerSlice.selectedBookmarksCheckbox.includes(bookmark.id)) {
+				// If checbox not already checked then check it
+				managerSlice.setSelectedBookmarksCheckbox(bookmark.id);
+				setCheckedCard(true);
+			}
+		} else if (
+			// Trigger on de-selected all bookmarks checkbox
+			managerSlice.showHeadSelectOptions &&
+			!managerSlice.selectAllBookmarks &&
+			!managerSlice.selectedBookmarksCheckbox.includes(bookmark.id)
+		) {
+			setCheckedCard(false);
+		}
+	}, [managerSlice.selectAllBookmarks, managerSlice.showHeadSelectOptions]);
 
 	return (
 		<>
@@ -292,7 +327,7 @@ export const ManagerBookmarkCard = ({
 								boxShadow: "none",
 							}}
 							cursor="default"
-							isChecked={managerSlice.selectAllBookmarks}
+							isChecked={checkedCard}
 							onChange={handleOnClickCheckbox}
 						/>
 						{!managerSlice.showHeadSelectOptions && (

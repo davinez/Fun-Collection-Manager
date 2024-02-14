@@ -56,24 +56,9 @@ type TMainContentProps = {
 
 const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
 	// State Hooks
-	const { managerSlice } = useStore();
+	
 	// General Hooks
 	const [sortedData] = useBookmarkSort(bookmarks);
-
-	// Pending set "All" word in headselect component if all bookmarks are selected, add to store boomarks object to count 
-	// a;so it will be use in the sort and filter/search functionality
-	useEffect(() => {
-		if (managerSlice.selectAllBookmarks) {
-			managerSlice.resetSelectedBookmarksCheckbox();
-
-			managerSlice.setSelectedBookmarksCheckbox(
-				bookmarks.map((bookmark) => bookmark.id)
-			);
-		} else if (!managerSlice.selectAllBookmarks) {
-			managerSlice.resetSelectedBookmarksCheckbox();
-		}
-
-	}, [managerSlice.selectAllBookmarks]);
 
 	return (
 		<Box
@@ -137,7 +122,7 @@ export const AllBookmarksPage =
 		return (
 			<>
 				{managerSlice.showHeadSelectOptions ? (
-					<ManagerHeadSelectOptions />
+					<ManagerHeadSelectOptions bookmarksCount={getAllBookmarksResponse.length} />
 				) : (
 					<ManagerHeadFilters headerName="All bookmarks" icon={AiFillCloud} />
 				)}

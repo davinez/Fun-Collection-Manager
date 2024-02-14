@@ -167,12 +167,8 @@ export const ManagerHeadFilters = ({
 	};
 
 	const handleOnClickSelectAllCheckbox = () => {
-		// activate head with edit and select options if it is not active
-		if (!managerSlice.showHeadSelectOptions) {
-			managerSlice.resetSelectedBookmarksCheckbox();
-			managerSlice.setShowHeadSelectOptions(true);
-		}
-
+		managerSlice.resetSelectedBookmarksCheckbox();
+		managerSlice.setShowHeadSelectOptions(true);
 		managerSlice.setSelectAllBookmarks(true);
 	};
 
@@ -191,9 +187,12 @@ export const ManagerHeadFilters = ({
 
 	return (
 		<Flex
+			w="100%"
+			h="10%"
 			bg="brandPrimary.800"
 			justify="space-between"
-			px={1}
+			pl={6}
+			pr={8}
 			pt={1}
 			pb={2}
 			borderBottom="1px solid"
@@ -204,7 +203,7 @@ export const ManagerHeadFilters = ({
 			onMouseOver={handleMouseOver}
 			onMouseOut={handleMouseOut}
 		>
-			<Flex alignItems="center" gap={3} ml={4}>
+			<Flex alignItems="center" gap={3}>
 				{isHovering && (
 					<Checkbox
 						defaultChecked={false}
@@ -242,13 +241,13 @@ export const ManagerHeadFilters = ({
 				</Text>
 			</Flex>
 
-			<Flex justify="center" gap={1} mr={4}>
+			<Flex justify="center" align="center" gap={{ sm: 2, md: 4 }}>
 				<Popover>
 					<PopoverTrigger>
 						<Button
 							bg="brandPrimary.800"
-							px={2}
-							py={2}
+							p={0}
+							h={6}
 							color="brandPrimary.100"
 							_hover={{
 								bg: "brandPrimary.950",
@@ -258,8 +257,7 @@ export const ManagerHeadFilters = ({
 							}}
 						>
 							<Icon
-								mx="0px"
-								boxSize="4"
+								boxSize="5"
 								color="brandPrimary.150"
 								as={sortValueRadio?.icon}
 							/>
@@ -332,8 +330,8 @@ export const ManagerHeadFilters = ({
 					<PopoverTrigger>
 						<Button
 							bg="brandPrimary.800"
-							px={2}
-							py={2}
+							p={0}
+							h={6}
 							color="brandPrimary.100"
 							_hover={{
 								bg: "brandPrimary.950",
@@ -343,8 +341,7 @@ export const ManagerHeadFilters = ({
 							}}
 						>
 							<Icon
-								mx="0px"
-								boxSize="4"
+								boxSize="5"
 								color="brandPrimary.150"
 								as={viewValueRadio?.icon}
 							/>
