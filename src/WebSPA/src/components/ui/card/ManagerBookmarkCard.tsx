@@ -7,13 +7,12 @@ import {
 	Image,
 	Box,
 	Checkbox,
-	IconButton,
+	Button,
 	Icon,
-	useDisclosure,
 } from "@chakra-ui/react";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 // Components
-import { ManagerBookmarkModal } from "components/ui/modal";
+
 // Assets
 
 // Hooks
@@ -30,21 +29,20 @@ import { useStore } from "@/store/UseStore";
 
 type TManagerBookmarkCardProps = {
 	bookmark: TBookmark;
+	onOpenBookmarkModal: () => void;
+	setModalBookmark: React.Dispatch<React.SetStateAction<TBookmark | undefined>>;
 };
 
 export const ManagerBookmarkCard = ({
 	bookmark,
+	onOpenBookmarkModal,
+	setModalBookmark
 }: TManagerBookmarkCardProps) => {
 	// State Hooks
 	const [isHovering, setIsHovering] = useState(false);
 	const { managerSlice } = useStore();
 	const [checkedCard, setCheckedCard] = useState(false);
 	// General Hooks
-	const {
-		isOpen: isOpenBookmarkModal,
-		onOpen: onOpenBookmarkModal,
-		onClose: onCloseBookmarkModal,
-	} = useDisclosure();
 
 	const handleMouseOver = (bookmarkId: number) => {
 		setIsHovering(true);
@@ -91,6 +89,7 @@ export const ManagerBookmarkCard = ({
 	};
 
 	const handleOnClickEditBookmark = () => {
+		setModalBookmark(bookmark);
 		managerSlice.setBookmarkModalFormAction(FormActionEnum.Update);
 		onOpenBookmarkModal();
 	};
@@ -127,11 +126,6 @@ export const ManagerBookmarkCard = ({
 
 	return (
 		<>
-			<ManagerBookmarkModal
-				isOpen={isOpenBookmarkModal}
-				onClose={onCloseBookmarkModal}
-				bookmark={bookmark}
-			/>
 			<Card
 				w="100%"
 				h="100%"
@@ -337,9 +331,9 @@ export const ManagerBookmarkCard = ({
 								mt={2}
 								mr={2}
 							>
-								<IconButton
+								<Button
 									// Set edit functionality, open right drawer with form
-									aria-label="Search database"
+									aria-label="Edit bookmark"
 									size="sm"
 									_hover={{
 										bg: "brandPrimary.950",
@@ -347,18 +341,13 @@ export const ManagerBookmarkCard = ({
 									_active={{
 										bg: "brandPrimary.950",
 									}}
-									icon={
-										<Icon
-											boxSize="5"
-											color="brandPrimary.150"
-											as={AiFillEdit}
-										/>
-									}
 									bg="brandPrimary.900"
 									onClick={handleOnClickEditBookmark}
-								/>
-								<IconButton
-									aria-label="Search database"
+								>
+									<Icon boxSize="5" color="brandPrimary.150" as={AiFillEdit} />
+								</Button>
+								<Button
+									aria-label="Delete bookmark"
 									size="sm"
 									_hover={{
 										bg: "brandPrimary.950",
@@ -366,16 +355,15 @@ export const ManagerBookmarkCard = ({
 									_active={{
 										bg: "brandPrimary.950",
 									}}
-									icon={
-										<Icon
-											boxSize="5"
-											color="brandPrimary.150"
-											as={AiFillDelete}
-										/>
-									}
 									bg="brandPrimary.900"
 									onClick={handleOnClickDeleteBookmark}
-								/>
+								>
+									<Icon
+										boxSize="5"
+										color="brandPrimary.150"
+										as={AiFillDelete}
+									/>
+								</Button>
 							</Flex>
 						)}
 					</Flex>

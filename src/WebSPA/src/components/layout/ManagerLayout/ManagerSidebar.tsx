@@ -251,7 +251,7 @@ const NavItem = ({
 // function generic and type props explicitly.
 type TSidebarProps = {};
 
-export const SidebarManager = ({}: TSidebarProps &
+export const ManagerSidebar = ({}: TSidebarProps &
 	FlexProps): React.ReactElement => {
 	// State Hooks
 	const { managerSlice } = useStore();
@@ -432,6 +432,7 @@ export const SidebarManager = ({}: TSidebarProps &
 						color="brandPrimary.100"
 						border="1px solid"
 						borderColor="brandPrimary.900"
+						zIndex="sticky"
 					>
 						<MenuItem
 							bg="brandPrimary.800"

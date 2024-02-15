@@ -4,8 +4,8 @@ import {
 	GridItem,
 } from "@chakra-ui/react";
 // Components
-import { SidebarManager } from "./SidebarManager";
-import { NavbarManager } from "./NavbarManager";
+import { ManagerSidebar } from "./ManagerSidebar";
+import { ManagerNavbar } from "./ManagerNavbar";
 // Assets
 
 // Hooks
@@ -39,7 +39,6 @@ export const ManagerLayout = (): JSX.Element => {
 				pos="fixed"
 				top="0"
 				left="0"
-				zIndex="sticky"
 				h="full"
 				pb="10"
 				overflowX="hidden"
@@ -49,7 +48,7 @@ export const ManagerLayout = (): JSX.Element => {
 				borderRight="1px solid"
 				borderRightColor="gray"
 			>
-				<SidebarManager />
+				<ManagerSidebar />
 			</GridItem>
 
 			<GridItem
@@ -64,11 +63,11 @@ export const ManagerLayout = (): JSX.Element => {
 				w="full"
 				h="full"
 				bg="brandPrimary.800"
-				pl="15px"
-				pr="15px"
+				pl="20px"
+				pr="20px"
 				gap={2}	
 			>
-				<NavbarManager />
+				<ManagerNavbar />
 			</GridItem>
 
 			<GridItem 

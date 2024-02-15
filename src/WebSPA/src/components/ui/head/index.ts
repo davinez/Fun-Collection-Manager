@@ -1,2 +1,2 @@
-export * from "@/components/ui/head/ManagerHeadFilters";
-export * from "@/components/ui/head/ManagerHeadSelectOptions"
+export * from "@/components/ui/head/ManagerFiltersHead";
+export * from "@/components/ui/head/ManagerSelectOptionsHead"

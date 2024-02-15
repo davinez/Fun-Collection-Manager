@@ -43,5 +43,11 @@ export enum ShowInBookmarkEnum {
   Description = 'description',
   BookmarkInfo = 'bookmarkInfo'
 }
-         
+
+export enum FilterBookmarksEnum {
+  Info = 'info',
+  CreationDate = 'creationDate',
+  URL = 'url'
+}
+
 

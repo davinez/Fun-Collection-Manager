@@ -4,6 +4,7 @@ import {
   SortEnum,
   ViewCollectionsEnum,
   ShowInBookmarkEnum,
+  FilterBookmarksEnum
 } from "@/shared/types/global.types";
 
 export type TManagerSliceDefinition = {
@@ -17,6 +18,7 @@ export type TManagerSliceDefinition = {
   selectedBookmarksCheckbox: number[];
   selectAllBookmarks: boolean;
   showHeadSelectOptions: boolean;
+  selectedBookmarkCollectionFilter: string;
 };
 
 export type TManagerSliceActions = {
@@ -31,6 +33,7 @@ export type TManagerSliceActions = {
   resetSelectedBookmarksCheckbox: () => void;
   setSelectAllBookmarks: (payload: boolean) => void;
   setShowHeadSelectOptions: (payload: boolean) => void;
+  setSelectedBookmarkCollectionFilter: (payload: string) => void;
 };
 
 export type TManagerSlice = TManagerSliceDefinition & TManagerSliceActions;
@@ -45,7 +48,8 @@ const initialManagerSliceState: TManagerSliceDefinition = {
   selectedShowInValueCollectionFilter: [ShowInBookmarkEnum.Cover, ShowInBookmarkEnum.Title, ShowInBookmarkEnum.BookmarkInfo],
   selectedBookmarksCheckbox: [],
   selectAllBookmarks: false,
-  showHeadSelectOptions: false
+  showHeadSelectOptions: false,
+  selectedBookmarkCollectionFilter: FilterBookmarksEnum.Info
 };
 
 export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
@@ -102,6 +106,10 @@ export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
   setBookmarkModalFormAction: (payload): void =>
     set((state) => {
       state.managerSlice.bookmarkModalFormAction = payload;
+    }),
+  setSelectedBookmarkCollectionFilter: (payload): void =>
+    set((state) => {
+      state.managerSlice.selectedBookmarkCollectionFilter = payload;
     }),
   //   updateWallet: (payload) =>
   //   set(

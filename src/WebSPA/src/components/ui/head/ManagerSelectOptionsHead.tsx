@@ -1,24 +1,12 @@
 // Design
 import {
-	Hide,
-	Stack,
 	Text,
 	Flex,
 	Icon,
-	Image,
 	Button,
-	Popover,
-	PopoverTrigger,
-	PopoverContent,
-	PopoverBody,
-	RadioGroup,
-	Radio,
 	Checkbox,
-	useCheckboxGroup,
-	Divider,
 } from "@chakra-ui/react";
 import { AiFillDelete, AiOutlineClose } from "react-icons/ai";
-import { FaArrowDownAZ, FaArrowUpAZ } from "react-icons/fa6";
 // Components
 
 // Assets
@@ -26,7 +14,9 @@ import { FaArrowDownAZ, FaArrowUpAZ } from "react-icons/fa6";
 // Hooks
 
 // Types
-
+import {
+	FormActionEnum,
+} from "@/shared/types/global.types";
 // General
 import { useState } from "react";
 import { useStore } from "@/store/UseStore";
@@ -34,11 +24,13 @@ import { useStore } from "@/store/UseStore";
 type THeaderSelectOptionsProps = {
 	headerName?: string;
 	bookmarksCount: number;
+	onOpenBookmarkModal: () => void;
 };
 
-export const ManagerHeadSelectOptions = ({
+export const ManagerSelectOptionsHead = ({
 	headerName,
 	bookmarksCount,
+	onOpenBookmarkModal
 }: THeaderSelectOptionsProps) => {
 	// State Hooks
 	const { managerSlice } = useStore();
@@ -51,6 +43,11 @@ export const ManagerHeadSelectOptions = ({
 		managerSlice.resetSelectedBookmarksCheckbox();
 		managerSlice.setSelectAllBookmarks(false);
 		managerSlice.setShowHeadSelectOptions(false);
+	};
+
+	const handleOnClickDeleteButton = () => {
+		managerSlice.setBookmarkModalFormAction(FormActionEnum.Delete);
+		onOpenBookmarkModal();
 	};
 
 	const handleOnClickSelectAllCheckbox = (
@@ -140,14 +137,14 @@ export const ManagerHeadSelectOptions = ({
 					_active={{
 						bg: "brandPrimary.950",
 					}}
+					onClick={handleOnClickDeleteButton}
 				>
 					<Icon boxSize="5" color="brandPrimary.150" as={AiFillDelete} />
 				</Button>
 				<Button
-					aria-label="delete-selection"
+					aria-label="close-selection"
 					p={0}
 					h={6}
-					onClick={handleOnClickCloseButton}
 					bg="brandPrimary.900"
 					_hover={{
 						bg: "brandPrimary.950",
@@ -155,6 +152,7 @@ export const ManagerHeadSelectOptions = ({
 					_active={{
 						bg: "brandPrimary.950",
 					}}
+					onClick={handleOnClickCloseButton}
 				>
 					<Icon boxSize="5" color="brandPrimary.150" as={AiOutlineClose} />
 				</Button>

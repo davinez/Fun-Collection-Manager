@@ -1,38 +1,14 @@
 // Design
-import {
-	Hide,
-	Text,
-	Flex,
-	Card,
-	CardBody,
-	CardFooter,
-	Heading,
-	Divider,
-	Image,
-	Stack,
-	useToast,
-	type FlexProps,
-	Box,
-	CardHeader,
-} from "@chakra-ui/react";
-import {
-	AiFillCloud,
-	AiFillClockCircle,
-	AiFillChrome,
-	AiFillProfile,
-	AiFillLayout,
-	AiFillAppstore,
-} from "react-icons/ai";
-import { FaArrowDownAZ, FaArrowUpAZ } from "react-icons/fa6";
-import textStylesTheme from "shared/styles/theme/foundations/textStyles";
-import colorStylesTheme from "shared/styles/theme/foundations/colors";
+import { useToast, useDisclosure, Box } from "@chakra-ui/react";
+import { AiFillCloud } from "react-icons/ai";
 // Components
 import {
-	ManagerHeadFilters,
-	ManagerHeadSelectOptions,
+	ManagerFiltersHead,
+	ManagerSelectOptionsHead,
 } from "components/ui/head";
 import { LoadingBox, ErrorBox } from "@/components/ui/box";
 import { ManagerBookmarkCard } from "@/components/ui/card";
+import { ManagerBookmarkModal } from "@/components/ui/modal";
 // Assets
 
 // Hooks
@@ -40,13 +16,8 @@ import { useGetAllBookmarks } from "@/api/services/manager";
 import useBookmarkSort from "@/hooks/manager/useBookmarkSort";
 // Types
 import type { TBookmark } from "@/shared/types/api/manager.types";
-import {
-	ViewCollectionsEnum,
-	ShowInBookmarkEnum,
-	TBreakpointsStyling,
-} from "@/shared/types/global.types";
 // General
-import { Fragment, useState, useEffect } from "react";
+import { useState } from "react";
 import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/apiClient";
 
@@ -56,34 +27,63 @@ type TMainContentProps = {
 
 const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
 	// State Hooks
-	
+	const { managerSlice } = useStore();
+	const [modalBookmark, setModalBookmark] = useState<TBookmark | undefined>();
+	const {
+		isOpen: isOpenBookmarkModal,
+		onOpen: onOpenBookmarkModal,
+		onClose: onCloseBookmarkModal,
+	} = useDisclosure();
 	// General Hooks
 	const [sortedData] = useBookmarkSort(bookmarks);
 
 	return (
-		<Box
-			aria-label="page-maincontent"
-			h="auto"
-			w="100%"
-			px={4}
-			py={4}
-			display="grid"
-			gridAutoRows="1fr" /* make all rows the same height */
-			gridTemplateColumns={{ sm: "1fr 1fr", md: "1fr 1fr 1fr" }}
-			gap={4}
-			justifyItems="center"
-			alignItems="center"
-		>
-			{sortedData &&
-				sortedData.map((bookmark) => {
-					return (
-						<ManagerBookmarkCard
-							key={`RenderedCard_${bookmark.id}`}
-							bookmark={bookmark}
-						/>
-					);
-				})}
-		</Box>
+		<>
+			<ManagerBookmarkModal
+				aria-label="page-modal"
+				isOpen={isOpenBookmarkModal}
+				onClose={onCloseBookmarkModal}
+				bookmark={modalBookmark}
+			/>
+			{managerSlice.showHeadSelectOptions ? (
+				<ManagerSelectOptionsHead
+					aria-label="page-head"
+					bookmarksCount={bookmarks.length}
+					onOpenBookmarkModal={onOpenBookmarkModal}
+				/>
+			) : (
+				<ManagerFiltersHead
+					aria-label="page-head"
+					headerName="All bookmarks"
+					icon={AiFillCloud}
+				/>
+			)}
+			<Box
+				aria-label="page-maincontent"
+				h="auto"
+				w="100%"
+				px={4}
+				py={4}
+				display="grid"
+				gridAutoRows="1fr" /* make all rows the same height */
+				gridTemplateColumns={{ sm: "1fr 1fr", md: "1fr 1fr 1fr" }}
+				gap={4}
+				justifyItems="center"
+				alignItems="center"
+			>
+				{sortedData &&
+					sortedData.map((bookmark) => {
+						return (
+							<ManagerBookmarkCard
+								key={`RenderedCard_${bookmark.id}`}
+								bookmark={bookmark}
+								onOpenBookmarkModal={onOpenBookmarkModal}
+								setModalBookmark={setModalBookmark}
+							/>
+						);
+					})}
+			</Box>
+		</>
 	);
 };
 
@@ -92,7 +92,7 @@ type TAllBookmarksPageProps = {};
 export const AllBookmarksPage =
 	({}: TAllBookmarksPageProps): React.ReactElement => {
 		// State Hooks
-		const { managerSlice } = useStore();
+
 		// General Hooks
 		const {
 			isPending: isPendingGetAllBookmarks,
@@ -119,14 +119,5 @@ export const AllBookmarksPage =
 			return <ErrorBox />;
 		}
 
-		return (
-			<>
-				{managerSlice.showHeadSelectOptions ? (
-					<ManagerHeadSelectOptions bookmarksCount={getAllBookmarksResponse.length} />
-				) : (
-					<ManagerHeadFilters headerName="All bookmarks" icon={AiFillCloud} />
-				)}
-				<MainContent bookmarks={getAllBookmarksResponse} />
-			</>
-		);
+		return <MainContent bookmarks={getAllBookmarksResponse} />;
 	};

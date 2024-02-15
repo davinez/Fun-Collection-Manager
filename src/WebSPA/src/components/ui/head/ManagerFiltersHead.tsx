@@ -46,7 +46,7 @@ type TManagerHeadFiltersProps = {
 	headerName: string;
 };
 
-export const ManagerHeadFilters = ({
+export const ManagerFiltersHead = ({
 	icon,
 	headerName,
 }: TManagerHeadFiltersProps) => {
@@ -203,7 +203,12 @@ export const ManagerHeadFilters = ({
 			onMouseOver={handleMouseOver}
 			onMouseOut={handleMouseOut}
 		>
-			<Flex alignItems="center" gap={3}>
+			<Flex 
+			w={{sm: "42%", md: "13.4%"}}
+			aria-label="left-head-section" 
+			alignItems="center" 
+			justify="space-between" 
+			>
 				{isHovering && (
 					<Checkbox
 						defaultChecked={false}
@@ -241,12 +246,17 @@ export const ManagerHeadFilters = ({
 				</Text>
 			</Flex>
 
-			<Flex justify="center" align="center" gap={{ sm: 2, md: 4 }}>
+			<Flex
+				aria-label="right-head-section"
+				justify="center"
+				align="center"
+				gap={{ sm: 1, md: 1 }}
+			>
 				<Popover>
 					<PopoverTrigger>
 						<Button
 							bg="brandPrimary.800"
-							p={0}
+							p={2}
 							h={6}
 							color="brandPrimary.100"
 							_hover={{
@@ -269,6 +279,7 @@ export const ManagerHeadFilters = ({
 						</Button>
 					</PopoverTrigger>
 					<PopoverContent
+					  aria-label="sort-options-section"
 						zIndex="popover"
 						bg="brandPrimary.900"
 						color="brandPrimary.100"
@@ -328,9 +339,9 @@ export const ManagerHeadFilters = ({
 
 				<Popover>
 					<PopoverTrigger>
-						<Button
+						<Button	
 							bg="brandPrimary.800"
-							p={0}
+							p={2}
 							h={6}
 							color="brandPrimary.100"
 							_hover={{
@@ -353,6 +364,7 @@ export const ManagerHeadFilters = ({
 						</Button>
 					</PopoverTrigger>
 					<PopoverContent
+					  aria-label="showview-options-section"
 						zIndex="popover"
 						bg="brandPrimary.900"
 						color="brandPrimary.100"
