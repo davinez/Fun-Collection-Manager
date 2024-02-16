@@ -1,5 +1,5 @@
 // Design
-import { useToast, useDisclosure, Box } from "@chakra-ui/react";
+import { useToast, useDisclosure, Box, Flex } from "@chakra-ui/react";
 import { AiFillCloud } from "react-icons/ai";
 // Components
 import {
@@ -20,13 +20,14 @@ import type { TBookmark } from "@/shared/types/api/manager.types";
 import { useState } from "react";
 import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/apiClient";
+import { PAGE_ITEM_LIMIT } from "shared/config";
 
 type TMainContentProps = {
 	bookmarks: TBookmark[];
 };
 
 const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
-	// State Hooks
+	// Hooks
 	const { managerSlice } = useStore();
 	const [modalBookmark, setModalBookmark] = useState<TBookmark | undefined>();
 	const {
@@ -34,8 +35,18 @@ const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
 		onOpen: onOpenBookmarkModal,
 		onClose: onCloseBookmarkModal,
 	} = useDisclosure();
-	// General Hooks
 	const [sortedData] = useBookmarkSort(bookmarks);
+	const [pagesQuantity, setPagesQuantity] = useState(0);
+	const [currentPage, setCurrentPage] = useState(0);
+
+	// Handlers
+	const handlePageChange = (page) => {
+		setCurPage(page);
+	};
+
+	if (!sortedData) {
+		return <LoadingBox />;
+	}
 
 	return (
 		<>
@@ -71,18 +82,23 @@ const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
 				justifyItems="center"
 				alignItems="center"
 			>
-				{sortedData &&
-					sortedData.map((bookmark) => {
-						return (
-							<ManagerBookmarkCard
-								key={`RenderedCard_${bookmark.id}`}
-								bookmark={bookmark}
-								onOpenBookmarkModal={onOpenBookmarkModal}
-								setModalBookmark={setModalBookmark}
-							/>
-						);
-					})}
+				{sortedData.map((bookmark) => {
+					return (
+						<ManagerBookmarkCard
+							key={`SortedCard_${bookmark.id}`}
+							bookmark={bookmark}
+							onOpenBookmarkModal={onOpenBookmarkModal}
+							setModalBookmark={setModalBookmark}
+						/>
+					);
+				})}
 			</Box>
+			<Flex
+			aria-label="page-footer"
+			>
+				
+
+			</Flex>
 		</>
 	);
 };
@@ -91,9 +107,7 @@ type TAllBookmarksPageProps = {};
 
 export const AllBookmarksPage =
 	({}: TAllBookmarksPageProps): React.ReactElement => {
-		// State Hooks
-
-		// General Hooks
+		// Hooks
 		const {
 			isPending: isPendingGetAllBookmarks,
 			isError: isErrorGetAllBookmarks,
@@ -101,6 +115,11 @@ export const AllBookmarksPage =
 			data: getAllBookmarksResponse,
 		} = useGetAllBookmarks();
 		const toast = useToast();
+
+		// Handlers
+
+
+		// Render
 
 		if (isPendingGetAllBookmarks) {
 			return <LoadingBox />;

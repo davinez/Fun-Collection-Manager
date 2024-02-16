@@ -1,3 +1,4 @@
+import { FilterBookmarksEnum } from "@/shared/types/global.types";
 import * as z from "zod";
 import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from "shared/config";
 import { bytesToMegaBytes } from "shared/utils";
@@ -120,12 +121,22 @@ export type TBookmarkUpdatePayload = z.infer<typeof bookmarkUpdateFormPayload>;
 
 export const bookmarkDeleteFormPayload = z.object({
   bookmarkIds: z
-  .custom<number[]>()
-  .refine((ids) => {
-    return ids.length < 1 ? false : true;
-  }, "Empty Payload")  
-  .refine((ids) => {
-    return ids.every((id) => id > 0);
-  }, "Invalid Ids")  
+    .custom<number[]>()
+    .refine((ids) => {
+      return ids.length < 1 ? false : true;
+    }, "Empty Payload")
+    .refine((ids) => {
+      return ids.every((id) => id > 0);
+    }, "Invalid Ids")
 });
 export type TBookmarkDeletePayload = z.infer<typeof bookmarkDeleteFormPayload>;
+
+
+// Query Params Types //
+
+export type TGetBookmarksParams = {
+  page: number;
+  filterType: FilterBookmarksEnum;
+  debounceSearchValue: string;
+}
+

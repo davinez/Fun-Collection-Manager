@@ -1,4 +1,5 @@
 export * from './InputField';
+export * from './SearchInputField';
 export * from './TextAreaField';
 export * from './ManagerGroupAddForm';
 export * from './ManagerGroupUpdateForm';

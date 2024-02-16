@@ -18,7 +18,7 @@ import {
 	PopoverContent,
 	PopoverCloseButton,
 	PopoverBody,
-	Box,
+	Spinner,
 	Flex,
 	Text,
 } from "@chakra-ui/react";
@@ -33,7 +33,7 @@ import {
 } from "react-icons/ai";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
-import { ManagerURLAddForm } from "@/components/forms";
+import { ManagerURLAddForm, SearchInputField } from "@/components/forms";
 // Assets
 
 // Types
@@ -42,7 +42,9 @@ import { FilterBookmarksEnum } from "@/shared/types/global.types";
 import { useState } from "react";
 import { useStore } from "@/store/UseStore";
 
-export const ManagerNavbar = (): React.ReactElement => {
+type TManagerNavbarProps = {};
+
+export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 	const filterbookmarkOptions = [
 		{
 			value: FilterBookmarksEnum.Info,
@@ -61,14 +63,13 @@ export const ManagerNavbar = (): React.ReactElement => {
 		},
 	];
 
-	// State Hooks
+	// Hooks
 	const { managerSlice } = useStore();
 	const [filterOptionRadio, setFilterOptionRadio] = useState(
 		filterbookmarkOptions.find(
 			(option) => option.value === managerSlice.selectedBookmarkCollectionFilter
 		)
 	);
-	// General Hooks
 
 	const handleOnChangeBookmarkFilterOption = (value: string | string[]) => {
 		if (typeof value === "string") {
@@ -93,6 +94,12 @@ export const ManagerNavbar = (): React.ReactElement => {
 					base: "80%",
 					md: "40%",
 				}}
+				borderLeftRadius={5}
+				borderRightRadius={5}
+				_focusWithin={{
+					border: "1px solid",
+					borderColor: "brandSecondary.800",
+				}}
 			>
 				<InputLeftElement h="100%" left="4px" gap="2px" pointerEvents="none">
 					<Icon as={AiOutlineSearch} boxSize="5" color="brandPrimary.150" />
@@ -103,12 +110,11 @@ export const ManagerNavbar = (): React.ReactElement => {
 					/>
 				</InputLeftElement>
 
-				<Input
+				<SearchInputField
 					w="100%"
-					pl="48px"
+					pl="50px"
 					variant="navbar"
 					placeholder="Search"
-					// to filter bookmark data handle on change input https://chakra-ui.com/docs/components/input/usage#controlled-input
 				/>
 
 				<InputRightElement h="100%">
@@ -122,31 +128,26 @@ export const ManagerNavbar = (): React.ReactElement => {
 							_active={{
 								bg: "brandPrimary.800",
 							}}
-							p="5px"
-							w="100%"
 							h="100%"
-							borderLeftRadius={5}
-							borderRightRadius={0}
+							p={0}
 						>
-							<Box>
-								<Icon
-									boxSize={textStylesTheme.textStyles.primary.fontSize}
-									as={AiFillFilter}
-									color="brandPrimary.150"
-								/>
-								<Icon
-									boxSize={textStylesTheme.textStyles.primary.fontSize}
-									as={AiFillCaretDown}
-									color="brandPrimary.150"
-								/>
-							</Box>
+							<Icon
+								boxSize={textStylesTheme.textStyles.primary.fontSize}
+								as={AiFillFilter}
+								color="brandPrimary.150"
+							/>
+							<Icon
+								boxSize={textStylesTheme.textStyles.primary.fontSize}
+								as={AiFillCaretDown}
+								color="brandPrimary.150"
+							/>
 						</MenuButton>
 						<MenuList
 							aria-label="filter-options-section"
 							bg="brandPrimary.900"
 							color="brandPrimary.100"
 							border="none"
-							w="195px"
+							w="200px"
 							minW={0}
 						>
 							<MenuOptionGroup

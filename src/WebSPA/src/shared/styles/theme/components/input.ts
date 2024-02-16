@@ -13,21 +13,18 @@ const { definePartsStyle, defineMultiStyleConfig } =
 
 const navbar = definePartsStyle({
   field: {
-    border: '0px solid',
     background: `${bgColor}`,
     color: `${fontColor}`,
     fontSize: `${fontSize}`,
     h: 'auto'
   },
   addon: {
-    border: '0px solid',
     background: `${bgColor}`,
     color: `${fontColor}`,
     fontSize: `${fontSize}`,
     h: 'auto'
   },
   element: {
-    border: '0px solid',
     background: `${bgColor}`,
     color: `${fontColor}`,
     fontSize: `${fontSize}`,

@@ -8,7 +8,8 @@ import type {
   TBookmarkUpdatePayload,
   TBookmarkDeletePayload,
   TGroup,
-  TBookmark
+  TBookmark,
+  TGetBookmarksParams
 } from "@/shared/types/api/manager.types";
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -29,7 +30,7 @@ The promise that is returned should either resolve the data or throw an error.
  React Query will return the cached data instead of performing a new fetch.
 */
 
-/***** Queries *****/ 
+/***** Queries *****/
 
 export const useGetCollectionsQuery = () => {
   return useQuery({
@@ -52,17 +53,22 @@ export const useGetGroupByIdQuery = (id: number) => {
   });
 }
 
-export const useGetAllBookmarks = () => {
+export const useGetAllBookmarks = ({ page, filterType, debounceSearchValue }: TGetBookmarksParams) => {
   return useQuery({
-    queryKey: ["bookmarks"],
+    queryKey: ["bookmarks", { page, filterType, debounceSearchValue }],
     queryFn: async () => {
-      const response = await $apiClient.get<TApiResponse<TBookmark[]>>('/manager/bookmarks');
+      const response = await $apiClient.get<TApiResponse<TBookmark[]>>('/manager/bookmarks',
+        {
+          page: page,
+          filter_type: filterType,
+          search_value: debounceSearchValue
+        });
       return response.data.data
     }
   });
 }
 
-/***** Mutations *****/ 
+/***** Mutations *****/
 
 export const useAddCategoryMutation = () => {
   return useMutation({
