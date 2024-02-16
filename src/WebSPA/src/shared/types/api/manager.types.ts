@@ -136,7 +136,8 @@ export type TBookmarkDeletePayload = z.infer<typeof bookmarkDeleteFormPayload>;
 
 export type TGetBookmarksParams = {
   page: number;
-  filterType: FilterBookmarksEnum;
+  pageLimit: number;
+  filterType: string;
   debounceSearchValue: string;
 }
 

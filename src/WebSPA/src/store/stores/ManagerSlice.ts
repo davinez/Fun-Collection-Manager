@@ -6,6 +6,8 @@ import {
   ShowInBookmarkEnum,
   FilterBookmarksEnum
 } from "@/shared/types/global.types";
+import { TGetBookmarksParams } from "@/shared/types/api/manager.types";
+import { PAGE_ITEM_LIMIT } from "shared/config";
 
 export type TManagerSliceDefinition = {
   groupModalFormAction: FormActionEnum;
@@ -19,6 +21,7 @@ export type TManagerSliceDefinition = {
   selectAllBookmarks: boolean;
   showHeadSelectOptions: boolean;
   selectedBookmarkCollectionFilter: string;
+  getBookmarkParams: TGetBookmarksParams;
 };
 
 export type TManagerSliceActions = {
@@ -34,6 +37,9 @@ export type TManagerSliceActions = {
   setSelectAllBookmarks: (payload: boolean) => void;
   setShowHeadSelectOptions: (payload: boolean) => void;
   setSelectedBookmarkCollectionFilter: (payload: string) => void;
+  setGetBookmarkParamsFilter: (payload: string) => void;
+  setGetBookmarkParamsSearchValue: (payload: string) => void;
+  setGetBookmarkParamsPage: (payload: number) => void;
 };
 
 export type TManagerSlice = TManagerSliceDefinition & TManagerSliceActions;
@@ -49,7 +55,13 @@ const initialManagerSliceState: TManagerSliceDefinition = {
   selectedBookmarksCheckbox: [],
   selectAllBookmarks: false,
   showHeadSelectOptions: false,
-  selectedBookmarkCollectionFilter: FilterBookmarksEnum.Info
+  selectedBookmarkCollectionFilter: FilterBookmarksEnum.Info,
+  getBookmarkParams: {
+    page: 1,
+    pageLimit: PAGE_ITEM_LIMIT,
+    filterType: FilterBookmarksEnum.Info,
+    debounceSearchValue: ""
+  }
 };
 
 export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
@@ -110,6 +122,18 @@ export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
   setSelectedBookmarkCollectionFilter: (payload): void =>
     set((state) => {
       state.managerSlice.selectedBookmarkCollectionFilter = payload;
+    }),
+  setGetBookmarkParamsFilter: (payload): void =>
+    set((state) => {
+      state.managerSlice.getBookmarkParams.filterType = payload;
+    }),
+  setGetBookmarkParamsPage: (payload): void =>
+    set((state) => {
+      state.managerSlice.getBookmarkParams.page = payload;
+    }),
+  setGetBookmarkParamsSearchValue: (payload): void =>
+    set((state) => {
+      state.managerSlice.getBookmarkParams.debounceSearchValue = payload;
     }),
   //   updateWallet: (payload) =>
   //   set(

@@ -40,9 +40,9 @@ export const defaultHandlerApiError = (error: Error | unknown) => {
 
 type TApi = {
   get: <T>(url: string, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
-  post: <T>(url: string, data: object) => Promise<AxiosResponse<T, unknown>>;
-  patch: <T>(url: string, data: object) => Promise<AxiosResponse<T, unknown>>;
-  delete: <T>(url: string, data?: object) => Promise<AxiosResponse<T, unknown>>;
+  post: <T>(url: string, data: object, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
+  patch: <T>(url: string, data: object, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
+  delete: <T>(url: string, data?: object, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
 }
 
 const apiClient = (baseURL: string): TApi => {
@@ -61,25 +61,28 @@ const apiClient = (baseURL: string): TApi => {
         headers: {
           token: authSlice.accessToken,
         },
-        ...parameters,
+        params: parameters,
       }),
-    post: <T>(url: string, data: object) =>
+    post: <T>(url: string, data: object, parameters?: object) =>
       apiClient.post<T>(url, data, {
         headers: {
           token: authSlice.accessToken,
         },
+        params: parameters,
       }),
-    patch: <T>(url: string, data: object) =>
+    patch: <T>(url: string, data: object, parameters?: object) =>
       apiClient.patch<T>(url, data, {
         headers: {
           token: authSlice.accessToken,
         },
+        params: parameters,
       }),
-    delete: <T>(url: string, data?: object) =>
+    delete: <T>(url: string, data?: object, parameters?: object) =>
       apiClient.delete<T>(url, {
         headers: {
           token: authSlice.accessToken,
         },
+        params: parameters,
         data: {
           source: data
         }

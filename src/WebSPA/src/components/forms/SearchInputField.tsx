@@ -28,8 +28,9 @@ export const SearchInputField = ({
 	const [searchValueDebounce] = useDebounce(searchValue, 1000, { leading: true });
 
   useEffect(() => {
+    // Pending value sanitization
     if(searchValueDebounce.trim().length >= 3) {
-      
+      managerSlice.setGetBookmarkParamsSearchValue(searchValueDebounce.trim());
     }
   }, [searchValueDebounce]);
 

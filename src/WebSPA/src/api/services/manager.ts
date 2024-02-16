@@ -53,17 +53,24 @@ export const useGetGroupByIdQuery = (id: number) => {
   });
 }
 
-export const useGetAllBookmarks = ({ page, filterType, debounceSearchValue }: TGetBookmarksParams) => {
+export const useGetAllBookmarks = ({ page, pageLimit, filterType, debounceSearchValue }: TGetBookmarksParams) => {
   return useQuery({
     queryKey: ["bookmarks", { page, filterType, debounceSearchValue }],
     queryFn: async () => {
       const response = await $apiClient.get<TApiResponse<TBookmark[]>>('/manager/bookmarks',
-        {
-          page: page,
-          filter_type: filterType,
-          search_value: debounceSearchValue
-        });
-      return response.data.data
+        debounceSearchValue.length !== 0 ?
+          {
+            page: page,
+            page_limit: pageLimit,
+            filter_type: filterType,
+            search_value: debounceSearchValue
+          } :
+          {
+            page: page,
+            page_limit: pageLimit
+          }
+      );
+      return response.data
     }
   });
 }

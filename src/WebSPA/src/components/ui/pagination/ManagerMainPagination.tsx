@@ -30,6 +30,9 @@ import {
 	AiFillDatabase,
 	AiFillClockCircle,
 	AiFillChrome,
+	AiFillBackward,
+	AiFillForward,
+	AiOutlineEllipsis,
 } from "react-icons/ai";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
@@ -39,123 +42,170 @@ import { ManagerURLAddForm, SearchInputField } from "@/components/forms";
 // Types
 import { FilterBookmarksEnum } from "@/shared/types/global.types";
 // General
-import React, { useState } from "react";
+import React, { useState, useEffect, ReactElement } from "react";
 import { useStore } from "@/store/UseStore";
 
 type TPagButtonProps = {
 	children?: React.ReactNode;
+	active?: boolean;
 };
 
-const PagButton = ({children} : TPagButtonProps) => {
-	const activeStyle = {
-		bg: "brand.600",
-		_dark: {
-			bg: "brand.500",
-		},
-		color: "white",
-	};
+const PagButton = ({ active, children }: TPagButtonProps) => {
 	return (
 		<Button
 			mx={1}
 			px={4}
 			py={2}
 			rounded="md"
-			bg="white"
+			bg={active ? "gray.800" : "gray.700"}
 			_dark={{
 				bg: "gray.800",
 			}}
 			color="gray.700"
-			opacity={props.disabled && 0.6}
-			_hover={!props.disabled && activeStyle}
-			cursor={props.disabled && "not-allowed"}
-			{...(props.active && activeStyle)}
+			_hover={
+				active
+					? {
+							bg: "brand.600",
+							color: "white",
+					  }
+					: {}
+			}
 		>
 			{children}
 		</Button>
 	);
 };
 
-export const ManagerMainPagination = (): React.ReactElement => {
+type TMoreButtonProps = {
+	left?: boolean;
+	right?: boolean;
+};
 
-	const MButton = (props) => {
-		const DoubleArrow = props.left ? ArrowLeftIcon : ArrowRightIcon;
-		const [hovered, setHovered] = React.useState(false);
-		const hoverColor = useColorModeValue("brand.800", "brand.700");
-		const unHoverColor = useColorModeValue("gray.100", "gray.200");
-		return (
-			<chakra.a
-				w={8}
-				py={2}
-				color="gray.700"
-				_dark={{
-					color: "gray.200",
-				}}
-				onMouseOver={() => setHovered(true)}
-				onMouseOut={() => setHovered(false)}
-				cursor="pointer"
-				textAlign="center"
-			>
-				{hovered ? (
-					<Icon
-						as={DoubleArrow}
-						boxSize={3}
-						cursor="pointer"
-						color={hoverColor}
-					/>
-				) : (
-					<Icon
-						as={HiDotsHorizontal}
-						color={unHoverColor}
-						boxSize={4}
-						opacity={0.5}
-					/>
-				)}
-			</chakra.a>
-		);
+const MoreButton = ({ left, right }: TMoreButtonProps) => {
+	const DoubleArrow = left ? AiFillBackward : AiFillForward;
+	const [isHovering, setIsHovering] = useState(false);
+
+	const handleMouseOver = () => {
+		setIsHovering(true);
 	};
+
+	const handleMouseOut = () => {
+		setIsHovering(false);
+	};
+
+	return (
+		<Button
+			w={8}
+			py={2}
+			color="gray.700"
+			onMouseOver={handleMouseOver}
+			onMouseOut={handleMouseOut}
+			cursor="pointer"
+			textAlign="center"
+		>
+			{isHovering ? (
+				<Icon as={DoubleArrow} boxSize={3} cursor="pointer" color="brand.700" />
+			) : (
+				<Icon
+					as={AiOutlineEllipsis}
+					color="gray.200"
+					boxSize={4}
+					opacity={0.5}
+				/>
+			)}
+		</Button>
+	);
+};
+
+type TManagerMainPaginationProps = {
+	total: number;
+};
+
+export const ManagerMainPagination = ({
+	total,
+}: TManagerMainPaginationProps): React.ReactElement => {
+	// Hooks
+	const [pagesQuantity, setPagesQuantity] = useState(0);
+	//const [currentPage, setCurrentPage] = useState(0);
+	const { managerSlice } = useStore();
+
+	useEffect(() => {
+		// console.log(Math.ceil(total / managerSlice.getBookmarkParams.pageLimit));
+		setPagesQuantity(
+			Math.ceil(total / managerSlice.getBookmarkParams.pageLimit)
+		);
+	}, [total]);
+
+	// Handlers
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
+	};
+
+	const generatePagesButtons = () => {
+    const currentPage = managerSlice.getBookmarkParams.page;
+		let lowerLimit = currentPage - 4 === 1 ? 1 : currentPage - 4;
+		let upperLimit = currentPage + 4 > pagesQuantity ? pagesQuantity : currentPage + 4;
+    let arrSize = 1;//upperLimit - 9 !== 0 ? 9 : 
+
+		// 1
+		// 12
+		// 123
+		// 1234
+		// 12345
+    // 123456
+		// 1234567
+
+		// 1   2   3 4 ... 8
+
+		// 123456789
+
+		// 10 ... 12 13   14   15 16 ... 18
+
+		while (arrSize < 9 &&
+			arrSize + lowerLimit <= upperLimit) {
+			arrSize++;
+		}
+     
+		const pagesArr = [...Array(arrSize).keys()].map(i => i + lowerLimit);
+		const pagesButtons : ReactElement[] = pagesArr.map(page => {
+      
+		});
+
+
+
+		return (
+
+		)
+	}
 
 	return (
 		<Flex
 			bg="#edf3f8"
-			_dark={{
-				bg: "#3e3e3e",
-			}}
 			p={50}
 			w="full"
 			alignItems="center"
 			justifyContent="center"
 		>
-			<Flex>
+			{
+				generatePagesButtons()
+			}
 				<PagButton>
-					<Icon
-						as={IoIosArrowBack}
-						color="gray.700"
-						_dark={{
-							color: "gray.200",
-						}}
-						boxSize={4}
-					/>
+					<Icon as={AiFillBackward} color="gray.700" boxSize={4} />
+					<Text>Previous Page</Text>
 				</PagButton>
 				<PagButton>1</PagButton>
-				<MButton left />
+				<MoreButton left />
 				<PagButton>5</PagButton>
 				<PagButton>6</PagButton>
 				<PagButton active>7</PagButton>
 				<PagButton>8</PagButton>
 				<PagButton>9</PagButton>
-				<MButton right />
+				<MoreButton right />
 				<PagButton>50</PagButton>
 				<PagButton>
-					<Icon
-						as={IoIosArrowForward}
-						color="gray.700"
-						_dark={{
-							color: "gray.200",
-						}}
-						boxSize={4}
-					/>
+					<Text>Next Page</Text>
+					<Icon as={AiFillForward} color="gray.700" boxSize={4} />
 				</PagButton>
-			</Flex>
 		</Flex>
 	);
 };

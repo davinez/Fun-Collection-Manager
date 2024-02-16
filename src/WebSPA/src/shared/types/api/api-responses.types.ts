@@ -24,6 +24,7 @@
 
 export type TApiResponse<T extends object | undefined = undefined> = {
   data: T;
+  total?: number;
 }
 
 type TApiError = {

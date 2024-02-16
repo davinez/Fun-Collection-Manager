@@ -9,21 +9,22 @@ import {
 import { LoadingBox, ErrorBox } from "@/components/ui/box";
 import { ManagerBookmarkCard } from "@/components/ui/card";
 import { ManagerBookmarkModal } from "@/components/ui/modal";
+import { ManagerMainPagination } from "@/components/ui/pagination";
 // Assets
 
 // Hooks
 import { useGetAllBookmarks } from "@/api/services/manager";
 import useBookmarkSort from "@/hooks/manager/useBookmarkSort";
 // Types
+import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import type { TBookmark } from "@/shared/types/api/manager.types";
 // General
 import { useState } from "react";
 import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/apiClient";
-import { PAGE_ITEM_LIMIT } from "shared/config";
 
 type TMainContentProps = {
-	bookmarks: TBookmark[];
+	bookmarks: TApiResponse<TBookmark[]>;
 };
 
 const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
@@ -35,14 +36,9 @@ const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
 		onOpen: onOpenBookmarkModal,
 		onClose: onCloseBookmarkModal,
 	} = useDisclosure();
-	const [sortedData] = useBookmarkSort(bookmarks);
-	const [pagesQuantity, setPagesQuantity] = useState(0);
-	const [currentPage, setCurrentPage] = useState(0);
+	const [sortedData] = useBookmarkSort(bookmarks.data);
 
 	// Handlers
-	const handlePageChange = (page) => {
-		setCurPage(page);
-	};
 
 	if (!sortedData) {
 		return <LoadingBox />;
@@ -59,7 +55,7 @@ const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
 			{managerSlice.showHeadSelectOptions ? (
 				<ManagerSelectOptionsHead
 					aria-label="page-head"
-					bookmarksCount={bookmarks.length}
+					bookmarksCount={bookmarks.total as number}
 					onOpenBookmarkModal={onOpenBookmarkModal}
 				/>
 			) : (
@@ -93,11 +89,8 @@ const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
 					);
 				})}
 			</Box>
-			<Flex
-			aria-label="page-footer"
-			>
-				
-
+			<Flex aria-label="page-footer">
+				<ManagerMainPagination total={bookmarks.total as number} />
 			</Flex>
 		</>
 	);
@@ -108,16 +101,16 @@ type TAllBookmarksPageProps = {};
 export const AllBookmarksPage =
 	({}: TAllBookmarksPageProps): React.ReactElement => {
 		// Hooks
+		const { managerSlice } = useStore();
 		const {
 			isPending: isPendingGetAllBookmarks,
 			isError: isErrorGetAllBookmarks,
 			error: errorGetAllBookmarks,
 			data: getAllBookmarksResponse,
-		} = useGetAllBookmarks();
+		} = useGetAllBookmarks(managerSlice.getBookmarkParams);
 		const toast = useToast();
 
 		// Handlers
-
 
 		// Render
 
