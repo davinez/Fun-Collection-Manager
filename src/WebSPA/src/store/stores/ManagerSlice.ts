@@ -20,7 +20,6 @@ export type TManagerSliceDefinition = {
   selectedBookmarksCheckbox: number[];
   selectAllBookmarks: boolean;
   showHeadSelectOptions: boolean;
-  selectedBookmarkCollectionFilter: string;
   getBookmarkParams: TGetBookmarksParams;
 };
 
@@ -36,7 +35,6 @@ export type TManagerSliceActions = {
   resetSelectedBookmarksCheckbox: () => void;
   setSelectAllBookmarks: (payload: boolean) => void;
   setShowHeadSelectOptions: (payload: boolean) => void;
-  setSelectedBookmarkCollectionFilter: (payload: string) => void;
   setGetBookmarkParamsFilter: (payload: string) => void;
   setGetBookmarkParamsSearchValue: (payload: string) => void;
   setGetBookmarkParamsPage: (payload: number) => void;
@@ -55,7 +53,6 @@ const initialManagerSliceState: TManagerSliceDefinition = {
   selectedBookmarksCheckbox: [],
   selectAllBookmarks: false,
   showHeadSelectOptions: false,
-  selectedBookmarkCollectionFilter: FilterBookmarksEnum.Info,
   getBookmarkParams: {
     page: 1,
     pageLimit: PAGE_ITEM_LIMIT,
@@ -118,10 +115,6 @@ export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
   setBookmarkModalFormAction: (payload): void =>
     set((state) => {
       state.managerSlice.bookmarkModalFormAction = payload;
-    }),
-  setSelectedBookmarkCollectionFilter: (payload): void =>
-    set((state) => {
-      state.managerSlice.selectedBookmarkCollectionFilter = payload;
     }),
   setGetBookmarkParamsFilter: (payload): void =>
     set((state) => {

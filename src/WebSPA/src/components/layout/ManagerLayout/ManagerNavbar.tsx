@@ -67,9 +67,10 @@ export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 	const { managerSlice } = useStore();
 	const [filterOptionRadio, setFilterOptionRadio] = useState(
 		filterbookmarkOptions.find(
-			(option) => option.value === managerSlice.selectedBookmarkCollectionFilter
+			(option) => option.value === managerSlice.getBookmarkParams.filterType
 		)
 	);
+
 
 	const handleOnChangeBookmarkFilterOption = (value: string | string[]) => {
 		if (typeof value === "string") {
@@ -77,7 +78,7 @@ export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 				Object.values(FilterBookmarksEnum).includes(value);
 			// Only if value of radio option exists in enum value
 			if (enumValueExists) {
-				managerSlice.setSelectedBookmarkCollectionFilter(value);
+				managerSlice.setGetBookmarkParamsFilter(value);
 				setFilterOptionRadio(
 					filterbookmarkOptions.find((option) => option.value === value)
 				);
@@ -153,7 +154,7 @@ export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 							<MenuOptionGroup
 								title="Filter By"
 								type="radio"
-								defaultValue={managerSlice.selectedBookmarkCollectionFilter.toString()}
+								defaultValue={managerSlice.getBookmarkParams.filterType.toString()}
 								onChange={handleOnChangeBookmarkFilterOption}
 							>
 								{filterbookmarkOptions.map((option, index) => {

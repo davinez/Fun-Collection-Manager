@@ -405,7 +405,7 @@ export const ManagerSidebar = ({}: TSidebarProps &
 	return (
 		<>
 			<ManagerGroupModal isOpen={isOpenGroupModal} onClose={onCloseGroupModal} />
-			<Flex pl="3" py="2" alignItems="center">
+			<Flex w="100%" pl="3" py="2" alignItems="center">
 				<Menu>
 					<MenuButton
 						as={Button}

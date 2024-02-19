@@ -8,12 +8,13 @@ import type {
   TBookmarkUpdatePayload,
   TBookmarkDeletePayload,
   TGroup,
-  TBookmark,
+  TGetBookmarks,
   TGetBookmarksParams
 } from "@/shared/types/api/manager.types";
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import { useQuery, useMutation } from '@tanstack/react-query';
 import apiClient from "@/api/apiClient";
+import { useStore } from "@/store/UseStore";
 
 const API_BASE_URL = "http://localhost:7000/api";
 
@@ -38,8 +39,7 @@ export const useGetCollectionsQuery = () => {
     queryFn: async () => {
       const response = await $apiClient.get<TApiResponse<TGetCollectionGroups>>("/manager/groups/collection-groups");
       return response.data.data
-    },
-    staleTime: 20_000,
+    }
   });
 }
 
@@ -53,11 +53,11 @@ export const useGetGroupByIdQuery = (id: number) => {
   });
 }
 
-export const useGetAllBookmarks = ({ page, pageLimit, filterType, debounceSearchValue }: TGetBookmarksParams) => {
+export const useGetAllBookmarks = ({page, pageLimit, filterType, debounceSearchValue}: TGetBookmarksParams) => {
   return useQuery({
-    queryKey: ["bookmarks", { page, filterType, debounceSearchValue }],
+    queryKey: ["bookmarks", { currentPage: page, debounceSearchValue }],
     queryFn: async () => {
-      const response = await $apiClient.get<TApiResponse<TBookmark[]>>('/manager/bookmarks',
+      const response = await $apiClient.get<TApiResponse<TGetBookmarks>>('/manager/bookmarks',
         debounceSearchValue.length !== 0 ?
           {
             page: page,

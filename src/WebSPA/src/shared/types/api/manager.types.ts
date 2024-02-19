@@ -33,6 +33,11 @@ export type TGroup = {
   name: string;
 }
 
+export type TGetBookmarks = {
+  bookmarks: TBookmark[];
+  total: number;
+}
+
 export type TBookmark = {
   id: number;
   cover: string;
@@ -130,7 +135,6 @@ export const bookmarkDeleteFormPayload = z.object({
     }, "Invalid Ids")
 });
 export type TBookmarkDeletePayload = z.infer<typeof bookmarkDeleteFormPayload>;
-
 
 // Query Params Types //
 

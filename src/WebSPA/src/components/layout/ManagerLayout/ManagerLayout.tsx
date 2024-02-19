@@ -26,7 +26,7 @@ export const ManagerLayout = (): JSX.Element => {
 				sm: "200px 1fr",
 				md: "220px 1fr"
 			}}
-			gridTemplateRows="3rem 1fr"
+			gridTemplateRows="48px 1fr"
 			gap="0"
 			minH="100vh"
 			maxWidth="100vw"		

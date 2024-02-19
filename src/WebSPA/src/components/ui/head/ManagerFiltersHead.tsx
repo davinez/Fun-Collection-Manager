@@ -188,7 +188,7 @@ export const ManagerFiltersHead = ({
 	return (
 		<Flex
 			w="100%"
-			h="10%"
+			h="48px"
 			bg="brandPrimary.800"
 			justify="space-between"
 			pl={6}

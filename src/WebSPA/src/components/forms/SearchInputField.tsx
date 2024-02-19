@@ -1,8 +1,5 @@
 // Design
-import {
-	Input,
-	InputProps,
-} from "@chakra-ui/react";
+import { Input, InputProps } from "@chakra-ui/react";
 // Components
 
 // Assets
@@ -14,41 +11,40 @@ import {
 // General
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
-import { useDebounce } from 'use-debounce';
+import { useDebouncedCallback } from "use-debounce";
 
-type TSearchInputFieldProps = {
-};
+type TSearchInputFieldProps = {};
 
 export const SearchInputField = ({
 	...rest
 }: TSearchInputFieldProps & InputProps) => {
-  // Hooks
-  const { managerSlice } = useStore();
+	// Hooks
+	const { managerSlice } = useStore();
 	const [searchValue, setSearchValue] = useState("");
-	const [searchValueDebounce] = useDebounce(searchValue, 1000, { leading: true });
-
-  useEffect(() => {
-    // Pending value sanitization
-    if(searchValueDebounce.trim().length >= 3) {
-      managerSlice.setGetBookmarkParamsSearchValue(searchValueDebounce.trim());
-    }
-  }, [searchValueDebounce]);
-
-  // Handlers
-  const handleOnChangeSearchInput = (
-		event: React.SyntheticEvent<EventTarget>
-	) => {
-		if (event.target instanceof HTMLInputElement) {
-			setSearchValue(event.target.value);
+	const debounced = useDebouncedCallback(
+		// function
+		(event: React.SyntheticEvent<EventTarget>) => {
+			if (event.target instanceof HTMLInputElement) {
+				// Pending value sanitization
+				console.log("handleOnChangeSearchInput " + event.target.value);
+				setSearchValue(event.target.value.trim());
+			}
+		},
+		// delay in ms
+		1500,
+		// Config debounce
+		{
+			leading: false,
 		}
-	};
-
-  // leading = true, value is updated immediately when text changes the first time,
-  // but all subsequent changes are debounced.
-  return (
-			<Input 
-      onChange={handleOnChangeSearchInput}
-      {...rest}
-      />
 	);
+
+	useEffect(() => {
+		if (searchValue) {
+			managerSlice.setGetBookmarkParamsSearchValue(searchValue);
+		} else {
+			managerSlice.setGetBookmarkParamsSearchValue("");
+		}
+	}, [searchValue]);
+
+	return <Input onChange={debounced} {...rest} />;
 };

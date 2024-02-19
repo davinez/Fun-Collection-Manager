@@ -16,18 +16,20 @@ import { ManagerMainPagination } from "@/components/ui/pagination";
 import { useGetAllBookmarks } from "@/api/services/manager";
 import useBookmarkSort from "@/hooks/manager/useBookmarkSort";
 // Types
-import type { TApiResponse } from "@/shared/types/api/api-responses.types";
-import type { TBookmark } from "@/shared/types/api/manager.types";
+import type {
+	TBookmark,
+	TGetBookmarks,
+} from "@/shared/types/api/manager.types";
 // General
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/apiClient";
 
 type TMainContentProps = {
-	bookmarks: TApiResponse<TBookmark[]>;
+	data: TGetBookmarks;
 };
 
-const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
+const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 	// Hooks
 	const { managerSlice } = useStore();
 	const [modalBookmark, setModalBookmark] = useState<TBookmark | undefined>();
@@ -36,7 +38,7 @@ const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
 		onOpen: onOpenBookmarkModal,
 		onClose: onCloseBookmarkModal,
 	} = useDisclosure();
-	const [sortedData] = useBookmarkSort(bookmarks.data);
+	const [sortedData] = useBookmarkSort(data.bookmarks);
 
 	// Handlers
 
@@ -55,7 +57,7 @@ const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
 			{managerSlice.showHeadSelectOptions ? (
 				<ManagerSelectOptionsHead
 					aria-label="page-head"
-					bookmarksCount={bookmarks.total as number}
+					bookmarksCount={data.total as number}
 					onOpenBookmarkModal={onOpenBookmarkModal}
 				/>
 			) : (
@@ -89,8 +91,11 @@ const MainContent = ({ bookmarks }: TMainContentProps): React.ReactElement => {
 					);
 				})}
 			</Box>
-			<Flex aria-label="page-footer">
-				<ManagerMainPagination total={bookmarks.total as number} />
+			<Flex 
+			aria-label="page-footer"
+			w="100%"
+			mt={5}>
+				<ManagerMainPagination totalCount={data.total as number} />
 			</Flex>
 		</>
 	);
@@ -110,26 +115,27 @@ export const AllBookmarksPage =
 		} = useGetAllBookmarks(managerSlice.getBookmarkParams);
 		const toast = useToast();
 
+		useEffect(() => {
+			if (isErrorGetAllBookmarks) {
+				toast({
+					title: "Error",
+					description: "Error in fetching all bookmarks",
+					status: "error",
+					duration: 5000,
+					isClosable: true,
+				});
+				defaultHandlerApiError(errorGetAllBookmarks);
+			}
+		}, [isErrorGetAllBookmarks]);
+
 		// Handlers
 
-		// Render
+		// Return handling
 
-		if (isPendingGetAllBookmarks) {
-			return <LoadingBox />;
-		}
+		if (isPendingGetAllBookmarks) return <LoadingBox />;
 
-		if (isErrorGetAllBookmarks) {
-			toast({
-				title: "Error",
-				description: "Error in fetching all bookmarks",
-				status: "error",
-				duration: 5000,
-				isClosable: true,
-			});
-			defaultHandlerApiError(errorGetAllBookmarks);
+		if (isErrorGetAllBookmarks) return <ErrorBox />;
 
-			return <ErrorBox />;
-		}
-
-		return <MainContent bookmarks={getAllBookmarksResponse} />;
+		// if data.length === 0 and searchterm !== empty then render Not Found bookmarks Content - Message
+		return <MainContent data={getAllBookmarksResponse.data} />;
 	};

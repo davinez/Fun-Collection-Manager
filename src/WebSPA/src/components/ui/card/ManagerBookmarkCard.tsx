@@ -36,7 +36,7 @@ type TManagerBookmarkCardProps = {
 export const ManagerBookmarkCard = ({
 	bookmark,
 	onOpenBookmarkModal,
-	setModalBookmark
+	setModalBookmark,
 }: TManagerBookmarkCardProps) => {
 	// State Hooks
 	const [isHovering, setIsHovering] = useState(false);
@@ -44,11 +44,11 @@ export const ManagerBookmarkCard = ({
 	const [checkedCard, setCheckedCard] = useState(false);
 	// General Hooks
 
-	const handleMouseOver = (bookmarkId: number) => {
+	const handleMouseOver = () => {
 		setIsHovering(true);
 	};
 
-	const handleMouseOut = (bookmarkId: number) => {
+	const handleMouseOut = () => {
 		setIsHovering(false);
 	};
 
@@ -132,8 +132,8 @@ export const ManagerBookmarkCard = ({
 				bg="brandPrimary.900"
 				boxShadow="0 0 1px rgba(255,255,255)"
 				borderRadius="6px"
-				onMouseOver={() => handleMouseOver(bookmark.id)}
-				onMouseOut={() => handleMouseOut(bookmark.id)}
+				onMouseOver={handleMouseOver}
+				onMouseOut={handleMouseOut}
 			>
 				<CardBody w="100%" h="100%" p={0}>
 					{managerSlice.selectedShowInValueCollectionFilter.includes(
@@ -164,7 +164,7 @@ export const ManagerBookmarkCard = ({
 					<Flex
 						aria-label="card-info"
 						w="100%"
-						h="100%"
+						h="auto" // height according to image container without overflowing card
 						p={
 							managerSlice.selectedShowInValueCollectionFilter.length === 1 &&
 							managerSlice.selectedShowInValueCollectionFilter.includes(
@@ -189,6 +189,7 @@ export const ManagerBookmarkCard = ({
 								color="brandPrimary.100"
 							>
 								<Text
+									wordBreak="break-word"
 									overflow="hidden"
 									textOverflow="ellipsis"
 									sx={{
@@ -214,6 +215,7 @@ export const ManagerBookmarkCard = ({
 								color="brandPrimary.150"
 							>
 								<Text
+									wordBreak="break-word"
 									overflow="hidden"
 									textOverflow="ellipsis"
 									sx={{
@@ -241,16 +243,18 @@ export const ManagerBookmarkCard = ({
 								fontSize=".8rem"
 								fontWeight="400"
 							>
-								<Flex direction="row" gap={1} align="center">
+								<Flex w="100%" direction="row" gap={1} align="center">
 									<Image
+										w="auto"
 										boxSize="4"
 										objectFit="contain"
 										src={bookmark.bookmarkDetail.collection.icon}
 										fallbackSrc="/assets/icons/bookmark.svg"
 										alt="Default Icon"
 									/>
-									<Box color="brandPrimary.150">
+									<Box w="auto" color="brandPrimary.150">
 										<Text
+											wordBreak="break-word"
 											overflow="hidden"
 											textOverflow="ellipsis"
 											sx={{
@@ -263,8 +267,9 @@ export const ManagerBookmarkCard = ({
 										</Text>
 									</Box>
 								</Flex>
-								<Box lineHeight="1.2" color="brandPrimary.150">
+								<Box w="100%" lineHeight="1.2" color="brandPrimary.150">
 									<Text
+										wordBreak="break-word"
 										overflow="hidden"
 										textOverflow="ellipsis"
 										sx={{
@@ -276,8 +281,9 @@ export const ManagerBookmarkCard = ({
 										&#x2022; {bookmark.bookmarkDetail.websiteURL}
 									</Text>
 								</Box>
-								<Box lineHeight="1.2" color="brandPrimary.150">
+								<Box w="100%" lineHeight="1.2" color="brandPrimary.150">
 									<Text
+										wordBreak="break-word"
 										overflow="hidden"
 										textOverflow="ellipsis"
 										sx={{
