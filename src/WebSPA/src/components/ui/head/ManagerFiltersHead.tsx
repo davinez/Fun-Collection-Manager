@@ -203,11 +203,12 @@ export const ManagerFiltersHead = ({
 			onMouseOver={handleMouseOver}
 			onMouseOut={handleMouseOut}
 		>
-			<Flex 
-			w={{sm: "42%", md: "13.4%"}}
-			aria-label="left-head-section" 
-			alignItems="center" 
-			justify="space-between" 
+			<Flex
+				aria-label="left-head-section"
+				w={{ sm: "42%", md: "13.4%" }}
+				alignItems="center"
+				justify="start"
+				gap={2}
 			>
 				{isHovering && (
 					<Checkbox
@@ -241,7 +242,18 @@ export const ManagerFiltersHead = ({
 								as={icon as React.ElementType}
 							/>
 					  )}
-				<Text wordBreak="break-word" textStyle="title" color="brandPrimary.150">
+				<Text
+					textStyle="title"
+					color="brandPrimary.150"
+					wordBreak="break-all"
+					overflow="hidden"
+					textOverflow="ellipsis"
+					sx={{
+						display: "-webkit-box",
+						WebkitLineClamp: 1,
+						WebkitBoxOrient: "vertical",
+					}}
+				>
 					{headerName}
 				</Text>
 			</Flex>
@@ -279,7 +291,7 @@ export const ManagerFiltersHead = ({
 						</Button>
 					</PopoverTrigger>
 					<PopoverContent
-					  aria-label="sort-options-section"
+						aria-label="sort-options-section"
 						zIndex="popover"
 						bg="brandPrimary.900"
 						color="brandPrimary.100"
@@ -339,7 +351,7 @@ export const ManagerFiltersHead = ({
 
 				<Popover>
 					<PopoverTrigger>
-						<Button	
+						<Button
 							bg="brandPrimary.800"
 							p={2}
 							h={6}
@@ -364,7 +376,7 @@ export const ManagerFiltersHead = ({
 						</Button>
 					</PopoverTrigger>
 					<PopoverContent
-					  aria-label="showview-options-section"
+						aria-label="showview-options-section"
 						zIndex="popover"
 						bg="brandPrimary.900"
 						color="brandPrimary.100"

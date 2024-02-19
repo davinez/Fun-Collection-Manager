@@ -1,42 +1,12 @@
 // Design
 import {
-	Icon,
-	InputGroup,
-	InputLeftElement,
-	InputRightElement,
-	Input,
-	Button,
-	Menu,
-	MenuList,
-	MenuButton,
-	MenuItem,
-	MenuOptionGroup,
-	MenuItemOption,
-	MenuDivider,
-	Popover,
-	PopoverTrigger,
-	PopoverContent,
-	PopoverCloseButton,
-	PopoverBody,
-	Spinner,
-	Flex,
-	Text,
-	List,
 	ListItem,
 	ListIcon,
 	UnorderedList,
 } from "@chakra-ui/react";
 import {
-	AiFillCaretDown,
-	AiOutlineSearch,
-	AiFillFilter,
-	AiFillStar,
-	AiFillDatabase,
-	AiFillClockCircle,
-	AiFillChrome,
 	AiFillBackward,
 	AiFillForward,
-	AiOutlineEllipsis,
 } from "react-icons/ai";
 // Components
 
@@ -45,7 +15,7 @@ import {
 // Types
 import { PAGINATION_DOTS } from "@/shared/config";
 // General
-import React, { useState, useEffect, ReactElement } from "react";
+import React from "react";
 import { useStore } from "@/store/UseStore";
 import { usePagination } from "@/hooks/manager/usePagination";
 
@@ -91,7 +61,6 @@ export const ManagerMainPagination = ({
 
 	return (
 		<UnorderedList
-			// className={classnames('pagination-container', { [className]: className })}
 			w="100%"
 			h="100%"
 			p={0}
@@ -100,15 +69,31 @@ export const ManagerMainPagination = ({
 			display="flex"
 			justifyContent="center"
 			alignItems="center"
-			gap={3}
+			gap={1}
+			fontSize=".9rem"
+			fontWeight="500"
+			color="brandPrimary.100"
 		>
 			{managerSlice.getBookmarkParams.page !== 1 && (
 				<ListItem
 					aria-label="pagination-previous"
 					cursor="pointer"
+					borderRadius="6px"
+					bg="brandPrimary.900"
+					p={2}
+					paddingRight={3}
+					display="flex"
+					alignItems="center"
+					gap={1}
+					_hover={{
+						bg: "brandSecondary.600",
+					}}
+					_active={{
+						bg: "brandSecondary.600",
+					}}
 					onClick={onPrevious}
 				>
-					<ListIcon as={AiFillBackward} color="brandPrimary.150" />
+					<ListIcon m={0} as={AiFillBackward} color="brandPrimary.150" />
 					Previous Page
 				</ListItem>
 			)}
@@ -120,10 +105,24 @@ export const ManagerMainPagination = ({
 				}
 				return (
 					<ListItem
-						// className={classnames("pagination-item", { selected: pageNumber === currentPage,})}
-						bg="pink.300"
-						p={2}
+						aria-label="pagination-number"
 						cursor="pointer"
+						borderRadius="6px"
+						bg={
+							managerSlice.getBookmarkParams.page === pageNumber
+								? "brandSecondary.600"
+								: "brandPrimary.900"
+						}
+						p={2}
+						display="flex"
+						alignItems="center"
+						gap={1}
+						_hover={{
+							bg: "brandSecondary.600",
+						}}
+						_active={{
+							bg: "brandSecondary.600",
+						}}
 						onClick={() => handleOnPageChange(pageNumber as number)}
 					>
 						{pageNumber}
@@ -134,6 +133,20 @@ export const ManagerMainPagination = ({
 				<ListItem
 					aria-label="pagination-next"
 					cursor="pointer"
+					borderRadius="6px"
+					bg="brandPrimary.900"
+					py={2}
+					paddingRight={1}
+					paddingLeft={3}
+					display="flex"
+					alignItems="center"
+					gap={1}
+					_hover={{
+						bg: "brandSecondary.600",
+					}}
+					_active={{
+						bg: "brandSecondary.600",
+					}}
 					onClick={onNext}
 				>
 					Next Page

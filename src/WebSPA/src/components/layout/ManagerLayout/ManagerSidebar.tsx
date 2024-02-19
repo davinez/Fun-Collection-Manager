@@ -50,7 +50,6 @@ type TMenuOptionsNavItem = {
 	onClickOption?: () => void;
 };
 
-// function generic and type props explicitly.
 type TNavItemProps = {
 	leftIcon?: React.ElementType; // Third party icon
 	leftIconSelected?: React.ElementType; // Third party icon
@@ -95,12 +94,10 @@ const NavItem = ({
 
 	const handleOnClickGroup = (event: React.SyntheticEvent<EventTarget>) => {
 		// Only activate collapse component if the clicked element it is div or button with show text
-		if (event.target instanceof HTMLDivElement) onToggle();
-
-		// Only activate collapse component if the clicked element it is div or button with show text
 		if (
-			event.target instanceof HTMLButtonElement &&
-			(event.target as HTMLButtonElement).textContent === "Show"
+			event.target instanceof HTMLDivElement ||
+			(event.target instanceof HTMLButtonElement &&
+				(event.target as HTMLButtonElement).textContent === "Show")
 		)
 			onToggle();
 	};
@@ -110,8 +107,8 @@ const NavItem = ({
 			<Flex
 				align="center"
 				justify="space-between"
-				py="2"
-				pr="3"
+				py={2}
+				pr={3}
 				cursor="pointer"
 				textStyle="primary"
 				color="brandPrimary.100"
@@ -121,7 +118,13 @@ const NavItem = ({
 				onMouseOut={handleMouseOut}
 				{...rest}
 			>
-				<Flex align="center" gap="0" p="0">
+				<Flex
+					w="85%"
+					aria-label="navitem-left-section"
+					align="center"
+					gap={0}
+					p={0}
+				>
 					{leftIcon && (
 						<Icon
 							mx="0px"
@@ -153,11 +156,24 @@ const NavItem = ({
 								as={icon as React.ElementType}
 							/>
 						))}
-					{children}
+					<Text
+						aria-label="navitem-name"
+						wordBreak="break-all"
+						overflow="hidden"
+						textOverflow="ellipsis"
+						sx={{
+							display: "-webkit-box",
+							WebkitLineClamp: 1,
+							WebkitBoxOrient: "vertical",
+						}}
+					>
+						{children}
+					</Text>
 				</Flex>
-				{isHovering && menuListOptions !== undefined ? (
+				{isHovering && menuListOptions !== undefined ? ( ////
 					isGroup && !isOpen ? (
 						<Button
+							aria-label="navitem-right-section"
 							color="brandPrimary.100"
 							bg="brandPrimary.900"
 							_hover={{
@@ -165,7 +181,9 @@ const NavItem = ({
 							}}
 							fontSize={textStylesTheme.textStyles.secondary.fontSize}
 							h={5}
-							py={1}
+							p={0}
+							m={0}
+							w="15%"
 							onClick={handleOnClickGroup}
 						>
 							Show
@@ -173,8 +191,8 @@ const NavItem = ({
 					) : (
 						<Menu>
 							<MenuButton
+								aria-label="navitem-right-section"
 								as={IconButton}
-								aria-label="NavItem Options"
 								icon={
 									<Icon
 										boxSize="4"
@@ -191,7 +209,9 @@ const NavItem = ({
 									bg: "brandPrimary.950",
 								}}
 								h={5}
-								py={1}
+								p={0}
+								m={0}
+								w="15%"
 							/>
 							<MenuList
 								bg="brandPrimary.800"
@@ -234,7 +254,14 @@ const NavItem = ({
 						</Menu>
 					)
 				) : (
-					<Text mr={2} textStyle="tertiary" color="brandPrimary.150">
+					<Text
+						aria-label="navitem-right-section"
+						textStyle="tertiary"
+						color="brandPrimary.150"
+						w="15%"
+						textAlign="end"
+						mr={1}
+					>
 						{counter}
 					</Text>
 				)}
@@ -290,7 +317,9 @@ export const ManagerSidebar = ({}: TSidebarProps &
 
 	const handleOnClickCreateCollectionRootGroup = () => {};
 
-	const handleOnClickCollapseAllCollections = () => {};
+	const handleOnClickCollapseAllCollections = () => {
+		// Pendiente, lift state?
+	};
 
 	const handleOnClickRemoveAllEmptyCollection = () => {};
 
@@ -326,6 +355,7 @@ export const ManagerSidebar = ({}: TSidebarProps &
 			) {
 				return (
 					<NavItem
+						aria-label="collapsable-navitem"
 						key={`RenderedCollection_${collection.id}`}
 						leftIcon={AiFillCaretRight}
 						leftIconSelected={AiFillCaretDown}
@@ -344,12 +374,12 @@ export const ManagerSidebar = ({}: TSidebarProps &
 								isDivider: true,
 							},
 							{
-								description: "Rename",
-								onClickOption: handleOnClickRenameCollection,
-							},
-							{
 								description: "Change Icon",
 								onClickOption: handleOnClickChangeIconCollection,
+							},
+							{
+								description: "Rename",
+								onClickOption: handleOnClickRenameCollection,
 							},
 							{
 								description: "Remove",
@@ -366,6 +396,7 @@ export const ManagerSidebar = ({}: TSidebarProps &
 			} else {
 				return (
 					<NavItem
+						aria-label="non-collapsable-navitem"
 						key={`RenderedCollection_${collection.id}`}
 						icon={collection.cover}
 						counter={collection.bookmarksCounter}
@@ -379,12 +410,12 @@ export const ManagerSidebar = ({}: TSidebarProps &
 								isDivider: true,
 							},
 							{
-								description: "Rename",
-								onClickOption: handleOnClickRenameCollection,
-							},
-							{
 								description: "Change Icon",
 								onClickOption: handleOnClickChangeIconCollection,
+							},
+							{
+								description: "Rename",
+								onClickOption: handleOnClickRenameCollection,
 							},
 							{
 								description: "Remove",
@@ -404,7 +435,10 @@ export const ManagerSidebar = ({}: TSidebarProps &
 
 	return (
 		<>
-			<ManagerGroupModal isOpen={isOpenGroupModal} onClose={onCloseGroupModal} />
+			<ManagerGroupModal
+				isOpen={isOpenGroupModal}
+				onClose={onCloseGroupModal}
+			/>
 			<Flex w="100%" pl="3" py="2" alignItems="center">
 				<Menu>
 					<MenuButton
@@ -509,10 +543,6 @@ export const ManagerSidebar = ({}: TSidebarProps &
 											{
 												description: "Collapse all collections",
 												onClickOption: handleOnClickCollapseAllCollections,
-											},
-											{
-												description: "Remove all empty collection",
-												onClickOption: handleOnClickRemoveAllEmptyCollection,
 											},
 											{
 												isDivider: true,

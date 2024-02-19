@@ -91,10 +91,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 					);
 				})}
 			</Box>
-			<Flex 
-			aria-label="page-footer"
-			w="100%"
-			mt={5}>
+			<Flex aria-label="page-footer" w="100%" mt={5} mb={8}>
 				<ManagerMainPagination totalCount={data.total as number} />
 			</Flex>
 		</>

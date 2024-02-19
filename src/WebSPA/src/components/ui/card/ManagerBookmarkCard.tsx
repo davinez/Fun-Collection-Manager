@@ -189,7 +189,7 @@ export const ManagerBookmarkCard = ({
 								color="brandPrimary.100"
 							>
 								<Text
-									wordBreak="break-word"
+									wordBreak="break-all"
 									overflow="hidden"
 									textOverflow="ellipsis"
 									sx={{
@@ -215,7 +215,7 @@ export const ManagerBookmarkCard = ({
 								color="brandPrimary.150"
 							>
 								<Text
-									wordBreak="break-word"
+									wordBreak="break-all"
 									overflow="hidden"
 									textOverflow="ellipsis"
 									sx={{
@@ -254,7 +254,7 @@ export const ManagerBookmarkCard = ({
 									/>
 									<Box w="auto" color="brandPrimary.150">
 										<Text
-											wordBreak="break-word"
+											wordBreak="break-all"
 											overflow="hidden"
 											textOverflow="ellipsis"
 											sx={{
@@ -269,7 +269,7 @@ export const ManagerBookmarkCard = ({
 								</Flex>
 								<Box w="100%" lineHeight="1.2" color="brandPrimary.150">
 									<Text
-										wordBreak="break-word"
+										wordBreak="break-all"
 										overflow="hidden"
 										textOverflow="ellipsis"
 										sx={{
@@ -283,7 +283,7 @@ export const ManagerBookmarkCard = ({
 								</Box>
 								<Box w="100%" lineHeight="1.2" color="brandPrimary.150">
 									<Text
-										wordBreak="break-word"
+										wordBreak="break-all"
 										overflow="hidden"
 										textOverflow="ellipsis"
 										sx={{
