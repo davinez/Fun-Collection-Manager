@@ -1,7 +1,11 @@
-import { FilterBookmarksEnum } from "@/shared/types/global.types";
 import * as z from "zod";
 import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from "shared/config";
 import { bytesToMegaBytes } from "shared/utils";
+
+
+
+// API/Service Types //
+
 
 export type TNewCollection = {
   id: number;
@@ -10,14 +14,13 @@ export type TNewCollection = {
 
 export type TGetCollectionGroups = {
   allBookmarksCounter: number;
-  trashCounter: number;
-  groups: TCollectionGroup[] | undefined;
+  groups: TCollectionGroup[];
 }
 
 export type TCollectionGroup = {
   id: number;
   name: string;
-  collections: TCollection[] | undefined;
+  collections: TCollection[];
 }
 
 export type TCollection = {
@@ -25,7 +28,7 @@ export type TCollection = {
   name: string;
   cover: string;
   bookmarksCounter: number;
-  childCollections: TCollection[] | undefined;
+  childCollections: TCollection[];
 }
 
 export type TGroup = {

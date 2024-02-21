@@ -41,6 +41,7 @@
 		"@nivo/pie": "^0.83.0",
 		"@rematch/core": "^2.2.0",
 		"@tanstack/react-query": "^5.0.5",
+		"@types/uuid": "^9.0.8",
 		"axios": "^1.6.0",
 		"dayjs": "^1.11.9",
 		"framer-motion": "^10.16.4",
@@ -51,6 +52,7 @@
 		"react-icons": "^4.12.0",
 		"react-router-dom": "^6.16.0",
 		"use-debounce": "^10.0.0",
+		"uuid": "^9.0.1",
 		"zod": "^3.21.4",
 		"zustand": "^4.4.4"
 	},

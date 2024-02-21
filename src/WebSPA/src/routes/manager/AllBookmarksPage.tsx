@@ -92,7 +92,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 				})}
 			</Box>
 			<Flex aria-label="page-footer" w="100%" mt={5} mb={8}>
-				<ManagerMainPagination totalCount={data.total as number} />
+				<ManagerMainPagination totalCount={data.total} />
 			</Flex>
 		</>
 	);
@@ -134,5 +134,5 @@ export const AllBookmarksPage =
 		if (isErrorGetAllBookmarks) return <ErrorBox />;
 
 		// if data.length === 0 and searchterm !== empty then render Not Found bookmarks Content - Message
-		return <MainContent data={getAllBookmarksResponse.data} />;
+		return <MainContent data={getAllBookmarksResponse} />;
 	};

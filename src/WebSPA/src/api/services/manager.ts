@@ -70,7 +70,7 @@ export const useGetAllBookmarks = ({page, pageLimit, filterType, debounceSearchV
             page_limit: pageLimit
           }
       );
-      return response.data
+      return response.data.data
     }
   });
 }
