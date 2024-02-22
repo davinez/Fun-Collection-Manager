@@ -2,6 +2,12 @@ import * as z from "zod";
 import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from "shared/config";
 import { bytesToMegaBytes } from "shared/utils";
 
+// Components Types //
+
+export type TDynamicCollapseState = {
+	nodeId: number;
+	isOpen: boolean;
+};
 
 
 // API/Service Types //

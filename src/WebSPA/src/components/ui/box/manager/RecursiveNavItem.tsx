@@ -23,35 +23,40 @@ import {
 
 // Assets
 
-
 // Types
-import type { TCollection } from "@/shared/types/api/manager.types";
+import type {
+	TCollection,
+	TDynamicCollapseState,
+} from "@/shared/types/api/manager.types";
 
 // General
 import { useState } from "react";
-
 
 // All bookmarks and group NavItem in sidebar
 
 type TRecursiveNavItemProps = {
 	icon?: string | React.ElementType; // Third party icon
-	counter?: number;
+	collection: TCollection;
 	nodesChildren: {
 		nodePadding: number;
 		collections: TCollection[];
 	};
+	nodesState: TDynamicCollapseState[];
+	setNodesState: React.Dispatch<React.SetStateAction<TDynamicCollapseState[]>>;
 	children: React.ReactNode;
 };
 
 export const RecursiveNavItem = ({
 	icon,
-	counter,
+	collection,
 	nodesChildren,
+	nodesState,
+	setNodesState,
 	children,
 	...rest
 }: TRecursiveNavItemProps & FlexProps): React.ReactElement => {
 	const [isHovering, setIsHovering] = useState(false);
-	const { isOpen, onToggle } = useDisclosure();
+	//const { isOpen, onToggle } = useDisclosure();
 
 	const handleMouseOver = () => {
 		setIsHovering(true);
@@ -61,7 +66,22 @@ export const RecursiveNavItem = ({
 		setIsHovering(false);
 	};
 
-	const handleOnClickNavItem = (event: React.SyntheticEvent<EventTarget>) => {};
+	const handleOnClickCollapseCollection = () => {
+		setNodesState(
+			[...nodesState].map((node) => {
+				if (node.nodeId === collection.id) {
+					return {
+						...node,
+						isOpen: !node.isOpen,
+					};
+				} else return node;
+			})
+		);
+	};
+
+	const handleOnClickNavItem = (event: React.SyntheticEvent<EventTarget>) => {
+		// Navigate to collection page
+	};
 
 	const handleOnClickCreateNestedCollection = () => {};
 
@@ -99,8 +119,12 @@ export const RecursiveNavItem = ({
 							mx="0px"
 							boxSize="3"
 							color="brandPrimary.150"
-							as={isOpen ? AiFillCaretDown : AiFillCaretRight}
-							onClick={onToggle}
+							as={
+								nodesState.find((node) => node.nodeId === collection.id)?.isOpen
+									? AiFillCaretDown
+									: AiFillCaretRight
+							}
+							onClick={handleOnClickCollapseCollection}
 						/>
 					)}
 					{icon &&
@@ -222,25 +246,37 @@ export const RecursiveNavItem = ({
 						textAlign="end"
 						mr={1}
 					>
-						{counter}
+						{collection.bookmarksCounter}
 					</Text>
 				)}
 			</Flex>
 			{nodesChildren.collections.length > 0 && ( // Rendering collections
-				<Collapse in={isOpen} animateOpacity>
+				<Collapse
+					in={
+						nodesState.find((node) => node.nodeId === collection.id)
+							?.isOpen as boolean
+					}
+					animateOpacity
+				>
 					{nodesChildren.collections.map((item) => {
 						return (
 							<RecursiveNavItem
 								key={`CollectionNavItem_${item.id}`}
-                counter={item.bookmarksCounter}						
+								collection={item}
 								_hover={{
 									bg: "brandPrimary.900",
 								}}
-                pl={item.childCollections.length > 0 ? nodesChildren.nodePadding : nodesChildren.nodePadding + 3}
+								pl={
+									item.childCollections.length > 0
+										? nodesChildren.nodePadding
+										: nodesChildren.nodePadding + 3
+								}
 								nodesChildren={{
 									nodePadding: nodesChildren.nodePadding + 3,
 									collections: item.childCollections,
 								}}
+								nodesState={nodesState}
+								setNodesState={setNodesState}
 							>
 								{item.name}
 							</RecursiveNavItem>

@@ -25,12 +25,10 @@ export default function useBookmarkSort(data: TBookmark[]) {
       case SortEnum.DateAsc:
         newArray.sort((a, b) => new Date(a.bookmarkDetail.createdAt).getTime() - new Date(b.bookmarkDetail.createdAt).getTime());
         setDataSort(newArray);
-        console.log(dataSort);
         break;
       case SortEnum.DateDesc:
         newArray.sort((a, b) => new Date(a.bookmarkDetail.createdAt).getTime() - new Date(b.bookmarkDetail.createdAt).getTime());
         setDataSort(newArray);
-        console.log(dataSort);
         break;
       case SortEnum.NameAsc:
         newArray.sort((a, b) => {

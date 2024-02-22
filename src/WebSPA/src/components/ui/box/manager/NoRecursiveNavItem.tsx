@@ -23,7 +23,7 @@ import { RecursiveNavItem } from "@/components/ui/box/manager";
 // Hooks
 
 // Types
-import type { TCollection } from "@/shared/types/api/manager.types";
+import type { TCollection, TDynamicCollapseState } from "@/shared/types/api/manager.types";
 
 // General
 import { useState } from "react";
@@ -35,24 +35,28 @@ type TNoRecursiveNavItemProps = {
 	icon?: React.ElementType; // Third party icon
 	counter?: number;
 	groupId?: number;
-	nodesChildren?: TCollection[];
+	nodesData?: {
+		nodesChildren: TCollection[],
+		nodesState: TDynamicCollapseState[],
+		setNodesState: React.Dispatch<React.SetStateAction<TDynamicCollapseState[]>>
+	};
 	menuListOptions?: {
 		isDivider?: boolean;
 		description?: string;
 		handleOnClickMenuOption?: () => void;
 	}[];
 	children: React.ReactNode;
-	onNavItemClick?: () => void;
+	handleOnClickNavItem?: () => void;
 };
 
 export const NoRecursiveNavItem = ({
 	icon,
 	counter,
 	groupId,
-	nodesChildren,
+	nodesData,
 	menuListOptions,
 	children,
-	onNavItemClick,
+	handleOnClickNavItem,
 	...rest
 }: TNoRecursiveNavItemProps & FlexProps): React.ReactElement => {
 	const [isHovering, setIsHovering] = useState(false);
@@ -66,13 +70,13 @@ export const NoRecursiveNavItem = ({
 		setIsHovering(false);
 	};
 
-	const handleOnClickGroup = (event: React.SyntheticEvent<EventTarget>) => {
+	const handleOnClickGroupNavItem = (event: React.SyntheticEvent<EventTarget>) => {
 		// Only activate collapse component if the clicked element it is div or button with show text
-		// if (
-		// 	event.target instanceof HTMLDivElement ||
-		// 	(event.target instanceof HTMLButtonElement &&
-		// 		(event.target as HTMLButtonElement).textContent === "Show")
-		// )
+		if (
+			event.target instanceof HTMLDivElement ||
+			(event.target instanceof HTMLButtonElement &&
+				(event.target as HTMLButtonElement).textContent === "Show")
+		)
 		onToggle();
 	};
 
@@ -87,7 +91,7 @@ export const NoRecursiveNavItem = ({
 				textStyle="primary"
 				color="brandPrimary.100"
 				transition=".15s ease"
-				onClick={groupId ? handleOnClickGroup : onNavItemClick}
+				onClick={groupId ? handleOnClickGroupNavItem : handleOnClickNavItem}
 				onMouseOver={handleMouseOver}
 				onMouseOut={handleMouseOut}
 				{...rest}
@@ -136,7 +140,7 @@ export const NoRecursiveNavItem = ({
 							p={0}
 							m={0}
 							w="15%"
-							onClick={handleOnClickGroup}
+							onClick={handleOnClickGroupNavItem}
 						>
 							Show
 						</Button>
@@ -212,14 +216,14 @@ export const NoRecursiveNavItem = ({
 					</Text>
 				)}
 			</Flex>
-			{nodesChildren && // Rendering collections
-				nodesChildren.length > 0 && (
+			{nodesData && // Rendering collections
+				nodesData.nodesChildren.length > 0 && (
 					<Collapse in={isOpen} animateOpacity>
-						{nodesChildren.map((item) => {
+						{nodesData.nodesChildren.map((item) => {
 							return (
 								<RecursiveNavItem
 									key={`CollectionNavItem_${item.id}`}
-									counter={item.bookmarksCounter}
+									collection={item}
 									_hover={{
 										bg: "brandPrimary.900",
 									}}
@@ -228,6 +232,8 @@ export const NoRecursiveNavItem = ({
 										nodePadding: 3,
 										collections: item.childCollections,
 									}}
+									nodesState={nodesData.nodesState}
+									setNodesState={nodesData.setNodesState}
 								>
 									{item.name}
 								</RecursiveNavItem>

@@ -1,13 +1,6 @@
 // Design
-import {
-	ListItem,
-	ListIcon,
-	UnorderedList,
-} from "@chakra-ui/react";
-import {
-	AiFillBackward,
-	AiFillForward,
-} from "react-icons/ai";
+import { ListItem, ListIcon, UnorderedList } from "@chakra-ui/react";
+import { AiFillBackward, AiFillForward } from "react-icons/ai";
 // Components
 
 // Assets
@@ -97,15 +90,21 @@ export const ManagerMainPagination = ({
 					Previous Page
 				</ListItem>
 			)}
-			{paginationRange.map((pageNumber) => {
+			{paginationRange.map((pageNumber, index) => {
 				if (pageNumber === PAGINATION_DOTS) {
 					return (
-						<ListItem aria-label="pagination-dots">{PAGINATION_DOTS}</ListItem>
+						<ListItem
+							aria-label="pagination-dots"
+							key={`pagination_dots_${index}`}
+						>
+							{PAGINATION_DOTS}
+						</ListItem>
 					);
 				}
 				return (
 					<ListItem
 						aria-label="pagination-number"
+						key={`pagination_number_${pageNumber}`}
 						cursor="pointer"
 						borderRadius="6px"
 						bg={

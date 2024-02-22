@@ -59,7 +59,7 @@ export const ManagerBookmarkCard = ({
 			(event.target as HTMLDivElement).getAttribute("aria-label") ===
 				"card-overlay-container"
 		) {
-			console.log("Clicked overlay card");
+		//	console.log("Clicked overlay card");
 		}
 	};
 

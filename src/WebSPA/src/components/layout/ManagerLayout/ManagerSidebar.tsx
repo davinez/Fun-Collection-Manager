@@ -28,13 +28,17 @@ import { NoRecursiveNavItem } from "@/components/ui/box/manager";
 // Hooks
 import { useGetCollectionsQuery } from "@/api/services/manager";
 // Types
-import type { TGetCollectionGroups } from "@/shared/types/api/manager.types";
+import type {
+	TGetCollectionGroups,
+	TDynamicCollapseState,
+} from "@/shared/types/api/manager.types";
 import { FormActionEnum } from "@/shared/types/global.types";
 // General
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/apiClient";
 import { useNavigate } from "react-router-dom";
+import { renderNodesState } from "@/shared/utils";
 
 type TMainContentProps = {
 	data: TGetCollectionGroups;
@@ -43,6 +47,9 @@ type TMainContentProps = {
 const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 	// State Hooks
 	const { managerSlice } = useStore();
+	const [nodesState, setNodesState] = useState<TDynamicCollapseState[]>(
+		renderNodesState(data.groups)
+	);
 	// General Hooks
 	const navigate = useNavigate();
 	const {
@@ -52,6 +59,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 	} = useDisclosure();
 
 	// Handlers
+
 	const handleOnClickAllbookmarks = () => {
 		navigate("/my/manager/all");
 	};
@@ -59,7 +67,14 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 	const handleOnClickCreateCollectionRootGroup = () => {};
 
 	const handleOnClickCollapseAllCollections = () => {
-		// Pendiente, lift state?
+		setNodesState(
+			[...nodesState].map((node) => {
+				return {
+					...node,
+					isOpen: false,
+				};
+			})
+		);
 	};
 
 	const handleOnClickCreateGroup = () => {
@@ -143,7 +158,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 					_hover={{
 						bg: "brandPrimary.900",
 					}}
-					onNavItemClick={handleOnClickAllbookmarks}
+					handleOnClickNavItem={handleOnClickAllbookmarks}
 				>
 					All Bookmarks
 				</NoRecursiveNavItem>
@@ -155,7 +170,11 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 							pl="3"
 							color="brandPrimary.150"
 							groupId={group.id}
-							nodesChildren={group.collections}
+							nodesData={{
+								nodesChildren: group.collections,
+								nodesState: nodesState,
+								setNodesState: setNodesState,
+							}}
 							menuListOptions={[
 								{
 									description: "Create collection",
