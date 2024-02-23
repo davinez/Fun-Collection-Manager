@@ -35,21 +35,16 @@ import { useState } from "react";
 // All bookmarks and group NavItem in sidebar
 
 type TRecursiveNavItemProps = {
-	icon?: string | React.ElementType; // Third party icon
 	collection: TCollection;
-	nodesChildren: {
-		nodePadding: number;
-		collections: TCollection[];
-	};
+	nodePadding: number;
 	nodesState: TDynamicCollapseState[];
 	setNodesState: React.Dispatch<React.SetStateAction<TDynamicCollapseState[]>>;
 	children: React.ReactNode;
 };
 
 export const RecursiveNavItem = ({
-	icon,
 	collection,
-	nodesChildren,
+	nodePadding,
 	nodesState,
 	setNodesState,
 	children,
@@ -114,7 +109,7 @@ export const RecursiveNavItem = ({
 					gap={0}
 					p={0}
 				>
-					{nodesChildren.collections.length > 0 && (
+					{collection.childCollections.length > 0 && (
 						<Icon
 							mx="0px"
 							boxSize="3"
@@ -127,28 +122,17 @@ export const RecursiveNavItem = ({
 							onClick={handleOnClickCollapseCollection}
 						/>
 					)}
-					{icon &&
-						(typeof icon === "string" ? (
-							<Image
-								ml="0px"
-								mr="5px"
-								borderRadius="2px"
-								boxSize="5"
-								color="brandPrimary.150"
-								objectFit="contain"
-								src={icon as string}
-								fallbackSrc="/assets/icons/bookmark.svg"
-								alt="Default Icon"
-							/>
-						) : (
-							<Icon
-								ml="0px"
-								mr="5px"
-								boxSize="5"
-								color="brandPrimary.150"
-								as={icon as React.ElementType}
-							/>
-						))}
+					<Image
+						ml="0px"
+						mr="5px"
+						borderRadius="2px"
+						boxSize="5"
+						color="brandPrimary.150"
+						objectFit="contain"
+						src={collection.cover}
+						fallbackSrc="/assets/icons/bookmark.svg"
+						alt="Default Icon"
+					/>
 					<Text
 						aria-label="navitem-name"
 						wordBreak="break-all"
@@ -250,7 +234,7 @@ export const RecursiveNavItem = ({
 					</Text>
 				)}
 			</Flex>
-			{nodesChildren.collections.length > 0 && ( // Rendering collections
+			{collection.childCollections.length > 0 && ( // Rendering collections
 				<Collapse
 					in={
 						nodesState.find((node) => node.nodeId === collection.id)
@@ -258,23 +242,20 @@ export const RecursiveNavItem = ({
 					}
 					animateOpacity
 				>
-					{nodesChildren.collections.map((item) => {
+					{collection.childCollections.map((item) => {
 						return (
 							<RecursiveNavItem
 								key={`CollectionNavItem_${item.id}`}
-								collection={item}
 								_hover={{
 									bg: "brandPrimary.900",
 								}}
+								collection={item}
 								pl={
 									item.childCollections.length > 0
-										? nodesChildren.nodePadding
-										: nodesChildren.nodePadding + 3
+										? nodePadding
+										: nodePadding + 3
 								}
-								nodesChildren={{
-									nodePadding: nodesChildren.nodePadding + 3,
-									collections: item.childCollections,
-								}}
+								nodePadding={nodePadding + 3}
 								nodesState={nodesState}
 								setNodesState={setNodesState}
 							>

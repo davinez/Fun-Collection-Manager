@@ -337,8 +337,7 @@ export const ManagerBookmarkCard = ({
 								mt={2}
 								mr={2}
 							>
-								<Button
-									// Set edit functionality, open right drawer with form
+								<Button	
 									aria-label="Edit bookmark"
 									size="sm"
 									_hover={{

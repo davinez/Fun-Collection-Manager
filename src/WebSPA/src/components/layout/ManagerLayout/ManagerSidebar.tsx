@@ -22,7 +22,7 @@ import {
 // Components
 import { ManagerGroupModal } from "@/components/ui/modal";
 import { LoadingBox, ErrorBox } from "@/components/ui/box";
-import { NoRecursiveNavItem } from "@/components/ui/box/manager";
+import { GroupNavItem, GeneralNavItem } from "@/components/ui/box/manager";
 // Assets
 
 // Hooks
@@ -32,7 +32,6 @@ import type {
 	TGetCollectionGroups,
 	TDynamicCollapseState,
 } from "@/shared/types/api/manager.types";
-import { FormActionEnum } from "@/shared/types/global.types";
 // General
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
@@ -45,12 +44,11 @@ type TMainContentProps = {
 };
 
 const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
-	// State Hooks
+	// Hooks
 	const { managerSlice } = useStore();
 	const [nodesState, setNodesState] = useState<TDynamicCollapseState[]>(
 		renderNodesState(data.groups)
 	);
-	// General Hooks
 	const navigate = useNavigate();
 	const {
 		isOpen: isOpenGroupModal,
@@ -64,8 +62,6 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 		navigate("/my/manager/all");
 	};
 
-	const handleOnClickCreateCollectionRootGroup = () => {};
-
 	const handleOnClickCollapseAllCollections = () => {
 		setNodesState(
 			[...nodesState].map((node) => {
@@ -76,19 +72,6 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 			})
 		);
 	};
-
-	const handleOnClickCreateGroup = () => {
-		managerSlice.setGroupModalFormAction(FormActionEnum.Add);
-		onOpenGroupModal();
-	};
-
-	const handleOnClickRenameGroup = (id: number) => {
-		managerSlice.setGroupModalFormAction(FormActionEnum.Update);
-		managerSlice.setSelectedSidebarGroup(id);
-		onOpenGroupModal();
-	};
-
-	const handleOnClickRemoveGroup = () => {};
 
 	return (
 		<>
@@ -151,8 +134,11 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 				</Menu>
 			</Flex>
 			<Flex direction="column" as="nav" aria-label="Main Navigation">
-				<NoRecursiveNavItem
-					pl="3"
+				<GeneralNavItem
+					py={2}
+					px={3}
+					textStyle="primary"
+					color="brandPrimary.100"
 					icon={AiFillCloud}
 					counter={data.allBookmarksCounter}
 					_hover={{
@@ -161,50 +147,25 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 					handleOnClickNavItem={handleOnClickAllbookmarks}
 				>
 					All Bookmarks
-				</NoRecursiveNavItem>
+				</GeneralNavItem>
 				{data.groups.map((group) => {
 					return (
-						<NoRecursiveNavItem
+						<GroupNavItem
 							key={`RenderedGroup_${group.id}`}
-							py="2"
-							pl="3"
+							py={2}
+							px={3}
+							textStyle="primary"
 							color="brandPrimary.150"
-							groupId={group.id}
+							group={group}
+							onOpenGroupModal={onOpenGroupModal}
+							handleOnClickCollapseAllCollections={handleOnClickCollapseAllCollections}
 							nodesData={{
-								nodesChildren: group.collections,
 								nodesState: nodesState,
 								setNodesState: setNodesState,
-							}}
-							menuListOptions={[
-								{
-									description: "Create collection",
-									handleOnClickMenuOption:
-										handleOnClickCreateCollectionRootGroup,
-								},
-								{
-									description: "Collapse all collections",
-									handleOnClickMenuOption: handleOnClickCollapseAllCollections,
-								},
-								{
-									isDivider: true,
-								},
-								{
-									description: "Create group",
-									handleOnClickMenuOption: handleOnClickCreateGroup,
-								},
-								{
-									description: "Rename group",
-									handleOnClickMenuOption: () =>
-										handleOnClickRenameGroup(group.id),
-								},
-								{
-									description: "Remove group",
-									handleOnClickMenuOption: handleOnClickRemoveGroup,
-								},
-							]}
+							}}		
 						>
 							{group.name}
-						</NoRecursiveNavItem>
+						</GroupNavItem>
 					);
 				})}
 			</Flex>
