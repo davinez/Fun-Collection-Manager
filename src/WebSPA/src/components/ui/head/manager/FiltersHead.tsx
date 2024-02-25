@@ -41,15 +41,15 @@ import {
 import { useState } from "react";
 import { useStore } from "@/store/UseStore";
 
-type TManagerHeadFiltersProps = {
+type TFiltersHeadProps = {
 	icon: string | React.ElementType; // Third party icon
 	headerName: string;
 };
 
-export const ManagerFiltersHead = ({
+export const FiltersHead = ({
 	icon,
 	headerName,
-}: TManagerHeadFiltersProps) => {
+}: TFiltersHeadProps) => {
 	const sortOptions = [
 		{
 			value: SortEnum.DateAsc,

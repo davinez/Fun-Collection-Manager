@@ -33,7 +33,7 @@ import {
 } from "react-icons/ai";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
-import { ManagerURLAddForm, SearchInputField } from "@/components/forms";
+import { URLAddForm, SearchInputField } from "@/components/forms/manager";
 // Assets
 
 // Types
@@ -70,7 +70,6 @@ export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 			(option) => option.value === managerSlice.getBookmarkParams.filterType
 		)
 	);
-
 
 	const handleOnChangeBookmarkFilterOption = (value: string | string[]) => {
 		if (typeof value === "string") {
@@ -227,7 +226,7 @@ export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 				>
 					<PopoverCloseButton p={2} />
 					<PopoverBody>
-						<ManagerURLAddForm />
+						<URLAddForm />
 					</PopoverBody>
 				</PopoverContent>
 			</Popover>

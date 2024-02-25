@@ -2,9 +2,9 @@
 import { Modal, ModalOverlay, ModalContent } from "@chakra-ui/react";
 // Components
 import {
-	ManagerBookmarkUpdateForm,
-	ManagerBookmarkDeleteForm,
-} from "components/forms";
+	BookmarkUpdateForm,
+	BookmarkDeleteForm,
+} from "components/forms/manager";
 // Assets
 
 // Hooks
@@ -20,7 +20,7 @@ type TManagerBookmarkModalProps = {
 	bookmark?: TBookmark;
 };
 
-export const ManagerBookmarkModal = ({
+export const BookmarkModal = ({
 	isOpen,
 	onClose,
 	bookmark,
@@ -40,11 +40,11 @@ export const ManagerBookmarkModal = ({
 					borderColor="brandPrimary.900"
 				>
 					{managerSlice.bookmarkModalFormAction === FormActionEnum.Delete && (
-						<ManagerBookmarkDeleteForm onClose={onClose} />
+						<BookmarkDeleteForm onClose={onClose} />
 					)}
 					{managerSlice.bookmarkModalFormAction === FormActionEnum.Update &&
 						bookmark && (
-							<ManagerBookmarkUpdateForm
+							<BookmarkUpdateForm
 								onClose={onClose}
 								bookmark={bookmark}
 							/>

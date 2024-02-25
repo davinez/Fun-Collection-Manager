@@ -23,15 +23,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
 import { defaultHandlerApiError } from "@/api/apiClient";
 
+type TURLAddFormProps = {};
 
-export const ManagerURLAddForm = () => {
+// Validation is triggered on the changeevent for each input, leading to multiple re-renders. 
+// Warning: this often comes with a significant impact on performance.
+export const URLAddForm = ({}: TURLAddFormProps) => {
 	const methods = useForm<TAddURLPayload>({
 		resolver: zodResolver(addURLFormPayload),
 		mode: "onChange",
 	});
 	const {
 		reset,
-		formState: { errors, isSubmitting, isValid, isDirty },
+		formState: { errors, isValid },
 	} = methods;
 	const mutationAddURL = useAddURLMutation();
 	const toast = useToast();
@@ -91,7 +94,7 @@ export const ManagerURLAddForm = () => {
 							bg: "brandPrimary.100",
 						}}
 						fontSize={textStylesTheme.textStyles.primary.fontSize}
-						isDisabled={!isDirty || !isValid}
+						isDisabled={!isValid}
 						type="submit"
 					>
 						Save

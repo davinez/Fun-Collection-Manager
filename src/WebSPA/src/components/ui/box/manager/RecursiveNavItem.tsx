@@ -20,7 +20,7 @@ import {
 	AiFillSetting,
 } from "react-icons/ai";
 // Components
-
+import { NestedCollectionAddForm } from "@/components/forms/manager";
 // Assets
 
 // Types
@@ -51,7 +51,7 @@ export const RecursiveNavItem = ({
 	...rest
 }: TRecursiveNavItemProps & FlexProps): React.ReactElement => {
 	const [isHovering, setIsHovering] = useState(false);
-	//const { isOpen, onToggle } = useDisclosure();
+	const [isShowingInput, setIsShowingInput] = useState(false);
 
 	const handleMouseOver = () => {
 		setIsHovering(true);
@@ -76,9 +76,29 @@ export const RecursiveNavItem = ({
 
 	const handleOnClickNavItem = (event: React.SyntheticEvent<EventTarget>) => {
 		// Navigate to collection page
+
+		if (isShowingInput) setIsShowingInput(false);
 	};
 
-	const handleOnClickCreateNestedCollection = () => {};
+	const handleOnClickCreateNestedCollection = () => {
+		// Show input
+		setIsShowingInput(true);
+
+		// Open if is collection closed
+		if (!nodesState.find((node) => node.nodeId === collection.id)?.isOpen) {
+			// Possible undefined value if nodeId doesnt exists ?? Pending
+			setNodesState(
+				[...nodesState].map((node) => {
+					if (node.nodeId === collection.id) {
+						return {
+							...node,
+							isOpen: true,
+						};
+					} else return node;
+				})
+			);
+		}
+	};
 
 	const handleOnClickRenameCollection = () => {};
 
@@ -234,7 +254,7 @@ export const RecursiveNavItem = ({
 					</Text>
 				)}
 			</Flex>
-			{collection.childCollections.length > 0 && ( // Rendering collections
+			{collection.childCollections.length > 0 ? ( // Rendering child collections
 				<Collapse
 					in={
 						nodesState.find((node) => node.nodeId === collection.id)
@@ -242,6 +262,15 @@ export const RecursiveNavItem = ({
 					}
 					animateOpacity
 				>
+					{
+						// Show form if click on create collection
+						isShowingInput && (
+							<NestedCollectionAddForm
+								collectionId={collection.id}
+								setIsShowingInput={setIsShowingInput}
+							/>
+						)
+					}
 					{collection.childCollections.map((item) => {
 						return (
 							<RecursiveNavItem
@@ -264,7 +293,17 @@ export const RecursiveNavItem = ({
 						);
 					})}
 				</Collapse>
-			)}
+			) : // Doesnt have child collections
+   (
+			// Show form if click on create collection
+			isShowingInput && (
+				<NestedCollectionAddForm
+					collectionId={collection.id}
+					setIsShowingInput={setIsShowingInput}
+				/>
+			)
+	 )
+		}
 		</>
 	);
 };

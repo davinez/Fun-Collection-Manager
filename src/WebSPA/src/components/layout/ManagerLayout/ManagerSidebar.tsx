@@ -20,7 +20,7 @@ import {
 	AiOutlineLogout,
 } from "react-icons/ai";
 // Components
-import { ManagerGroupModal } from "@/components/ui/modal";
+import { GroupModal } from "@/components/ui/modal/manager";
 import { LoadingBox, ErrorBox } from "@/components/ui/box";
 import { GroupNavItem, GeneralNavItem } from "@/components/ui/box/manager";
 // Assets
@@ -75,7 +75,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 
 	return (
 		<>
-			<ManagerGroupModal
+			<GroupModal
 				isOpen={isOpenGroupModal}
 				onClose={onCloseGroupModal}
 			/>

@@ -3,12 +3,11 @@ import { Icon, Text, Button, Stack, useToast, Flex } from "@chakra-ui/react";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 import { AiFillAlert } from "react-icons/ai";
 // Components
-import { InputField, TextAreaField } from "components/forms";
+
 // Assets
 
 // Hooks
 import { useDeleteBookmarkMutation } from "@/api/services/manager";
-import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
 import { defaultHandlerApiError } from "@/api/apiClient";
 import { useStore } from "@/store/UseStore";
 // Types
@@ -17,16 +16,15 @@ import {
 	type TBookmarkDeletePayload,
 } from "@/shared/types/api/manager.types";
 // General
-import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
 
-type TManagerBookmarkDeleteFormProps = {
+type TBookmarkDeleteFormProps = {
 	onClose: () => void;
 };
 
-export const ManagerBookmarkDeleteForm = ({
+export const BookmarkDeleteForm = ({
 	onClose,
-}: TManagerBookmarkDeleteFormProps) => {
+}: TBookmarkDeleteFormProps) => {
 	// State Hooks
 	const { managerSlice } = useStore();
 	// General Hooks

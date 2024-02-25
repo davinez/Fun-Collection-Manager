@@ -12,17 +12,19 @@ import {
 	MenuItem,
 	MenuDivider,
 	useDisclosure,
+	useToast,
 	type FlexProps,
 } from "@chakra-ui/react";
 import { AiFillSetting } from "react-icons/ai";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
 import { RecursiveNavItem } from "@/components/ui/box/manager";
-import { CollectionAddForm } from "components/forms/manager";
+import { RootCollectionAddForm } from "components/forms/manager";
 // Assets
 
 // Hooks
-
+import { useGetGroupByIdQueryClientAsync } from "@/api/services/manager";
+import { defaultHandlerApiError } from "@/api/apiClient";
 // Types
 import type {
 	TDynamicCollapseState,
@@ -59,8 +61,9 @@ export const GroupNavItem = ({
 	// State Hooks
 	const { managerSlice } = useStore();
 	const [isHovering, setIsHovering] = useState(false);
-	const [isShowinginput, setIsShowingInput] = useState(false);
+	const [isShowingInput, setIsShowingInput] = useState(false);
 	const { isOpen, onToggle } = useDisclosure();
+	const toast = useToast();
 
 	// handlers
 
@@ -84,7 +87,7 @@ export const GroupNavItem = ({
 		)
 			onToggle();
 
-		if (isShowinginput) setIsShowingInput(false);
+		if (isShowingInput) setIsShowingInput(false);
 	};
 
 	const handleOnClickCreateCollectionRootGroup = () => {
@@ -99,11 +102,36 @@ export const GroupNavItem = ({
 
 	const handleOnClickRenameGroup = (id: number) => {
 		managerSlice.setGroupModalFormAction(FormActionEnum.Update);
-		managerSlice.setSelectedSidebarGroup(id);
+		managerSlice.setSelectedSidebarGroupId(id);
 		onOpenGroupModal();
 	};
 
-	const handleOnClickRemoveGroup = () => {};
+	const handleOnClickRemoveGroup = async (id: number) => {
+		// Validate that group it is empty
+		try {
+			const groupData = await useGetGroupByIdQueryClientAsync(id);
+
+			if (groupData.bookmarksCounter > 0) {
+				// Show warning of none-empty group
+				managerSlice.setGroupModalFormAction(FormActionEnum.Delete);
+				managerSlice.setSelectedSidebarGroupId(id);
+				onOpenGroupModal();
+			}else{
+       // Delete group
+			 
+			}
+
+		} catch (error) {
+			toast({
+				title: "Error",
+				description: "Error in fetching Group Data",
+				status: "error",
+				duration: 5000,
+				isClosable: true,
+			});
+			defaultHandlerApiError(error);
+		}
+	};
 
 	return (
 		<>
@@ -233,7 +261,7 @@ export const GroupNavItem = ({
 								}}
 								h="100%"
 								textStyle="primary"
-								onClick={handleOnClickRemoveGroup}
+								onClick={async () => handleOnClickRenameGroup(group.id)}
 							>
 								Remove group
 							</MenuItem>
@@ -242,11 +270,16 @@ export const GroupNavItem = ({
 				)}
 			</Flex>
 			{group.collections.length > 0 && ( // Rendering collections
-				// Show input if click on create collection
 				<Collapse in={isOpen} animateOpacity>
-					{isShowinginput && (
-						<CollectionAddForm setIsShowingInput={setIsShowingInput} />
-					)}
+					{
+						// Show form if click on create collection
+						isShowingInput && (
+							<RootCollectionAddForm
+								groupId={group.id}
+								setIsShowingInput={setIsShowingInput}
+							/>
+						)
+					}
 					{group.collections.map((collection) => {
 						return (
 							<RecursiveNavItem

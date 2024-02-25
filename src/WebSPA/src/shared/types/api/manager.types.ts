@@ -13,11 +13,6 @@ export type TDynamicCollapseState = {
 // API/Service Types //
 
 
-export type TNewCollection = {
-  id: number;
-  name: string;
-}
-
 export type TGetCollectionGroups = {
   allBookmarksCounter: number;
   groups: TCollectionGroup[];
@@ -40,6 +35,7 @@ export type TCollection = {
 export type TGroup = {
   id: number;
   name: string;
+  bookmarksCounter: number;
 }
 
 export type TGetBookmarks = {
@@ -72,9 +68,6 @@ export const groupAddFormPayload = z.object({
 export type TGroupAddPayload = z.infer<typeof groupAddFormPayload>;
 
 export const groupUpdateFormPayload = z.object({
-  groupId: z
-    .number()
-    .min(1, { message: "Invalid group id" }),
   groupName: z
     .string()
     .trim()
@@ -144,6 +137,23 @@ export const bookmarkDeleteFormPayload = z.object({
     }, "Invalid Ids")
 });
 export type TBookmarkDeletePayload = z.infer<typeof bookmarkDeleteFormPayload>;
+
+export const rootCollectionAddFormPayload = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, { message: "Collection is required" })
+});
+export type TRootCollectionAddFormPayload = z.infer<typeof rootCollectionAddFormPayload>;
+
+export const nestedCollectionAddFormPayload = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, { message: "Collection is required" })
+});
+export type TNestedCollectionAddFormPayload = z.infer<typeof nestedCollectionAddFormPayload>;
+
 
 // Query Params Types //
 

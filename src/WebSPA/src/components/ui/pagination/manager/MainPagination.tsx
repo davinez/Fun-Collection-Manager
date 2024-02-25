@@ -12,13 +12,13 @@ import React from "react";
 import { useStore } from "@/store/UseStore";
 import { usePagination } from "@/hooks/manager/usePagination";
 
-type TManagerMainPaginationProps = {
+type TMainPaginationProps = {
 	totalCount: number;
 };
 
-export const ManagerMainPagination = ({
+export const MainPagination = ({
 	totalCount,
-}: TManagerMainPaginationProps): React.ReactElement => {
+}: TMainPaginationProps): React.ReactElement => {
 	// Hooks
 	const { managerSlice } = useStore();
 	const paginationRange = usePagination({

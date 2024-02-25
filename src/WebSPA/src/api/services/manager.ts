@@ -1,5 +1,4 @@
 import type {
-  TNewCollection,
   TGetCollectionGroups,
   TAddURLPayload,
   TGroupUpdatePayload,
@@ -7,6 +6,7 @@ import type {
   TDeleteGroupPayload,
   TBookmarkUpdatePayload,
   TBookmarkDeletePayload,
+  TRootCollectionAddFormPayload,
   TGroup,
   TGetBookmarks,
   TGetBookmarksParams
@@ -14,7 +14,7 @@ import type {
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import { useQuery, useMutation } from '@tanstack/react-query';
 import apiClient from "@/api/apiClient";
-import { useStore } from "@/store/UseStore";
+import queryClient from "@/api/query-client";
 
 const API_BASE_URL = "http://localhost:7000/api";
 
@@ -49,11 +49,21 @@ export const useGetGroupByIdQuery = (id: number) => {
     queryFn: async () => {
       const response = await $apiClient.get<TApiResponse<TGroup>>(`/manager/groups/${id}`);
       return response.data.data
+    },
+  });
+}
+
+export const useGetGroupByIdQueryClientAsync = async (id: number) => {
+  return await queryClient.fetchQuery({
+    queryKey: ["group", id], 
+    queryFn: async () => {
+      const response = await $apiClient.get<TApiResponse<TGroup>>(`/manager/groups/${id}`);
+      return response.data.data
     }
   });
 }
 
-export const useGetAllBookmarks = ({page, pageLimit, filterType, debounceSearchValue}: TGetBookmarksParams) => {
+export const useGetAllBookmarks = ({ page, pageLimit, filterType, debounceSearchValue }: TGetBookmarksParams) => {
   return useQuery({
     queryKey: ["bookmarks", { currentPage: page, debounceSearchValue }],
     queryFn: async () => {
@@ -77,14 +87,6 @@ export const useGetAllBookmarks = ({page, pageLimit, filterType, debounceSearchV
 
 /***** Mutations *****/
 
-export const useAddCategoryMutation = () => {
-  return useMutation({
-    mutationFn: async (payload: TNewCollection) => {
-      const response = await $apiClient.post<TApiResponse>("/manager/collections", payload);
-      return response.data;
-    },
-  });
-}
 
 // MutationFunction takes only one parameter called variables.
 type TuseAddURLMutationVariables = {
@@ -156,7 +158,33 @@ export const useDeleteBookmarkMutation = () => {
   });
 }
 
+type TuseAddRootCollectionMutationVariables = {
+  groupId: number;
+  payload: TRootCollectionAddFormPayload;
+}
 
+export const useAddRootCollectionMutation = () => {
+  return useMutation({
+    mutationFn: async ({ groupId, payload }: TuseAddRootCollectionMutationVariables) => {
+      const response = await $apiClient.post<TApiResponse>(`/manager/collections/group/${groupId}`, payload);
+      return response.data;
+    },
+  });
+}
+
+type TuseAddNestedCollectionMutationVariables = {
+  collectionId: number;
+  payload: TRootCollectionAddFormPayload;
+}
+
+export const useAddNestedCollectionMutation = () => {
+  return useMutation({
+    mutationFn: async ({ collectionId, payload }: TuseAddNestedCollectionMutationVariables) => {
+      const response = await $apiClient.post<TApiResponse>(`/manager/collections/${collectionId}`, payload);
+      return response.data;
+    },
+  });
+}
 
 
 

@@ -1,7 +1,7 @@
 // Design
 import { Modal, ModalOverlay, ModalContent } from "@chakra-ui/react";
 // Components
-import { ManagerGroupAddForm, ManagerGroupUpdateForm } from "components/forms";
+import { GroupAddForm, GroupUpdateForm } from "components/forms/manager";
 // Assets
 
 // Hooks
@@ -11,18 +11,17 @@ import { FormActionEnum } from "@/shared/types/global.types";
 // General
 import { useStore } from "@/store/UseStore";
 
-type TManagerGroupModalProps = {
+type TGroupModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
 };
 
-export const ManagerGroupModal = ({
+export const GroupModal = ({
 	isOpen,
 	onClose,
-}: TManagerGroupModalProps) => {
-	// State Hooks
+}: TGroupModalProps) => {
+	// Hooks
 	const { managerSlice } = useStore();
-	// General Hooks
 
 	return (
 		<>
@@ -35,10 +34,13 @@ export const ManagerGroupModal = ({
 					borderColor="brandPrimary.900"
 				>
 					{managerSlice.groupModalFormAction === FormActionEnum.Add && (
-						<ManagerGroupAddForm onClose={onClose} />
+						<GroupAddForm onClose={onClose} />
 					)}
 					{managerSlice.groupModalFormAction === FormActionEnum.Update && (
-						<ManagerGroupUpdateForm onClose={onClose} />
+						<GroupUpdateForm onClose={onClose} />
+					)}
+					{managerSlice.groupModalFormAction === FormActionEnum.Delete && (
+						<GroupDeleteForm onClose={onClose} />
 					)}
 				</ModalContent>
 			</Modal>

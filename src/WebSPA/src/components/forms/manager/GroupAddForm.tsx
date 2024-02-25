@@ -31,17 +31,18 @@ type TGroupAddFormProps = {
 	onClose: () => void;
 };
 
-export const ManagerGroupAddForm = ({ onClose }: TGroupAddFormProps) => {
-	// State Hooks
+export const GroupAddForm = ({ onClose }: TGroupAddFormProps) => {
+	// Hooks
 
-	// General Hooks
+	// Validation is triggered on the changeevent for each input, leading to multiple re-renders. 
+	// Warning: this often comes with a significant impact on performance.
 	const methods = useForm<TGroupAddPayload>({
 		resolver: zodResolver(groupAddFormPayload),
 		mode: "onChange",
 	});
 	const {
 		reset,
-		formState: { errors, isValid, isDirty },
+		formState: { errors, isValid },
 	} = methods;
 	const AddGroupMutation = useAddGroupMutation();
 	const toast = useToast();
@@ -105,7 +106,7 @@ export const ManagerGroupAddForm = ({ onClose }: TGroupAddFormProps) => {
 						bg: "brandPrimary.100",
 					}}
 					fontSize={textStylesTheme.textStyles.primary.fontSize}
-					isDisabled={!isDirty || !isValid}
+					isDisabled={!isValid}
 					type="submit"
 				>
 					Save

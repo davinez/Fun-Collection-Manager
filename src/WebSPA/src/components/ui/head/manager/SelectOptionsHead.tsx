@@ -21,17 +21,17 @@ import {
 import { useState } from "react";
 import { useStore } from "@/store/UseStore";
 
-type THeaderSelectOptionsProps = {
+type TSelectOptionsHeadProps = {
 	headerName?: string;
 	bookmarksCount: number;
 	onOpenBookmarkModal: () => void;
 };
 
-export const ManagerSelectOptionsHead = ({
+export const SelectOptionsHead = ({
 	headerName,
 	bookmarksCount,
 	onOpenBookmarkModal
-}: THeaderSelectOptionsProps) => {
+}: TSelectOptionsHeadProps) => {
 	// State Hooks
 	const { managerSlice } = useStore();
 	const [checkedHead, setCheckedHead] = useState(

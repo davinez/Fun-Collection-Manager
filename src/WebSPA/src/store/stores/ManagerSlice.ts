@@ -12,7 +12,7 @@ import { PAGE_ITEM_LIMIT } from "shared/config";
 export type TManagerSliceDefinition = {
   groupModalFormAction: FormActionEnum;
   bookmarkModalFormAction: FormActionEnum | undefined;
-  selectedSidebarGroup: number | undefined;
+  selectedSidebarGroupId: number;
   selectedSidebarCollection: number | undefined;
   selectedSortValueCollectionFilter: string;
   selectedViewValueCollectionFilter: string;
@@ -26,7 +26,7 @@ export type TManagerSliceDefinition = {
 export type TManagerSliceActions = {
   setGroupModalFormAction: (payload: FormActionEnum) => void;
   setBookmarkModalFormAction: (payload: FormActionEnum) => void;
-  setSelectedSidebarGroup: (payload: number) => void;
+  setSelectedSidebarGroupId: (payload: number) => void;
   setSelectedSidebarCollection: (payload: number) => void;
   setSelectedSortValueCollectionFilter: (payload: string) => void;
   setSelectedViewValueCollectionFilter: (payload: string) => void;
@@ -45,7 +45,7 @@ export type TManagerSlice = TManagerSliceDefinition & TManagerSliceActions;
 const initialManagerSliceState: TManagerSliceDefinition = {
   groupModalFormAction: FormActionEnum.Add,
   bookmarkModalFormAction: undefined,
-  selectedSidebarGroup: undefined,
+  selectedSidebarGroupId: 0,
   selectedSidebarCollection: undefined,
   selectedSortValueCollectionFilter: SortEnum.DateAsc,
   selectedViewValueCollectionFilter: ViewCollectionsEnum.Card,
@@ -63,9 +63,9 @@ const initialManagerSliceState: TManagerSliceDefinition = {
 
 export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
   ...initialManagerSliceState,
-  setSelectedSidebarGroup: (payload): void =>
+  setSelectedSidebarGroupId: (payload): void =>
     set((state) => {
-      state.managerSlice.selectedSidebarGroup = payload;
+      state.managerSlice.selectedSidebarGroupId = payload;
     }),
   setSelectedSidebarCollection: (payload): void =>
     set((state) => {

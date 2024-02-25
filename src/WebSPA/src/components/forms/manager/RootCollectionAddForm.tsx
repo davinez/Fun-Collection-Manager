@@ -7,67 +7,84 @@ import { InputField } from "components/forms";
 // Assets
 
 // Hooks
-import { useAddGroupMutation } from "@/api/services/manager";
+import { useAddRootCollectionMutation } from "@/api/services/manager";
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
 import { defaultHandlerApiError } from "@/api/apiClient";
 // Types
 import {
-	groupAddFormPayload,
-	type TGroupAddPayload,
+	rootCollectionAddFormPayload,
+	type TRootCollectionAddFormPayload,
 } from "@/shared/types/api/manager.types";
 // General
 import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
+import { useCallback } from "react";
 
-type TCollectionAddFormProps = {
+type TRootCollectionAddFormProps = {
 	setIsShowingInput: React.Dispatch<React.SetStateAction<boolean>>;
+	groupId: number;
 };
 
-export const CollectionAddForm = ({
+export const RootCollectionAddForm = ({
 	setIsShowingInput,
-}: TCollectionAddFormProps) => {
-	// State Hooks
+	groupId,
+}: TRootCollectionAddFormProps) => {
+	// Hooks
 
-	// General Hooks
-	const methods = useForm<TGroupAddPayload>({
-		resolver: zodResolver(groupAddFormPayload),
+	// Validation is triggered on the changeevent for each input, leading to multiple re-renders. 
+	// Warning: this often comes with a significant impact on performance.
+	const methods = useForm<TRootCollectionAddFormPayload>({
+		resolver: zodResolver(rootCollectionAddFormPayload),
 		mode: "onChange",
 	});
 	const {
 		reset,
-		formState: { errors, isValid, isDirty },
+		formState: { errors, isValid },
 	} = methods;
-	const AddGroupMutation = useAddGroupMutation();
+	const AddRootCollectionMutation = useAddRootCollectionMutation();
 	const toast = useToast();
+	const handleOnInputRefChange = useCallback((node: HTMLInputElement) => {
+		// console.log(node);
+		if (node !== null) {
+			node.focus();
+		}
+	}, []); // adjust deps
 
-	// Add mutation, type and validation
-	// Submit on button click or enter key
+	// Handlers
+	const handleOnInputFocusOut = () => {
+		setIsShowingInput(false);
+	};
 
-	const onSubmit: SubmitHandler<TGroupAddPayload> = (
-		data: TGroupAddPayload
+	const onSubmit: SubmitHandler<TRootCollectionAddFormPayload> = (
+		data
 	): void => {
-		AddGroupMutation.mutate(data, {
-			onSuccess: (data, variables, context) => {
-				queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
-				toast({
-					title: "Group Added.",
-					status: "success",
-					duration: 5000,
-					isClosable: true,
-				});
-				reset();
-			},
-			onError: (error, variables, context) => {
-				toast({
-					title: "Error",
-					description: "Error in adding Group",
-					status: "error",
-					duration: 5000,
-					isClosable: true,
-				});
-				defaultHandlerApiError(error);
-			},
-		});
+		AddRootCollectionMutation.mutate(
+			{ groupId: groupId, payload: data },
+			{
+				onSuccess: (data, variables, context) => {
+					setIsShowingInput(false);
+					queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
+					toast({
+						title: "Collection Added.",
+						status: "success",
+						duration: 5000,
+						isClosable: true,
+					});
+					reset();
+				},
+				onError: (error, variables, context) => {
+					setIsShowingInput(false);
+					toast({
+						title: "Error",
+						description: "Error in adding Collection",
+						status: "error",
+						duration: 5000,
+						isClosable: true,
+					});
+					defaultHandlerApiError(error);
+				},
+			}
+		);
 	};
 
 	return (
@@ -92,8 +109,7 @@ export const CollectionAddForm = ({
 							bg: "brandPrimary.800",
 						}}
 						type="submit"
-						isDisabled={!isDirty || !isValid}
-						onClick={() => setIsShowingInput(false)}
+						isDisabled={!isValid}
 					>
 						<Icon
 							h="100%"
@@ -116,7 +132,7 @@ export const CollectionAddForm = ({
 							borderBottomColor: "brandSecondary.600",
 						}}
 						_hover={{
-							borderBottomColor: "brandSecondary.600"
+							borderBottomColor: "brandSecondary.600",
 						}}
 						fontSize={textStylesTheme.textStyles.primary.fontSize}
 						p={0}
@@ -125,8 +141,10 @@ export const CollectionAddForm = ({
 						borderBottom="1px solid"
 						borderRadius={0}
 						borderBottomColor="brandSecondary.600"
-						id="groupName"
+						id="name"
 						placeholder="New Collection"
+						onBlur={handleOnInputFocusOut}
+						ref={handleOnInputRefChange}
 					/>
 				</Flex>
 			</Stack>

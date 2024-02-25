@@ -3,13 +3,13 @@ import { useToast, useDisclosure, Box, Flex } from "@chakra-ui/react";
 import { AiFillCloud } from "react-icons/ai";
 // Components
 import {
-	ManagerFiltersHead,
-	ManagerSelectOptionsHead,
-} from "components/ui/head";
+	FiltersHead,
+	SelectOptionsHead,
+} from "components/ui/head/manager";
 import { LoadingBox, ErrorBox } from "@/components/ui/box";
-import { ManagerBookmarkCard } from "@/components/ui/card";
-import { ManagerBookmarkModal } from "@/components/ui/modal";
-import { ManagerMainPagination } from "@/components/ui/pagination";
+import { BookmarkCard } from "@/components/ui/card/manager";
+import { BookmarkModal } from "@/components/ui/modal/manager";
+import { MainPagination } from "@/components/ui/pagination/manager";
 // Assets
 
 // Hooks
@@ -48,20 +48,20 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 
 	return (
 		<>
-			<ManagerBookmarkModal
+			<BookmarkModal
 				aria-label="page-modal"
 				isOpen={isOpenBookmarkModal}
 				onClose={onCloseBookmarkModal}
 				bookmark={modalBookmark}
 			/>
 			{managerSlice.showHeadSelectOptions ? (
-				<ManagerSelectOptionsHead
+				<SelectOptionsHead
 					aria-label="page-head"
 					bookmarksCount={data.total as number}
 					onOpenBookmarkModal={onOpenBookmarkModal}
 				/>
 			) : (
-				<ManagerFiltersHead
+				<FiltersHead
 					aria-label="page-head"
 					headerName="All bookmarks"
 					icon={AiFillCloud}
@@ -82,7 +82,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 			>
 				{sortedData.map((bookmark) => {
 					return (
-						<ManagerBookmarkCard
+						<BookmarkCard
 							key={`SortedCard_${bookmark.id}`}
 							bookmark={bookmark}
 							onOpenBookmarkModal={onOpenBookmarkModal}
@@ -92,7 +92,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 				})}
 			</Box>
 			<Flex aria-label="page-footer" w="100%" mt={5} mb={8}>
-				<ManagerMainPagination totalCount={data.total} />
+				<MainPagination totalCount={data.total} />
 			</Flex>
 		</>
 	);

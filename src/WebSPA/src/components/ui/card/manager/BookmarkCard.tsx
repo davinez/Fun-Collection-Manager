@@ -27,17 +27,17 @@ import {
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 
-type TManagerBookmarkCardProps = {
+type TBookmarkCardProps = {
 	bookmark: TBookmark;
 	onOpenBookmarkModal: () => void;
 	setModalBookmark: React.Dispatch<React.SetStateAction<TBookmark | undefined>>;
 };
 
-export const ManagerBookmarkCard = ({
+export const BookmarkCard = ({
 	bookmark,
 	onOpenBookmarkModal,
 	setModalBookmark,
-}: TManagerBookmarkCardProps) => {
+}: TBookmarkCardProps) => {
 	// State Hooks
 	const [isHovering, setIsHovering] = useState(false);
 	const { managerSlice } = useStore();

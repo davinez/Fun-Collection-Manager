@@ -29,15 +29,15 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
 
-type TManagerBookmarkUpdateFormProps = {
+type TBookmarkUpdateFormProps = {
 	onClose: () => void;
 	bookmark: TBookmark;
 };
 
-export const ManagerBookmarkUpdateForm = ({
+export const BookmarkUpdateForm = ({
 	onClose,
 	bookmark
-}: TManagerBookmarkUpdateFormProps) => {
+}: TBookmarkUpdateFormProps) => {
 	// State Hooks
 
 	// General Hooks
@@ -47,7 +47,7 @@ export const ManagerBookmarkUpdateForm = ({
 	});
 	const {
 		reset,
-		formState: { errors, isValid, isDirty },
+		formState: { errors },
 	} = methods;
 	const updateBookmarkMutation = useUpdateBookmarkMutation();
 	const toast = useToast();
