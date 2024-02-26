@@ -22,9 +22,7 @@ type TBookmarkDeleteFormProps = {
 	onClose: () => void;
 };
 
-export const BookmarkDeleteForm = ({
-	onClose,
-}: TBookmarkDeleteFormProps) => {
+export const BookmarkDeleteForm = ({ onClose }: TBookmarkDeleteFormProps) => {
 	// State Hooks
 	const { managerSlice } = useStore();
 	// General Hooks
@@ -49,7 +47,7 @@ export const BookmarkDeleteForm = ({
 				duration: 5000,
 				isClosable: true,
 			});
-      return;
+			return;
 		}
 
 		deleteBookmarkMutation.mutate(payload, {
@@ -61,6 +59,7 @@ export const BookmarkDeleteForm = ({
 					duration: 5000,
 					isClosable: true,
 				});
+				onClose();
 			},
 			onError: (error, variables, context) => {
 				toast({

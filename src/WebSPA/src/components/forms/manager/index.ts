@@ -6,4 +6,7 @@ export * from './BookmarkUpdateForm';
 export * from './BookmarkDeleteForm';
 export * from './GroupAddForm';
 export * from './GroupUpdateForm';
+export * from './GroupDeleteForm';
+
+
 

@@ -23,17 +23,23 @@ import { RootCollectionAddForm } from "components/forms/manager";
 // Assets
 
 // Hooks
-import { useGetGroupByIdQueryClientAsync } from "@/api/services/manager";
+import {
+	useGetGroupByIdQueryClientAsync,
+	useDeleteGroupMutation,
+} from "@/api/services/manager";
 import { defaultHandlerApiError } from "@/api/apiClient";
 // Types
-import type {
-	TDynamicCollapseState,
-	TCollectionGroup,
+import {
+	deleteGroupFormPayload,
+	type TDynamicCollapseState,
+	type TCollectionGroup,
+	type TDeleteGroupPayload,
 } from "@/shared/types/api/manager.types";
 import { FormActionEnum } from "@/shared/types/global.types";
 // General
 import { useState } from "react";
 import { useStore } from "@/store/UseStore";
+import queryClient from "@/api/query-client";
 
 // All bookmarks and group NavItem in sidebar
 
@@ -58,12 +64,13 @@ export const GroupNavItem = ({
 	children,
 	...rest
 }: TGroupNavItemProps & FlexProps): React.ReactElement => {
-	// State Hooks
+	// Hooks
 	const { managerSlice } = useStore();
 	const [isHovering, setIsHovering] = useState(false);
 	const [isShowingInput, setIsShowingInput] = useState(false);
 	const { isOpen, onToggle } = useDisclosure();
 	const toast = useToast();
+	const deleteGroupMutation = useDeleteGroupMutation();
 
 	// handlers
 
@@ -107,20 +114,54 @@ export const GroupNavItem = ({
 	};
 
 	const handleOnClickRemoveGroup = async (id: number) => {
-		// Validate that group it is empty
 		try {
+			const payload: TDeleteGroupPayload = {
+				groupId: id,
+			};
+
+			const validationResult = deleteGroupFormPayload.safeParse(payload);
+
+			if (!validationResult.success) {
+				console.error(validationResult.error.message);
+				toast({
+					title: "Error",
+					description: "Error in validation",
+					status: "error",
+					duration: 5000,
+					isClosable: true,
+				});
+				return;
+			}
+
 			const groupData = await useGetGroupByIdQueryClientAsync(id);
 
+			// Validate that group it is not empty
 			if (groupData.bookmarksCounter > 0) {
 				// Show warning of none-empty group
 				managerSlice.setGroupModalFormAction(FormActionEnum.Delete);
 				managerSlice.setSelectedSidebarGroupId(id);
 				onOpenGroupModal();
-			}else{
-       // Delete group
-			 
+			} else {
+				// Delete group
+				deleteGroupMutation.mutate(payload, {
+					onSuccess: (data, variables, context) => {
+						queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
+						queryClient.invalidateQueries({
+							queryKey: ["group", id],
+						});
+					},
+					onError: (error, variables, context) => {
+						toast({
+							title: "Error",
+							description: "Error in deleting Group",
+							status: "error",
+							duration: 5000,
+							isClosable: true,
+						});
+						defaultHandlerApiError(error);
+					},
+				});
 			}
-
 		} catch (error) {
 			toast({
 				title: "Error",
@@ -261,7 +302,7 @@ export const GroupNavItem = ({
 								}}
 								h="100%"
 								textStyle="primary"
-								onClick={async () => handleOnClickRenameGroup(group.id)}
+								onClick={async () => handleOnClickRemoveGroup(group.id)}
 							>
 								Remove group
 							</MenuItem>

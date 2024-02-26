@@ -1,33 +1,16 @@
 // Design
-import {
-	ModalCloseButton,
-	Text,
-	Button,
-	Stack,
-	useToast,
-	Flex,
-} from "@chakra-ui/react";
+import { Icon, Text, Button, Stack, Flex } from "@chakra-ui/react";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
+import { AiFillAlert } from "react-icons/ai";
 // Components
-import { InputField } from "components/forms";
-import { LoadingBox, ErrorBox } from "@/components/ui/box";
+
 // Assets
 
 // Hooks
-import {
-	useDeleteGroupMutation,
-	useGetGroupByIdQuery,
-} from "@/api/services/manager";
-import { defaultHandlerApiError } from "@/api/apiClient";
+
 // Types
-import {
 
-} from "@/shared/types/api/manager.types";
 // General
-
-import queryClient from "@/api/query-client";
-import { useStore } from "@/store/UseStore";
-import { useEffect } from "react";
 
 type TGroupDeleteFormProps = {
 	onClose: () => void;
@@ -35,125 +18,39 @@ type TGroupDeleteFormProps = {
 
 export const GroupDeleteForm = ({ onClose }: TGroupDeleteFormProps) => {
 	// Hooks
-	const { managerSlice } = useStore();
-	const {
-		data: getGroupByIdResponse,
-		isPending: isPendingGetGroupById,
-		isError: isErrorGetGroupById,
-		error: errorGetGroupById,
-	} = useGetGroupByIdQuery(managerSlice.selectedSidebarGroupId);
-	const deleteGroupMutation = useDeleteGroupMutation();
-	const toast = useToast();
-
-	// Handle Error or Store Update
-	useEffect(() => {
-		if (isErrorGetGroupById && managerSlice.selectedSidebarGroupId !== 0) {
-			toast({
-				title: "Error",
-				description: "Error in fetching Group Data",
-				status: "error",
-				duration: 5000,
-				isClosable: true,
-			});
-			defaultHandlerApiError(errorGetGroupById);
-		}
-	}, [isErrorGetGroupById, managerSlice.selectedSidebarGroupId]);
 
 	// Handlers
-
-	const onSubmit: SubmitHandler<TGroupUpdatePayload> = (
-		data: TGroupUpdatePayload
-	): void => {
-		UpdateGroupMutation.mutate(
-			{ groupId: managerSlice.selectedSidebarGroup as number, payload: data },
-			{
-				onSuccess: (data, variables, context) => {
-					queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
-					toast({
-						title: "Group updated.",
-						status: "success",
-						duration: 5000,
-						isClosable: true,
-					});
-					reset();
-				},
-				onError: (error, variables, context) => {
-					toast({
-						title: "Error",
-						description: "Error in updating Group",
-						status: "error",
-						duration: 5000,
-						isClosable: true,
-					});
-					defaultHandlerApiError(error);
-				},
-			}
-		);
+	const handleOnClick = () => {
+		onClose();
 	};
 
 	// Return handling
-	if (isPendingGetGroupById)
-		return (
-			<>
-				<Flex align="center" justify="space-between" mb={3}>
-					<Text fontSize="large">Update group</Text>
-					<ModalCloseButton size="lg" position="unset" />
-				</Flex>
-				<LoadingBox />
-			</>
-		);
-
-	if (isErrorGetGroupById) return <ErrorBox />;
 
 	return (
-		<FormProvider {...methods}>
-			<Stack as="form" onSubmit={methods.handleSubmit(onSubmit)} p={5}>
-				<Flex align="center" justify="space-between" mb={3}>
-					<Text fontSize="large">Update group</Text>
-					<ModalCloseButton size="lg" position="unset" />
-				</Flex>
+		<Stack p={5}>
+			<Flex align="center" mb={3}>
+				<Icon ml="0px" mr="10px" boxSize="5" color="red.200" as={AiFillAlert} />
+				<Text fontSize="large">You can not delete a populated group!</Text>
+			</Flex>
 
-				<InputField
-					fontSize={textStylesTheme.textStyles.primary.fontSize}
-					py={0}
-					px={2}
-					h={8}
-					id="groupName"
-					errorMessage={errors.groupName ? errors.groupName.message : undefined}
-					defaultValue={getGroupByIdResponse.name}
-				/>
-
-				<Button
-					mt={4}
-					bg="brandSecondary.600"
-					h={8}
-					_hover={{
-						bg: "brandSecondary.800",
-					}}
-					_disabled={{
-						bg: "brandPrimary.100",
-					}}
-					_empty={{
-						bg: "brandPrimary.100",
-					}}
-					fontSize={textStylesTheme.textStyles.primary.fontSize}
-					type="submit"
-				>
-					Save
-				</Button>
-				<Button
-					bg="brandPrimary.950"
-					color="brandPrimary.100"
-					h={8}
-					_hover={{
-						bg: "brandSecondary.800",
-					}}
-					fontSize={textStylesTheme.textStyles.primary.fontSize}
-					onClick={onClose}
-				>
-					Cancel
-				</Button>
-			</Stack>
-		</FormProvider>
+			<Button
+				bg="brandSecondary.600"
+				h={8}
+				_hover={{
+					bg: "brandSecondary.800",
+				}}
+				_disabled={{
+					bg: "brandPrimary.100",
+				}}
+				_empty={{
+					bg: "brandPrimary.100",
+				}}
+				fontSize={textStylesTheme.textStyles.primary.fontSize}
+				mr={3}
+				onClick={handleOnClick}
+			>
+				Ok
+			</Button>
+		</Stack>
 	);
 };

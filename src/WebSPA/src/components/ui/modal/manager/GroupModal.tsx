@@ -1,7 +1,7 @@
 // Design
 import { Modal, ModalOverlay, ModalContent } from "@chakra-ui/react";
 // Components
-import { GroupAddForm, GroupUpdateForm } from "components/forms/manager";
+import { GroupAddForm, GroupUpdateForm, GroupDeleteForm } from "components/forms/manager";
 // Assets
 
 // Hooks
