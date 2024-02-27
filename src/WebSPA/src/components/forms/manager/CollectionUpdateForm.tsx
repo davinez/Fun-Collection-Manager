@@ -1,5 +1,12 @@
 // Design
-import { Button, Stack, useToast, Flex, Icon } from "@chakra-ui/react";
+import {
+	Button,
+	Stack,
+	useToast,
+	Flex,
+	Icon,
+	FlexProps,
+} from "@chakra-ui/react";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 import { AiOutlinePlus } from "react-icons/ai";
 // Components
@@ -7,41 +14,43 @@ import { InputField } from "components/forms";
 // Assets
 
 // Hooks
-import { useAddRootCollectionMutation } from "@/api/services/manager";
+import { useUpdateCollectionMutation } from "@/api/services/manager";
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
 import { defaultHandlerApiError } from "@/api/apiClient";
 // Types
 import {
-	rootCollectionAddFormPayload,
-	type TRootCollectionAddFormPayload,
+	collectionUpdateFormPayload,
+	type TCollectionUpdateFormPayload,
+	TCollection,
 } from "@/shared/types/api/manager.types";
 // General
 import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
 import { useCallback } from "react";
 
-type TRootCollectionAddFormProps = {
-	setIsShowingInput: React.Dispatch<React.SetStateAction<boolean>>;
-	groupId: number;
+type TCollectionUpdateFormProps = {
+	setIsSelfEditable: React.Dispatch<React.SetStateAction<boolean>>;
+	collection: TCollection;
 };
 
-export const RootCollectionAddForm = ({
-	setIsShowingInput,
-	groupId,
-}: TRootCollectionAddFormProps) => {
+export const CollectionUpdateForm = ({
+	setIsSelfEditable,
+	collection,
+	...rest
+}: TCollectionUpdateFormProps & FlexProps) => {
 	// Hooks
 
-	// Validation is triggered on the changeevent for each input, leading to multiple re-renders. 
+	// Validation is triggered on the changeevent for each input, leading to multiple re-renders.
 	// Warning: this often comes with a significant impact on performance.
-	const methods = useForm<TRootCollectionAddFormPayload>({
-		resolver: zodResolver(rootCollectionAddFormPayload),
+	const methods = useForm<TCollectionUpdateFormPayload>({
+		resolver: zodResolver(collectionUpdateFormPayload),
 		mode: "onChange",
 	});
 	const {
 		reset,
 		formState: { errors, isValid },
 	} = methods;
-	const AddRootCollectionMutation = useAddRootCollectionMutation();
+	const updateCollectionMutation = useUpdateCollectionMutation();
 	const toast = useToast();
 	const handleOnInputRefChange = useCallback((node: HTMLInputElement) => {
 		// console.log(node);
@@ -52,20 +61,23 @@ export const RootCollectionAddForm = ({
 
 	// Handlers
 	const handleOnInputFocusOut = () => {
-		setIsShowingInput(false);
+		setIsSelfEditable(false);
 	};
 
-	const onSubmit: SubmitHandler<TRootCollectionAddFormPayload> = (
+	const onSubmit: SubmitHandler<TCollectionUpdateFormPayload> = (
 		data
 	): void => {
-		AddRootCollectionMutation.mutate(
-			{ groupId: groupId, payload: data },
+		updateCollectionMutation.mutate(
+			{
+				collectionId: collection.id,
+				payload: data,
+			},
 			{
 				onSuccess: (data, variables, context) => {
-					setIsShowingInput(false);
+					setIsSelfEditable(false);
 					queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
 					toast({
-						title: "Collection Added.",
+						title: "Collection Updated.",
 						status: "success",
 						duration: 5000,
 						isClosable: true,
@@ -73,10 +85,10 @@ export const RootCollectionAddForm = ({
 					reset();
 				},
 				onError: (error, variables, context) => {
-					setIsShowingInput(false);
+					setIsSelfEditable(false);
 					toast({
 						title: "Error",
-						description: "Error in adding Collection",
+						description: "Error in updating Collection",
 						status: "error",
 						duration: 5000,
 						isClosable: true,
@@ -93,13 +105,14 @@ export const RootCollectionAddForm = ({
 				<Flex
 					w="100%"
 					align="center"
-					cursor="pointer"
+					
 					textStyle="primary"
 					bg="brandPrimary.800"
 					pr={3}
+					{...rest}
 				>
 					<Button
-						aria-label="Add Collection"
+						aria-label="Update Collection"
 						p={0}
 						m={0}
 						h="100%"
@@ -142,7 +155,7 @@ export const RootCollectionAddForm = ({
 						borderRadius={0}
 						borderBottomColor="brandSecondary.600"
 						id="name"
-						placeholder="New Collection"
+						defaultValue={collection.name}
 						onBlur={handleOnInputFocusOut}
 						ref={handleOnInputRefChange}
 					/>

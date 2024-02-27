@@ -20,7 +20,10 @@ import {
 	AiFillSetting,
 } from "react-icons/ai";
 // Components
-import { NestedCollectionAddForm } from "@/components/forms/manager";
+import {
+	CollectionAddForm,
+	CollectionUpdateForm,
+} from "@/components/forms/manager";
 // Assets
 
 // Types
@@ -52,6 +55,7 @@ export const RecursiveNavItem = ({
 }: TRecursiveNavItemProps & FlexProps): React.ReactElement => {
 	const [isHovering, setIsHovering] = useState(false);
 	const [isShowingInput, setIsShowingInput] = useState(false);
+	const [isSelfEditable, setIsSelfEditable] = useState(false);
 
 	const handleMouseOver = () => {
 		setIsHovering(true);
@@ -100,7 +104,10 @@ export const RecursiveNavItem = ({
 		}
 	};
 
-	const handleOnClickRenameCollection = () => {};
+	const handleOnClickRenameCollection = () => {
+		//
+		setIsSelfEditable(true);
+	};
 
 	const handleOnClickChangeIconCollection = () => {};
 
@@ -108,153 +115,176 @@ export const RecursiveNavItem = ({
 
 	return (
 		<>
-			<Flex
-				align="center"
-				justify="space-between"
-				py={2}
-				pr={3}
-				cursor="pointer"
-				textStyle="primary"
-				color="brandPrimary.100"
-				transition=".15s ease"
-				onClick={handleOnClickNavItem}
-				onMouseOver={handleMouseOver}
-				onMouseOut={handleMouseOut}
-				{...rest}
-			>
+			{isSelfEditable ? (
+				<CollectionUpdateForm
+					setIsSelfEditable={setIsSelfEditable}
+					collection={collection}
+					pl={nodePadding}
+				/>
+			) : (
 				<Flex
-					w="85%"
-					aria-label="navitem-left-section"
 					align="center"
-					gap={0}
-					p={0}
+					justify="space-between"
+					py={2}
+					pr={3}
+					cursor="pointer"
+					textStyle="primary"
+					color="brandPrimary.100"
+					transition=".15s ease"
+					onClick={handleOnClickNavItem}
+					onMouseOver={handleMouseOver}
+					onMouseOut={handleMouseOut}
+					{...rest}
 				>
-					{collection.childCollections.length > 0 && (
-						<Icon
-							mx="0px"
-							boxSize="3"
+					<Flex
+						w="85%"
+						aria-label="navitem-left-section"
+						align="center"
+						gap={0}
+						p={0}
+					>
+						{collection.childCollections.length > 0 && (
+							<Icon
+								mx="0px"
+								boxSize="3"
+								color="brandPrimary.150"
+								as={
+									nodesState.find((node) => node.nodeId === collection.id)
+										?.isOpen
+										? AiFillCaretDown
+										: AiFillCaretRight
+								}
+								onClick={handleOnClickCollapseCollection}
+							/>
+						)}
+						<Image
+							ml="0px"
+							mr="5px"
+							borderRadius="2px"
+							boxSize="5"
 							color="brandPrimary.150"
-							as={
-								nodesState.find((node) => node.nodeId === collection.id)?.isOpen
-									? AiFillCaretDown
-									: AiFillCaretRight
-							}
-							onClick={handleOnClickCollapseCollection}
+							objectFit="contain"
+							src={collection.cover}
+							fallbackSrc="/assets/icons/bookmark.svg"
+							alt="Default Icon"
 						/>
-					)}
-					<Image
-						ml="0px"
-						mr="5px"
-						borderRadius="2px"
-						boxSize="5"
-						color="brandPrimary.150"
-						objectFit="contain"
-						src={collection.cover}
-						fallbackSrc="/assets/icons/bookmark.svg"
-						alt="Default Icon"
-					/>
-					<Text
-						aria-label="navitem-name"
-						wordBreak="break-all"
-						overflow="hidden"
-						textOverflow="ellipsis"
-						sx={{
-							display: "-webkit-box",
-							WebkitLineClamp: 1,
-							WebkitBoxOrient: "vertical",
-						}}
-					>
-						{children}
-					</Text>
-				</Flex>
-				{isHovering ? (
-					<Menu>
-						<MenuButton
-							aria-label="navitem-right-section"
-							as={IconButton}
-							icon={
-								<Icon boxSize="4" color="brandPrimary.150" as={AiFillSetting} />
-							}
-							bg="brandPrimary.900"
-							color="brandPrimary.100"
-							_hover={{
-								bg: "brandPrimary.950",
+						<Text
+							aria-label="navitem-name"
+							wordBreak="break-all"
+							overflow="hidden"
+							textOverflow="ellipsis"
+							sx={{
+								display: "-webkit-box",
+								WebkitLineClamp: 1,
+								WebkitBoxOrient: "vertical",
 							}}
-							_active={{
-								bg: "brandPrimary.950",
-							}}
-							h={5}
-							p={0}
-							m={0}
-							w="15%"
-						/>
-						<MenuList
-							bg="brandPrimary.800"
-							color="brandPrimary.100"
-							border="1px solid"
-							borderColor="brandPrimary.900"
 						>
-							<MenuItem
-								bg="brandPrimary.800"
-								h="100%"
-								textStyle="primary"
+							{children}
+						</Text>
+					</Flex>
+					{isHovering ? (
+						<Menu>
+							<MenuButton
+								aria-label="navitem-right-section"
+								as={IconButton}
+								icon={
+									<Icon
+										boxSize="4"
+										color="brandPrimary.150"
+										as={AiFillSetting}
+									/>
+								}
+								bg="brandPrimary.950"
+								color="brandPrimary.100"
 								_hover={{
-									bg: "brandSecondary.800",
+									bg: "brandPrimary.800",
 								}}
-								onClick={handleOnClickCreateNestedCollection}
-							>
-								Create nested collection
-							</MenuItem>
-							<MenuDivider borderColor="brandPrimary.100" />
-							<MenuItem
+								_active={{
+									bg: "brandPrimary.800",
+								}}
+								h={5}
+								p={0}
+								m={0}
+								w="15%"
+							/>
+							<MenuList
 								bg="brandPrimary.800"
-								h="100%"
-								textStyle="primary"
-								_hover={{
-									bg: "brandSecondary.800",
-								}}
-								onClick={handleOnClickChangeIconCollection}
+								color="brandPrimary.100"
+								border="1px solid"
+								borderColor="brandPrimary.900"
 							>
-								Change Icon
-							</MenuItem>
-							<MenuItem
-								bg="brandPrimary.800"
-								h="100%"
-								textStyle="primary"
-								_hover={{
-									bg: "brandSecondary.800",
-								}}
-								onClick={handleOnClickRenameCollection}
-							>
-								Rename
-							</MenuItem>
-							<MenuItem
-								bg="brandPrimary.800"
-								h="100%"
-								textStyle="primary"
-								_hover={{
-									bg: "brandSecondary.800",
-								}}
-								onClick={handleOnClickRemoveCollection}
-							>
-								Remove
-							</MenuItem>
-						</MenuList>
-					</Menu>
-				) : (
-					<Text
-						aria-label="navitem-right-section"
-						textStyle="tertiary"
-						color="brandPrimary.150"
-						w="15%"
-						textAlign="end"
-						mr={1}
-					>
-						{collection.bookmarksCounter}
-					</Text>
-				)}
-			</Flex>
-			{collection.childCollections.length > 0 ? ( // Rendering child collections
+								<MenuItem
+									bg="brandPrimary.800"
+									h="100%"
+									textStyle="primary"
+									_hover={{
+										bg: "brandSecondary.800",
+									}}
+									onClick={handleOnClickCreateNestedCollection}
+								>
+									Create nested collection
+								</MenuItem>
+								<MenuDivider borderColor="brandPrimary.100" />
+								<MenuItem
+									bg="brandPrimary.800"
+									h="100%"
+									textStyle="primary"
+									_hover={{
+										bg: "brandSecondary.800",
+									}}
+									onClick={handleOnClickChangeIconCollection}
+								>
+									Change Icon
+								</MenuItem>
+								<MenuItem
+									bg="brandPrimary.800"
+									h="100%"
+									textStyle="primary"
+									_hover={{
+										bg: "brandSecondary.800",
+									}}
+									onClick={handleOnClickRenameCollection}
+								>
+									Rename
+								</MenuItem>
+								<MenuItem
+									bg="brandPrimary.800"
+									h="100%"
+									textStyle="primary"
+									_hover={{
+										bg: "brandSecondary.800",
+									}}
+									onClick={handleOnClickRemoveCollection}
+								>
+									Remove
+								</MenuItem>
+							</MenuList>
+						</Menu>
+					) : (
+						<Text
+							aria-label="navitem-right-section"
+							textStyle="tertiary"
+							color="brandPrimary.150"
+							w="15%"
+							textAlign="end"
+							mr={1}
+						>
+							{collection.bookmarksCounter}
+						</Text>
+					)}
+				</Flex>
+			)}
+			{
+				// Show form if click on create collection
+				isShowingInput && (
+					<CollectionAddForm
+						parentCollectionId={collection.id}
+						setIsShowingInput={setIsShowingInput}
+						pl={nodePadding}
+					/>
+				)
+			}
+			{collection.childCollections.length > 0 && ( // Rendering child collections
 				<Collapse
 					in={
 						nodesState.find((node) => node.nodeId === collection.id)
@@ -262,21 +292,13 @@ export const RecursiveNavItem = ({
 					}
 					animateOpacity
 				>
-					{
-						// Show form if click on create collection
-						isShowingInput && (
-							<NestedCollectionAddForm
-								collectionId={collection.id}
-								setIsShowingInput={setIsShowingInput}
-							/>
-						)
-					}
 					{collection.childCollections.map((item) => {
 						return (
 							<RecursiveNavItem
 								key={`CollectionNavItem_${item.id}`}
+								w="100%"
 								_hover={{
-									bg: "brandPrimary.900",
+									bg: "brandPrimary.950",
 								}}
 								collection={item}
 								pl={
@@ -293,19 +315,9 @@ export const RecursiveNavItem = ({
 						);
 					})}
 				</Collapse>
-			) : // Doesnt have child collections
-   (
-			// Show form if click on create collection
-			isShowingInput && (
-				<NestedCollectionAddForm
-					collectionId={collection.id}
-					setIsShowingInput={setIsShowingInput}
-				/>
-			)
-	 )
-		}
+			)}
 		</>
 	);
 };
 
-// Collections NavItem in sidebar
+

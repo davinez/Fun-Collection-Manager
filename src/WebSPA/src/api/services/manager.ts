@@ -6,10 +6,12 @@ import type {
   TDeleteGroupPayload,
   TBookmarkUpdatePayload,
   TBookmarkDeletePayload,
-  TRootCollectionAddFormPayload,
+  TCollectionAddFormPayload,
+  TCollectionUpdateFormPayload,
   TGroup,
   TGetBookmarks,
-  TGetBookmarksParams
+  TGetBookmarksParams,
+  TCollectionMutationParams
 } from "@/shared/types/api/manager.types";
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -55,7 +57,7 @@ export const useGetGroupByIdQuery = (id: number) => {
 
 export const useGetGroupByIdQueryClientAsync = async (id: number) => {
   return await queryClient.fetchQuery({
-    queryKey: ["group", id], 
+    queryKey: ["group", id],
     queryFn: async () => {
       const response = await $apiClient.get<TApiResponse<TGroup>>(`/manager/groups/${id}`);
       return response.data.data
@@ -158,29 +160,37 @@ export const useDeleteBookmarkMutation = () => {
   });
 }
 
-type TuseAddRootCollectionMutationVariables = {
-  groupId: number;
-  payload: TRootCollectionAddFormPayload;
+type TuseUpdateCollectionMutationVariables = {
+  collectionId: number;
+  payload: TCollectionUpdateFormPayload;
 }
 
-export const useAddRootCollectionMutation = () => {
+export const useUpdateCollectionMutation = () => {
   return useMutation({
-    mutationFn: async ({ groupId, payload }: TuseAddRootCollectionMutationVariables) => {
-      const response = await $apiClient.post<TApiResponse>(`/manager/collections/group/${groupId}`, payload);
+    mutationFn: async ({ collectionId, payload }: TuseUpdateCollectionMutationVariables) => {
+      const response = await $apiClient.patch<TApiResponse>('/manager/collections',
+        { ...payload, collectionId }
+      );
       return response.data;
     },
   });
 }
 
-type TuseAddNestedCollectionMutationVariables = {
-  collectionId: number;
-  payload: TRootCollectionAddFormPayload;
+type TuseAddCollectionMutationVariables = {
+  params: TCollectionMutationParams;
+  payload: TCollectionAddFormPayload;
 }
 
-export const useAddNestedCollectionMutation = () => {
+export const useAddCollectionMutation = () => {
   return useMutation({
-    mutationFn: async ({ collectionId, payload }: TuseAddNestedCollectionMutationVariables) => {
-      const response = await $apiClient.post<TApiResponse>(`/manager/collections/${collectionId}`, payload);
+    mutationFn: async ({ params, payload }: TuseAddCollectionMutationVariables) => {
+      const response = await $apiClient.post<TApiResponse>('/manager/collections',
+        payload,
+        { // Conditionally add object properties
+          ...(params.groupId) && { group_id: params.groupId },
+          ...(params.parentCollectionId) && { parent_collection_id: params.parentCollectionId }
+        }
+      );
       return response.data;
     },
   });

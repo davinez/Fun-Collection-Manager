@@ -138,21 +138,21 @@ export const bookmarkDeleteFormPayload = z.object({
 });
 export type TBookmarkDeletePayload = z.infer<typeof bookmarkDeleteFormPayload>;
 
-export const rootCollectionAddFormPayload = z.object({
+export const collectionAddFormPayload = z.object({
   name: z
     .string()
     .trim()
     .min(1, { message: "Collection is required" })
 });
-export type TRootCollectionAddFormPayload = z.infer<typeof rootCollectionAddFormPayload>;
+export type TCollectionAddFormPayload = z.infer<typeof collectionAddFormPayload>;
 
-export const nestedCollectionAddFormPayload = z.object({
+export const collectionUpdateFormPayload = z.object({
   name: z
     .string()
     .trim()
     .min(1, { message: "Collection is required" })
 });
-export type TNestedCollectionAddFormPayload = z.infer<typeof nestedCollectionAddFormPayload>;
+export type TCollectionUpdateFormPayload = z.infer<typeof collectionUpdateFormPayload>;
 
 
 // Query Params Types //
@@ -162,5 +162,10 @@ export type TGetBookmarksParams = {
   pageLimit: number;
   filterType: string;
   debounceSearchValue: string;
+}
+
+export type TCollectionMutationParams = {
+  groupId?: number;
+  parentCollectionId?: number;
 }
 

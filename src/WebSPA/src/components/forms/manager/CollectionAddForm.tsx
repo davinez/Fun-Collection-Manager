@@ -1,5 +1,5 @@
 // Design
-import { Button, Stack, useToast, Flex, Icon } from "@chakra-ui/react";
+import { Button, Stack, useToast, Flex, Icon, FlexProps } from "@chakra-ui/react";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 import { AiOutlinePlus } from "react-icons/ai";
 // Components
@@ -7,41 +7,44 @@ import { InputField } from "components/forms";
 // Assets
 
 // Hooks
-import { useAddNestedCollectionMutation } from "@/api/services/manager";
+import { useAddCollectionMutation } from "@/api/services/manager";
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
 import { defaultHandlerApiError } from "@/api/apiClient";
 // Types
 import {
-	nestedCollectionAddFormPayload,
-	type TNestedCollectionAddFormPayload,
+	collectionAddFormPayload,
+	type TCollectionAddFormPayload,
 } from "@/shared/types/api/manager.types";
 // General
 import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
 import { useCallback } from "react";
 
-type TNestedCollectionAddFormProps = {
+type TCollectionAddFormProps = {
 	setIsShowingInput: React.Dispatch<React.SetStateAction<boolean>>;
-	collectionId: number;
+	groupId?: number;
+	parentCollectionId?: number;
 };
 
-export const NestedCollectionAddForm = ({
+export const CollectionAddForm = ({
 	setIsShowingInput,
-	collectionId,
-}: TNestedCollectionAddFormProps) => {
+	groupId,
+	parentCollectionId,
+	...rest
+}: TCollectionAddFormProps & FlexProps) => {
 	// Hooks
 
-	// Validation is triggered on the changeevent for each input, leading to multiple re-renders. 
+	// Validation is triggered on the changeevent for each input, leading to multiple re-renders.
 	// Warning: this often comes with a significant impact on performance.
-	const methods = useForm<TNestedCollectionAddFormPayload>({
-		resolver: zodResolver(nestedCollectionAddFormPayload),
+	const methods = useForm<TCollectionAddFormPayload>({
+		resolver: zodResolver(collectionAddFormPayload),
 		mode: "onChange",
 	});
 	const {
 		reset,
 		formState: { errors, isValid },
 	} = methods;
-	const AddRootCollectionMutation = useAddNestedCollectionMutation();
+	const addCollectionMutation = useAddCollectionMutation();
 	const toast = useToast();
 	const handleOnInputRefChange = useCallback((node: HTMLInputElement) => {
 		// console.log(node);
@@ -52,14 +55,20 @@ export const NestedCollectionAddForm = ({
 
 	// Handlers
 	const handleOnInputFocusOut = () => {
+		// Validate if event target is only the cross/submit button, if not then set isshowinginput to false
 		setIsShowingInput(false);
 	};
 
-	const onSubmit: SubmitHandler<TNestedCollectionAddFormPayload> = (
-		data
-	): void => {
-		AddRootCollectionMutation.mutate(
-			{ collectionId: collectionId, payload: data },
+	const onSubmit: SubmitHandler<TCollectionAddFormPayload> = (data): void => {
+		addCollectionMutation.mutate(
+			{
+				params: {
+					// Conditionally add object properties
+					...(groupId) && { groupId },
+					...(parentCollectionId) && { parentCollectionId },
+				},
+				payload: data,
+			},
 			{
 				onSuccess: (data, variables, context) => {
 					setIsShowingInput(false);
@@ -93,10 +102,10 @@ export const NestedCollectionAddForm = ({
 				<Flex
 					w="100%"
 					align="center"
-					cursor="pointer"
 					textStyle="primary"
 					bg="brandPrimary.800"
 					pr={3}
+					{...rest}
 				>
 					<Button
 						aria-label="Add Collection"

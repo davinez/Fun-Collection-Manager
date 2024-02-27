@@ -19,7 +19,7 @@ import { AiFillSetting } from "react-icons/ai";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
 import { RecursiveNavItem } from "@/components/ui/box/manager";
-import { RootCollectionAddForm } from "components/forms/manager";
+import { CollectionAddForm } from "components/forms/manager";
 // Assets
 
 // Hooks
@@ -315,18 +315,20 @@ export const GroupNavItem = ({
 					{
 						// Show form if click on create collection
 						isShowingInput && (
-							<RootCollectionAddForm
+							<CollectionAddForm
 								groupId={group.id}
 								setIsShowingInput={setIsShowingInput}
 							/>
 						)
 					}
-					{group.collections.map((collection) => {
+					{
+					group.collections.map((collection) => {
 						return (
 							<RecursiveNavItem
 								key={`CollectionNavItem_${collection.id}`}
+								w="100%"
 								_hover={{
-									bg: "brandPrimary.900",
+									bg: "brandPrimary.950",
 								}}
 								pl={collection.childCollections.length > 0 ? 0 : 3}
 								collection={collection}
