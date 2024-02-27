@@ -26,7 +26,7 @@ import {
 // General
 import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 
 type TCollectionUpdateFormProps = {
 	setIsSelfEditable: React.Dispatch<React.SetStateAction<boolean>>;
@@ -52,6 +52,7 @@ export const CollectionUpdateForm = ({
 	} = methods;
 	const updateCollectionMutation = useUpdateCollectionMutation();
 	const toast = useToast();
+	const refForm = useRef<HTMLFormElement>(null);
 	const handleOnInputRefChange = useCallback((node: HTMLInputElement) => {
 		// console.log(node);
 		if (node !== null) {
@@ -60,13 +61,20 @@ export const CollectionUpdateForm = ({
 	}, []); // adjust deps
 
 	// Handlers
-	const handleOnInputFocusOut = () => {
-		setIsSelfEditable(false);
+	const handleOnInputFocusOut = (event: React.FocusEvent<HTMLInputElement>) => {
+		if (
+			refForm.current &&
+			!refForm.current.contains(event.relatedTarget as HTMLElement)
+		) {
+			// clicked outside of form component
+			setIsSelfEditable(false);
+		}
 	};
 
 	const onSubmit: SubmitHandler<TCollectionUpdateFormPayload> = (
 		data
 	): void => {
+		// TODO: Set loading if pending api call / react query state
 		updateCollectionMutation.mutate(
 			{
 				collectionId: collection.id,
@@ -101,11 +109,16 @@ export const CollectionUpdateForm = ({
 
 	return (
 		<FormProvider {...methods}>
-			<Stack w="100%" as="form" onSubmit={methods.handleSubmit(onSubmit)}>
+			<Stack
+				tabIndex={-1} // Make it focusable to catch it with relatedTarger
+				w="100%"
+				as="form"
+				onSubmit={methods.handleSubmit(onSubmit)}
+				ref={refForm}
+			>
 				<Flex
 					w="100%"
 					align="center"
-					
 					textStyle="primary"
 					bg="brandPrimary.800"
 					pr={3}
@@ -155,8 +168,8 @@ export const CollectionUpdateForm = ({
 						borderRadius={0}
 						borderBottomColor="brandSecondary.600"
 						id="name"
-						defaultValue={collection.name}
 						onBlur={handleOnInputFocusOut}
+						defaultValue={collection.name}
 						ref={handleOnInputRefChange}
 					/>
 				</Flex>

@@ -57,6 +57,8 @@ export const CollectionAddForm = ({
 	const handleOnInputFocusOut = () => {
 		// Validate if event target is only the cross/submit button, if not then set isshowinginput to false
 		setIsShowingInput(false);
+
+			// TODO: Set event handling like update form
 	};
 
 	const onSubmit: SubmitHandler<TCollectionAddFormPayload> = (data): void => {
