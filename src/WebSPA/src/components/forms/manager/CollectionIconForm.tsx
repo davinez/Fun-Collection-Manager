@@ -28,18 +28,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
 import { useCallback, useRef } from "react";
 
-type TCollectionAddFormProps = {
+type TCollectionIconFormProps = {
 	setIsShowingInput: React.Dispatch<React.SetStateAction<boolean>>;
 	groupId?: number;
 	parentCollectionId?: number;
 };
 
-export const CollectionAddForm = ({
+export const CollectionIconForm = ({
 	setIsShowingInput,
 	groupId,
 	parentCollectionId,
 	...rest
-}: TCollectionAddFormProps & FlexProps) => {
+}: TCollectionIconFormProps & FlexProps) => {
 	// Hooks
 
 	// Validation is triggered on the changeevent for each input, leading to multiple re-renders.

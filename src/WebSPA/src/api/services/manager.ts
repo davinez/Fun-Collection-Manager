@@ -8,10 +8,12 @@ import type {
   TBookmarkDeletePayload,
   TCollectionAddFormPayload,
   TCollectionUpdateFormPayload,
-  TGroup,
+  TGroupInfo,
+  TCollectionInfo,
   TGetBookmarks,
+  TDeleteCollectionPayload,
   TGetBookmarksParams,
-  TCollectionMutationParams
+  TAddCollectionMutationParams
 } from "@/shared/types/api/manager.types";
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -49,7 +51,7 @@ export const useGetGroupByIdQuery = (id: number) => {
   return useQuery({
     queryKey: ["group", id],
     queryFn: async () => {
-      const response = await $apiClient.get<TApiResponse<TGroup>>(`/manager/groups/${id}`);
+      const response = await $apiClient.get<TApiResponse<TGroupInfo>>(`/manager/groups/${id}`);
       return response.data.data
     },
   });
@@ -59,7 +61,17 @@ export const useGetGroupByIdQueryClientAsync = async (id: number) => {
   return await queryClient.fetchQuery({
     queryKey: ["group", id],
     queryFn: async () => {
-      const response = await $apiClient.get<TApiResponse<TGroup>>(`/manager/groups/${id}`);
+      const response = await $apiClient.get<TApiResponse<TGroupInfo>>(`/manager/groups/${id}`);
+      return response.data.data
+    }
+  });
+}
+
+export const useGetCollectionByIdQueryClientAsync = async (id: number) => {
+  return await queryClient.fetchQuery({
+    queryKey: ["collection", id],
+    queryFn: async () => {
+      const response = await $apiClient.get<TApiResponse<TCollectionInfo>>(`/manager/collections/${id}`);
       return response.data.data
     }
   });
@@ -177,7 +189,7 @@ export const useUpdateCollectionMutation = () => {
 }
 
 type TuseAddCollectionMutationVariables = {
-  params: TCollectionMutationParams;
+  params: TAddCollectionMutationParams;
   payload: TCollectionAddFormPayload;
 }
 
@@ -195,6 +207,17 @@ export const useAddCollectionMutation = () => {
     },
   });
 }
+
+export const useDeleteCollectionMutation = () => {
+  return useMutation({
+    mutationFn: async (payload: TDeleteCollectionPayload) => {
+      const response = await $apiClient.delete<TApiResponse>(`/manager/collections/${payload.collectionId}`);
+      return response.data;
+    },
+  });
+}
+
+
 
 
 

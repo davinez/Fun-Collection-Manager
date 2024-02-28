@@ -25,9 +25,8 @@ export const BookmarkModal = ({
 	onClose,
 	bookmark,
 }: TManagerBookmarkModalProps) => {
-	// State Hooks
+	// Hooks
 	const { managerSlice } = useStore();
-	// General Hooks
 
 	return (
 		<>

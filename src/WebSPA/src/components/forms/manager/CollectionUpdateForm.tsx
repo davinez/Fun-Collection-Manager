@@ -6,6 +6,7 @@ import {
 	Flex,
 	Icon,
 	FlexProps,
+	Spinner,
 } from "@chakra-ui/react";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -61,12 +62,13 @@ export const CollectionUpdateForm = ({
 	}, []); // adjust deps
 
 	// Handlers
+
 	const handleOnInputFocusOut = (event: React.FocusEvent<HTMLInputElement>) => {
+		// clicked outside of form component
 		if (
 			refForm.current &&
 			!refForm.current.contains(event.relatedTarget as HTMLElement)
 		) {
-			// clicked outside of form component
 			setIsSelfEditable(false);
 		}
 	};
@@ -74,7 +76,6 @@ export const CollectionUpdateForm = ({
 	const onSubmit: SubmitHandler<TCollectionUpdateFormPayload> = (
 		data
 	): void => {
-		// TODO: Set loading if pending api call / react query state
 		updateCollectionMutation.mutate(
 			{
 				collectionId: collection.id,
@@ -135,15 +136,19 @@ export const CollectionUpdateForm = ({
 							bg: "brandPrimary.800",
 						}}
 						type="submit"
-						isDisabled={!isValid}
+						isDisabled={!isValid || updateCollectionMutation.isPending}
 					>
-						<Icon
-							h="100%"
-							w="100%"
-							boxSize="5"
-							color="brandPrimary.100"
-							as={AiOutlinePlus}
-						/>
+						{updateCollectionMutation.isPending ? (
+							<Spinner h="100%" w="100%" boxSize="5" color="brandPrimary.100" />
+						) : (
+							<Icon
+								h="100%"
+								w="100%"
+								boxSize="5"
+								color="brandPrimary.100"
+								as={AiOutlinePlus}
+							/>
+						)}
 					</Button>
 
 					<InputField

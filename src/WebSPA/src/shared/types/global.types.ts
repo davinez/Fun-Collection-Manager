@@ -22,6 +22,11 @@ export enum FormActionEnum {
   Delete = 2
 }
 
+export enum CollectionModalActionEnum {
+  Delete = 0,
+  Icon = 1
+}
+
 export enum SortEnum {
   DateAsc = 'dateAsc',
   DateDesc = 'dateDesc',

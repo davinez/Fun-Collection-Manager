@@ -11,7 +11,7 @@ import { PAGE_ITEM_LIMIT } from "shared/config";
 
 export type TManagerSliceDefinition = {
   groupModalFormAction: FormActionEnum;
-  bookmarkModalFormAction: FormActionEnum | undefined;
+  bookmarkModalFormAction: FormActionEnum;
   selectedSidebarGroupId: number;
   selectedSidebarCollection: number | undefined;
   selectedSortValueCollectionFilter: string;
@@ -44,7 +44,7 @@ export type TManagerSlice = TManagerSliceDefinition & TManagerSliceActions;
 
 const initialManagerSliceState: TManagerSliceDefinition = {
   groupModalFormAction: FormActionEnum.Add,
-  bookmarkModalFormAction: undefined,
+  bookmarkModalFormAction: FormActionEnum.Add,
   selectedSidebarGroupId: 0,
   selectedSidebarCollection: undefined,
   selectedSortValueCollectionFilter: SortEnum.DateAsc,

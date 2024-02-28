@@ -32,10 +32,18 @@ export type TCollection = {
   childCollections: TCollection[];
 }
 
-export type TGroup = {
+export type TGroupInfo = {
   id: number;
   name: string;
-  bookmarksCounter: number;
+  hasCollections: boolean;
+}
+
+export type TCollectionInfo = {
+  id: number;
+  name: string;
+  cover: string;
+  hasBookmarks:  boolean;
+  hasCollections:  boolean;
 }
 
 export type TGetBookmarks = {
@@ -154,6 +162,14 @@ export const collectionUpdateFormPayload = z.object({
 });
 export type TCollectionUpdateFormPayload = z.infer<typeof collectionUpdateFormPayload>;
 
+export const deleteCollectionFormPayload = z.object({
+  collectionId: z
+    .number()
+    .min(1, { message: "Invalid group id" })
+});
+export type TDeleteCollectionPayload = z.infer<typeof deleteCollectionFormPayload>;
+
+
 
 // Query Params Types //
 
@@ -164,7 +180,7 @@ export type TGetBookmarksParams = {
   debounceSearchValue: string;
 }
 
-export type TCollectionMutationParams = {
+export type TAddCollectionMutationParams = {
   groupId?: number;
   parentCollectionId?: number;
 }

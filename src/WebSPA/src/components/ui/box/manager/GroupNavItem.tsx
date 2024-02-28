@@ -22,12 +22,6 @@ import { RecursiveNavItem } from "@/components/ui/box/manager";
 import { CollectionAddForm } from "components/forms/manager";
 // Assets
 
-// Hooks
-import {
-	useGetGroupByIdQueryClientAsync,
-	useDeleteGroupMutation,
-} from "@/api/services/manager";
-import { defaultHandlerApiError } from "@/api/apiClient";
 // Types
 import {
 	deleteGroupFormPayload,
@@ -37,11 +31,14 @@ import {
 } from "@/shared/types/api/manager.types";
 import { FormActionEnum } from "@/shared/types/global.types";
 // General
+import {
+	useGetGroupByIdQueryClientAsync,
+	useDeleteGroupMutation,
+} from "@/api/services/manager";
 import { useState } from "react";
 import { useStore } from "@/store/UseStore";
 import queryClient from "@/api/query-client";
-
-// All bookmarks and group NavItem in sidebar
+import { defaultHandlerApiError } from "@/api/apiClient";
 
 type TGroupNavItemProps = {
 	group: TCollectionGroup;
@@ -98,7 +95,6 @@ export const GroupNavItem = ({
 	};
 
 	const handleOnClickCreateCollectionRootGroup = () => {
-		// Show input
 		setIsShowingInput(true);
 	};
 
@@ -136,24 +132,26 @@ export const GroupNavItem = ({
 			const groupData = await useGetGroupByIdQueryClientAsync(id);
 
 			// Validate that group it is not empty
-			if (groupData.bookmarksCounter > 0) {
+			if (groupData.hasCollections) {
 				// Show warning of none-empty group
 				managerSlice.setGroupModalFormAction(FormActionEnum.Delete);
-				managerSlice.setSelectedSidebarGroupId(id);
 				onOpenGroupModal();
 			} else {
-				// Delete group
 				deleteGroupMutation.mutate(payload, {
 					onSuccess: (data, variables, context) => {
+						// TODO: validate invalidating key "collection-groups" to avoid re fetch all
 						queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
-						queryClient.invalidateQueries({
-							queryKey: ["group", id],
+						toast({
+							title: "Group deleted.",
+							status: "success",
+							duration: 5000,
+							isClosable: true,
 						});
 					},
 					onError: (error, variables, context) => {
 						toast({
 							title: "Error",
-							description: "Error in deleting Group",
+							description: "Error in deleting group",
 							status: "error",
 							duration: 5000,
 							isClosable: true,
@@ -321,8 +319,7 @@ export const GroupNavItem = ({
 							/>
 						)
 					}
-					{
-					group.collections.map((collection) => {
+					{group.collections.map((collection) => {
 						return (
 							<RecursiveNavItem
 								key={`CollectionNavItem_${collection.id}`}

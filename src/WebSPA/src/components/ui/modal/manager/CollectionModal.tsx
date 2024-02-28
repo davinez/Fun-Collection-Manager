@@ -12,20 +12,27 @@ import {
 import { AiFillAlert } from "react-icons/ai";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
-import { GroupAddForm, GroupUpdateForm } from "components/forms/manager";
+import {CollectionIconForm} from "components/forms/manager";
 // Assets
 
 // Types
-import { FormActionEnum } from "@/shared/types/global.types";
+import { CollectionModalActionEnum } from "@/shared/types/global.types";
 // General
 import { useStore } from "@/store/UseStore";
 
-type TGroupModalProps = {
+type TCollectionModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
+	modalAction: CollectionModalActionEnum;
+	executeDeleteMutation: () => void;
 };
 
-export const GroupModal = ({ isOpen, onClose }: TGroupModalProps) => {
+export const CollectionModal = ({
+	isOpen,
+	onClose,
+	modalAction,
+	executeDeleteMutation,
+}: TCollectionModalProps) => {
 	// Hooks
 	const { managerSlice } = useStore();
 
@@ -39,13 +46,10 @@ export const GroupModal = ({ isOpen, onClose }: TGroupModalProps) => {
 					border="1px solid"
 					borderColor="brandPrimary.900"
 				>
-					{managerSlice.groupModalFormAction === FormActionEnum.Add && (
-						<GroupAddForm onClose={onClose} />
-					)}
-					{managerSlice.groupModalFormAction === FormActionEnum.Update && (
-						<GroupUpdateForm onClose={onClose} />
-					)}
-					{managerSlice.groupModalFormAction === FormActionEnum.Delete && (
+					{modalAction === CollectionModalActionEnum.Icon && 
+					<CollectionIconForm />
+					}
+					{modalAction === CollectionModalActionEnum.Delete && (
 						<Stack p={5}>
 							<Flex align="center" mb={3}>
 								<Icon
@@ -56,11 +60,13 @@ export const GroupModal = ({ isOpen, onClose }: TGroupModalProps) => {
 									as={AiFillAlert}
 								/>
 								<Text fontSize="large">
-									You can not delete a populated group!
+									Are you sure you want to delete this collection? All bookmarks
+									within the collection will be deleted.
 								</Text>
 							</Flex>
 
 							<Button
+								w="100%"
 								bg="brandSecondary.600"
 								h={8}
 								_hover={{
@@ -74,9 +80,22 @@ export const GroupModal = ({ isOpen, onClose }: TGroupModalProps) => {
 								}}
 								fontSize={textStylesTheme.textStyles.primary.fontSize}
 								mr={3}
+								onClick={executeDeleteMutation}
+							>
+								Delete
+							</Button>
+							<Button
+								w="100%"
+								bg="brandPrimary.950"
+								color="brandPrimary.100"
+								h={8}
+								_hover={{
+									bg: "brandSecondary.800",
+								}}
+								fontSize={textStylesTheme.textStyles.primary.fontSize}
 								onClick={onClose}
 							>
-								Ok
+								Cancel
 							</Button>
 						</Stack>
 					)}

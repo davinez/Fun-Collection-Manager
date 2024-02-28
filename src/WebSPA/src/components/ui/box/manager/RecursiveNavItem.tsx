@@ -11,6 +11,7 @@ import {
 	MenuButton,
 	MenuItem,
 	MenuDivider,
+	useToast,
 	useDisclosure,
 	type FlexProps,
 } from "@chakra-ui/react";
@@ -24,16 +25,26 @@ import {
 	CollectionAddForm,
 	CollectionUpdateForm,
 } from "@/components/forms/manager";
+import { CollectionModal } from "components/ui/modal/manager";
 // Assets
 
 // Types
-import type {
-	TCollection,
-	TDynamicCollapseState,
+import {
+	type TCollection,
+	type TDynamicCollapseState,
+	type TDeleteCollectionPayload,
+	deleteCollectionFormPayload,
 } from "@/shared/types/api/manager.types";
-
+import { CollectionModalActionEnum } from "@/shared/types/global.types";
 // General
+import {
+	useGetCollectionByIdQueryClientAsync,
+	useDeleteCollectionMutation,
+} from "@/api/services/manager";
+import { useStore } from "@/store/UseStore";
 import { useState } from "react";
+import queryClient from "@/api/query-client";
+import { defaultHandlerApiError } from "@/api/apiClient";
 
 // All bookmarks and group NavItem in sidebar
 
@@ -53,9 +64,20 @@ export const RecursiveNavItem = ({
 	children,
 	...rest
 }: TRecursiveNavItemProps & FlexProps): React.ReactElement => {
+	const { managerSlice } = useStore();
 	const [isHovering, setIsHovering] = useState(false);
 	const [isShowingInput, setIsShowingInput] = useState(false);
 	const [isSelfEditable, setIsSelfEditable] = useState(false);
+	const [modalAction, setModalAction] = useState(
+		CollectionModalActionEnum.Delete
+	);
+	const toast = useToast();
+	const {
+		isOpen: isOpenCollectionModal,
+		onOpen: onOpenCollectionModal,
+		onClose: onCloseCollectionModal,
+	} = useDisclosure();
+	const deleteCollectionMutation = useDeleteCollectionMutation();
 
 	const handleMouseOver = () => {
 		setIsHovering(true);
@@ -105,16 +127,91 @@ export const RecursiveNavItem = ({
 	};
 
 	const handleOnClickRenameCollection = () => {
-		//
 		setIsSelfEditable(true);
 	};
 
-	const handleOnClickChangeIconCollection = () => {};
+	const handleOnClickChangeIconCollection = () => {
+// TODO: Show icons, get response array with url of icons
 
-	const handleOnClickRemoveCollection = () => {};
+
+	};
+
+	const executeDeleteMutation = () => {
+		const payload: TDeleteCollectionPayload = {
+			collectionId: collection.id,
+		};
+
+		const validationResult = deleteCollectionFormPayload.safeParse(payload);
+
+		if (!validationResult.success) {
+			console.error(validationResult.error.message);
+			toast({
+				title: "Error",
+				description: "Error in validation",
+				status: "error",
+				duration: 5000,
+				isClosable: true,
+			});
+			return;
+		}
+
+		deleteCollectionMutation.mutate(payload, {
+			onSuccess: (data, variables, context) => {
+				// TODO: validate invalidating key "collection-groups" to avoid re fetch all
+				queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
+				toast({
+					title: "Collection deleted.",
+					status: "success",
+					duration: 5000,
+					isClosable: true,
+				});
+			},
+			onError: (error, variables, context) => {
+				toast({
+					title: "Error",
+					description: "Error in deleting collection",
+					status: "error",
+					duration: 5000,
+					isClosable: true,
+				});
+				defaultHandlerApiError(error);
+			},
+		});
+	};
+
+	const handleOnClickRemoveCollection = async () => {
+		try {
+			const collectionData = await useGetCollectionByIdQueryClientAsync(
+				collection.id
+			);
+
+			// If collection has data then show warning
+			if (collectionData.hasCollections || collectionData.hasBookmarks) {
+				setModalAction(CollectionModalActionEnum.Delete);
+				onOpenCollectionModal();
+			} else {
+				executeDeleteMutation();
+			}
+		} catch (error) {
+			toast({
+				title: "Error",
+				description: "Error in fetching Collection Data",
+				status: "error",
+				duration: 5000,
+				isClosable: true,
+			});
+			defaultHandlerApiError(error);
+		}
+	};
 
 	return (
 		<>
+			<CollectionModal
+				isOpen={isOpenCollectionModal}
+				onClose={onCloseCollectionModal}
+				modalAction={modalAction}
+				executeDeleteMutation={executeDeleteMutation}
+			/>
 			{isSelfEditable ? (
 				<CollectionUpdateForm
 					setIsSelfEditable={setIsSelfEditable}
@@ -254,7 +351,7 @@ export const RecursiveNavItem = ({
 									_hover={{
 										bg: "brandSecondary.800",
 									}}
-									onClick={handleOnClickRemoveCollection}
+									onClick={async () => handleOnClickRemoveCollection()}
 								>
 									Remove
 								</MenuItem>
@@ -319,5 +416,3 @@ export const RecursiveNavItem = ({
 		</>
 	);
 };
-
-
