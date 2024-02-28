@@ -1,105 +1,171 @@
 // Design
 import {
+	ModalCloseButton,
+	Text,
 	Button,
 	Stack,
 	useToast,
 	Flex,
-	Icon,
-	FlexProps,
-	Spinner,
+	Box,
+	Image,
 } from "@chakra-ui/react";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
-import { AiOutlinePlus } from "react-icons/ai";
 // Components
-import { InputField } from "components/forms";
+import { LoadingBox, ErrorBox } from "@/components/ui/box";
 // Assets
 
-// Hooks
-import { useAddCollectionMutation } from "@/api/services/manager";
-import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
-import { defaultHandlerApiError } from "@/api/apiClient";
 // Types
 import {
-	collectionAddFormPayload,
-	type TCollectionAddFormPayload,
+	collectionUpdateIconFormPayload,
+	type TCollectionUpdateIconFormPayload,
 } from "@/shared/types/api/manager.types";
 // General
-import { zodResolver } from "@hookform/resolvers/zod";
+import {
+	useUpdateCollectionIconMutation,
+	useGetCollectionsAllIconsQuery,
+} from "@/api/services/manager";
+import { defaultHandlerApiError } from "@/api/apiClient";
 import queryClient from "@/api/query-client";
-import { useCallback, useRef } from "react";
+import { useState, useEffect } from "react";
+import { DEFAULT_ICON } from "shared/config";
 
 type TCollectionIconFormProps = {
-	setIsShowingInput: React.Dispatch<React.SetStateAction<boolean>>;
-	groupId?: number;
-	parentCollectionId?: number;
+	collectionId: number;
+	collectionIcon: string;
+	onClose: () => void;
 };
 
 export const CollectionIconForm = ({
-	setIsShowingInput,
-	groupId,
-	parentCollectionId,
-	...rest
-}: TCollectionIconFormProps & FlexProps) => {
+	collectionId,
+	collectionIcon,
+	onClose
+}: TCollectionIconFormProps) => {
 	// Hooks
-
-	// Validation is triggered on the changeevent for each input, leading to multiple re-renders.
-	// Warning: this often comes with a significant impact on performance.
-	const methods = useForm<TCollectionAddFormPayload>({
-		resolver: zodResolver(collectionAddFormPayload),
-		mode: "onChange",
-	});
 	const {
-		reset,
-		formState: { errors, isValid },
-	} = methods;
-	const addCollectionMutation = useAddCollectionMutation();
+		isPending: isPendingGetAllIcons,
+		isError: isErrorGetAllIcons,
+		error: errorGetAllIcons,
+		data: getGetAllIconsResponse,
+	} = useGetCollectionsAllIconsQuery();
+	const updateCollectionCoverMutation = useUpdateCollectionIconMutation();
 	const toast = useToast();
-	const refForm = useRef<HTMLFormElement>(null);
-	const handleOnInputRefChange = useCallback((node: HTMLInputElement) => {
-		// console.log(node);
-		if (node !== null) {
-			node.focus();
+
+	useEffect(() => {
+		if (isErrorGetAllIcons) {
+			toast({
+				title: "Error",
+				description: "Error in fetching all icons",
+				status: "error",
+				duration: 5000,
+				isClosable: true,
+			});
+			defaultHandlerApiError(errorGetAllIcons);
 		}
-	}, []); // adjust deps
+	}, [isErrorGetAllIcons]);
 
 	// Handlers
-	const handleOnInputFocusOut = (event: React.FocusEvent<HTMLInputElement>) => {
-		// clicked outside of form component
-		if (
-			refForm.current &&
-			!refForm.current.contains(event.relatedTarget as HTMLElement)
-		) {
-			setIsShowingInput(false);
+
+	//const onSubmit = (data): void => {};
+
+	const handleOnClickResetIcon = () => {
+		if (collectionIcon === DEFAULT_ICON) {
+			toast({
+				title: "Default icon already set",
+				status: "success",
+				duration: 5000,
+				isClosable: true,
+			});
+		} else {
+			const payload: TCollectionUpdateIconFormPayload = {
+				iconURL: DEFAULT_ICON,
+			};
+
+			const validationResult =
+				collectionUpdateIconFormPayload.safeParse(payload);
+
+			if (!validationResult.success) {
+				console.error(validationResult.error.message);
+				toast({
+					title: "Error",
+					description: "Error in validation",
+					status: "error",
+					duration: 5000,
+					isClosable: true,
+				});
+				return;
+			}
+
+			updateCollectionCoverMutation.mutate(
+				{
+					collectionId,
+					payload,
+				},
+				{
+					onSuccess: (data, variables, context) => {
+						// TODO: validate invalidating key "collection-groups" to avoid re fetch all
+						queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
+						toast({
+							title: "Icon updated.",
+							status: "success",
+							duration: 5000,
+							isClosable: true,
+						});
+						onClose();
+					},
+					onError: (error, variables, context) => {
+						toast({
+							title: "Error",
+							description: "Error in updating icon",
+							status: "error",
+							duration: 5000,
+							isClosable: true,
+						});
+						defaultHandlerApiError(error);
+					},
+				}
+			);
 		}
 	};
 
-	const onSubmit: SubmitHandler<TCollectionAddFormPayload> = (data): void => {
-		addCollectionMutation.mutate(
+	const handleOnClickSelectedIcon = (url: string) => {
+		const payload: TCollectionUpdateIconFormPayload = {
+			iconURL: url,
+		};
+
+		const validationResult = collectionUpdateIconFormPayload.safeParse(payload);
+
+		if (!validationResult.success) {
+			console.error(validationResult.error.message);
+			toast({
+				title: "Error",
+				description: "Error in validation",
+				status: "error",
+				duration: 5000,
+				isClosable: true,
+			});
+			return;
+		}
+
+		updateCollectionCoverMutation.mutate(
 			{
-				params: {
-					// Conditionally add object properties
-					...(groupId && { groupId }),
-					...(parentCollectionId && { parentCollectionId }),
-				},
-				payload: data,
+				collectionId,
+				payload,
 			},
 			{
 				onSuccess: (data, variables, context) => {
-					setIsShowingInput(false);
+					// TODO: validate invalidating key "collection-groups" to avoid re fetch all
 					queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
 					toast({
-						title: "Collection Added.",
+						title: "Icon updated.",
 						status: "success",
 						duration: 5000,
 						isClosable: true,
 					});
-					reset();
 				},
 				onError: (error, variables, context) => {
-					setIsShowingInput(false);
 					toast({
 						title: "Error",
-						description: "Error in adding Collection",
+						description: "Error in updating icon",
 						status: "error",
 						duration: 5000,
 						isClosable: true,
@@ -110,77 +176,80 @@ export const CollectionIconForm = ({
 		);
 	};
 
-	return (
-		<FormProvider {...methods}>
-			<Stack 
-			tabIndex={-1} // Make it focusable to catch it with relatedTarger
-			w="100%"
-			as="form"
-			onSubmit={methods.handleSubmit(onSubmit)}
-			ref={refForm}
-			>
-				<Flex
-					w="100%"
-					align="center"
-					textStyle="primary"
-					bg="brandPrimary.800"
-					pr={3}
-					{...rest}
-				>
-					<Button
-						aria-label="Add Collection"
-						p={0}
-						m={0}
-						h="100%"
-						w="20%"
-						bg="brandPrimary.800"
-						_hover={{
-							bg: "brandPrimary.800",
-						}}
-						type="submit"
-						isDisabled={!isValid || addCollectionMutation.isPending}
-					>
-						{addCollectionMutation.isPending ? (
-							<Spinner h="100%" w="100%" boxSize="5" color="brandPrimary.100" />
-						) : (
-							<Icon
-								h="100%"
-								w="100%"
-								boxSize="5"
-								color="brandPrimary.100"
-								as={AiOutlinePlus}
-							/>
-						)}
-					</Button>
+	// Return handling
 
-					<InputField
-						color="brandPrimary.100"
-						border="none"
-						_focus={{
-							border: "none",
-							outline: "none",
-							boxShadow: "none",
-							borderBottom: "1px solid",
-							borderRadius: "0",
-							borderBottomColor: "brandSecondary.600",
-						}}
-						_hover={{
-							borderBottomColor: "brandSecondary.600",
-						}}
+	if (isPendingGetAllIcons)
+		return (
+			<Flex p={5} align="center" justify="space-between">
+				<LoadingBox />
+				<ModalCloseButton size="lg" position="unset" />
+			</Flex>
+		);
+
+	if (isErrorGetAllIcons)
+		return (
+			<Flex p={5} align="center" justify="space-between">
+				<ErrorBox />
+				<ModalCloseButton size="lg" position="unset" />
+			</Flex>
+		);
+
+	return (
+		<Stack p={5}>
+			<Flex align="center" justify="space-between" mb={3}>
+				<Text fontSize="large">Change Icon</Text>
+				<Flex align="center" justify="space-between" gap={3}>
+					<Button
 						fontSize={textStylesTheme.textStyles.primary.fontSize}
-						p={0}
-						my={1}
-						h={6}
-						borderBottom="1px solid"
-						borderRadius={0}
-						borderBottomColor="brandSecondary.600"
-						id="name"
-						placeholder="New Collection"
-						onBlur={handleOnInputFocusOut}
-						ref={handleOnInputRefChange}
-					/>
+						bg="brandPrimary.900"
+						color="brandSecondary.600"
+						_hover={{
+							bg: "brandPrimary.950",
+						}}
+						p={2}
+						onClick={handleOnClickResetIcon}
+					>
+						Reset
+					</Button>
+					<ModalCloseButton size="lg" position="unset" />
 				</Flex>
-			</Stack>
-		</FormProvider>
+			</Flex>
+
+			{getGetAllIconsResponse.items.map((item, index) => {
+				return (
+					<Stack key={`GroupIcons_${index}`} aria-label="icons-group-container">
+						<Text>{item.title}</Text>
+						<Box
+							aria-label="icons-container"
+							mb={3}
+							display="grid"
+							gridAutoRows="auto" /* make all rows the same height */
+							gridTemplateColumns="repeat(8, 1fr)"
+							gap={4}
+							justifyItems="center"
+							alignItems="center"
+						>
+							{item.icons.map((icon) => {
+								return (
+									<Box w="100%">
+										<Image
+											key={`Icon_${icon.name}`}
+											borderRadius="2px"
+											color="brandPrimary.150"
+											objectFit="contain"
+											src={icon.url}
+											fallbackSrc={DEFAULT_ICON}
+											alt="Default Icon"
+											onClick={() => handleOnClickSelectedIcon(icon.url)}
+											cursor="pointer"
+										/>
+									</Box>
+								);
+							})}
+						</Box>
+					</Stack>
+				);
+			})}
+		</Stack>
 	);
 };

@@ -45,6 +45,7 @@ import { useStore } from "@/store/UseStore";
 import { useState } from "react";
 import queryClient from "@/api/query-client";
 import { defaultHandlerApiError } from "@/api/apiClient";
+import { DEFAULT_ICON } from "shared/config";
 
 // All bookmarks and group NavItem in sidebar
 
@@ -69,7 +70,7 @@ export const RecursiveNavItem = ({
 	const [isShowingInput, setIsShowingInput] = useState(false);
 	const [isSelfEditable, setIsSelfEditable] = useState(false);
 	const [modalAction, setModalAction] = useState(
-		CollectionModalActionEnum.Delete
+		CollectionModalActionEnum.Icon
 	);
 	const toast = useToast();
 	const {
@@ -131,9 +132,9 @@ export const RecursiveNavItem = ({
 	};
 
 	const handleOnClickChangeIconCollection = () => {
-// TODO: Show icons, get response array with url of icons
-
-
+		if (modalAction !== CollectionModalActionEnum.Icon)
+			setModalAction(CollectionModalActionEnum.Icon);
+		onOpenCollectionModal();
 	};
 
 	const executeDeleteMutation = () => {
@@ -211,6 +212,8 @@ export const RecursiveNavItem = ({
 				onClose={onCloseCollectionModal}
 				modalAction={modalAction}
 				executeDeleteMutation={executeDeleteMutation}
+				collectionId={collection.id}
+				collectionIcon={collection.icon}
 			/>
 			{isSelfEditable ? (
 				<CollectionUpdateForm
@@ -261,9 +264,9 @@ export const RecursiveNavItem = ({
 							boxSize="5"
 							color="brandPrimary.150"
 							objectFit="contain"
-							src={collection.cover}
-							fallbackSrc="/assets/icons/bookmark.svg"
-							alt="Default Icon"
+							src={collection.icon}
+							fallbackSrc={DEFAULT_ICON}
+							alt="Default Icon"	
 						/>
 						<Text
 							aria-label="navitem-name"

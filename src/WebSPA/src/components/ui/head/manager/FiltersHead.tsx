@@ -29,8 +29,6 @@ import { FaArrowDownAZ, FaArrowUpAZ } from "react-icons/fa6";
 
 // Assets
 
-// Hooks
-
 // Types
 import {
 	SortEnum,
@@ -40,6 +38,7 @@ import {
 // General
 import { useState } from "react";
 import { useStore } from "@/store/UseStore";
+import { DEFAULT_ICON } from "shared/config";
 
 type TFiltersHeadProps = {
 	icon: string | React.ElementType; // Third party icon
@@ -231,7 +230,7 @@ export const FiltersHead = ({
 								color="brandPrimary.150"
 								objectFit="contain"
 								src={icon as string}
-								fallbackSrc="/assets/icons/bookmark.svg"
+								fallbackSrc={DEFAULT_ICON}
 								alt="General Icon"
 							/>
 					  )

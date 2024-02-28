@@ -26,6 +26,7 @@ import {
 // General
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
+import { DEFAULT_ICON, DEFAULT_BOOKMARK_COVER } from "shared/config";
 
 type TBookmarkCardProps = {
 	bookmark: TBookmark;
@@ -155,7 +156,7 @@ export const BookmarkCard = ({
 								}
 								objectFit="fill"
 								src={bookmark.cover}
-								fallbackSrc="/assets/images/default_bookmark_cover.jpg"
+								fallbackSrc={DEFAULT_BOOKMARK_COVER}
 								alt="Default Icon"
 							/>
 						</Box>
@@ -249,7 +250,7 @@ export const BookmarkCard = ({
 										boxSize="4"
 										objectFit="contain"
 										src={bookmark.bookmarkDetail.collection.icon}
-										fallbackSrc="/assets/icons/bookmark.svg"
+										fallbackSrc={DEFAULT_ICON}
 										alt="Default Icon"
 									/>
 									<Box w="auto" color="brandPrimary.150">

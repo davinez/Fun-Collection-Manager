@@ -13,12 +13,6 @@ import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 import { InputField, TextAreaField } from "components/forms";
 // Assets
 
-// Hooks
-import {
-	useUpdateBookmarkMutation,
-} from "@/api/services/manager";
-import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
-import { defaultHandlerApiError } from "@/api/apiClient";
 // Types
 import {
 	bookmarkUpdateFormPayload,
@@ -28,6 +22,11 @@ import {
 // General
 import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
+import {
+	useUpdateBookmarkMutation,
+} from "@/api/services/manager";
+import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
+import { defaultHandlerApiError } from "@/api/apiClient";
 
 type TBookmarkUpdateFormProps = {
 	onClose: () => void;
@@ -38,9 +37,7 @@ export const BookmarkUpdateForm = ({
 	onClose,
 	bookmark
 }: TBookmarkUpdateFormProps) => {
-	// State Hooks
-
-	// General Hooks
+	// Hooks
 	const methods = useForm<TBookmarkUpdatePayload>({
 		resolver: zodResolver(bookmarkUpdateFormPayload),
 		mode: "onSubmit",

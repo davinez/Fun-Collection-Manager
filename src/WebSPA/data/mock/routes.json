@@ -7,5 +7,6 @@
   "/api/manager/collection/create": "/collection",
   "/api/manager/bookmarks/:id": "/bookmarks/:id",
   "/api/manager/bookmark/:id": "/bookmark/:id",
-  "/api/manager/bookmark/create": "/bookmark"
+  "/api/manager/bookmark/create": "/bookmark",
+  "/api/manager/collections/icons": "/icons"
 }

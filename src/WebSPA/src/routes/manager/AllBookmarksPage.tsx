@@ -13,7 +13,7 @@ import { MainPagination } from "@/components/ui/pagination/manager";
 // Assets
 
 // Hooks
-import { useGetAllBookmarks } from "@/api/services/manager";
+import { useGetAllBookmarksQuery } from "@/api/services/manager";
 import useBookmarkSort from "@/hooks/manager/useBookmarkSort";
 // Types
 import type {
@@ -109,7 +109,7 @@ export const AllBookmarksPage =
 			isError: isErrorGetAllBookmarks,
 			error: errorGetAllBookmarks,
 			data: getAllBookmarksResponse,
-		} = useGetAllBookmarks(managerSlice.getBookmarkParams);
+		} = useGetAllBookmarksQuery(managerSlice.getBookmarkParams);
 		const toast = useToast();
 
 		useEffect(() => {
@@ -133,6 +133,6 @@ export const AllBookmarksPage =
 
 		if (isErrorGetAllBookmarks) return <ErrorBox />;
 
-		// if data.length === 0 and searchterm !== empty then render Not Found bookmarks Content - Message
+		//TODO: if data.length === 0 and searchterm !== empty then render Not Found bookmarks Content - Message
 		return <MainContent data={getAllBookmarksResponse} />;
 	};

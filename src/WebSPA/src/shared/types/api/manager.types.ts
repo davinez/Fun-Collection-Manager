@@ -27,7 +27,7 @@ export type TCollectionGroup = {
 export type TCollection = {
   id: number;
   name: string;
-  cover: string;
+  icon: string;
   bookmarksCounter: number;
   childCollections: TCollection[];
 }
@@ -41,7 +41,6 @@ export type TGroupInfo = {
 export type TCollectionInfo = {
   id: number;
   name: string;
-  cover: string;
   hasBookmarks:  boolean;
   hasCollections:  boolean;
 }
@@ -64,6 +63,19 @@ type TBookmarkDetail = {
   websiteURL: string;
   createdAt: string;
 }
+
+export type TGetCollectionsAllIcons = {
+  items: IconsGroupCollections[]
+}
+
+type IconsGroupCollections = {
+  title: string;
+  icons: {
+    name: string;
+    url: string;
+  }[];
+}
+
 
 // Form Types //
 
@@ -162,13 +174,20 @@ export const collectionUpdateFormPayload = z.object({
 });
 export type TCollectionUpdateFormPayload = z.infer<typeof collectionUpdateFormPayload>;
 
+export const collectionUpdateIconFormPayload = z.object({
+  iconURL: z
+    .string()
+    .trim()
+    .min(1, { message: "URL is required" })
+});
+export type TCollectionUpdateIconFormPayload = z.infer<typeof collectionUpdateIconFormPayload>;
+
 export const deleteCollectionFormPayload = z.object({
   collectionId: z
     .number()
     .min(1, { message: "Invalid group id" })
 });
 export type TDeleteCollectionPayload = z.infer<typeof deleteCollectionFormPayload>;
-
 
 
 // Query Params Types //

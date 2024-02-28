@@ -12,19 +12,20 @@ import {
 import { AiFillAlert } from "react-icons/ai";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
-import {CollectionIconForm} from "components/forms/manager";
+import { CollectionIconForm } from "components/forms/manager";
 // Assets
 
 // Types
 import { CollectionModalActionEnum } from "@/shared/types/global.types";
 // General
-import { useStore } from "@/store/UseStore";
 
 type TCollectionModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
 	modalAction: CollectionModalActionEnum;
-	executeDeleteMutation: () => void;
+	executeDeleteMutation?: () => void;
+	collectionId: number;
+	collectionIcon: string;
 };
 
 export const CollectionModal = ({
@@ -32,9 +33,10 @@ export const CollectionModal = ({
 	onClose,
 	modalAction,
 	executeDeleteMutation,
+	collectionId,
+	collectionIcon
 }: TCollectionModalProps) => {
 	// Hooks
-	const { managerSlice } = useStore();
 
 	return (
 		<>
@@ -45,10 +47,12 @@ export const CollectionModal = ({
 					color="brandPrimary.100"
 					border="1px solid"
 					borderColor="brandPrimary.900"
+				  minH="150px"
+					maxW={{sm: "80vw", md: "60vw", lg: "60vw"}}
 				>
-					{modalAction === CollectionModalActionEnum.Icon && 
-					<CollectionIconForm />
-					}
+					{modalAction === CollectionModalActionEnum.Icon && (
+						<CollectionIconForm collectionId={collectionId} collectionIcon={collectionIcon} onClose={onClose}/>
+					)}
 					{modalAction === CollectionModalActionEnum.Delete && (
 						<Stack p={5}>
 							<Flex align="center" mb={3}>

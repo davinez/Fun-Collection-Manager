@@ -23,11 +23,16 @@ export const defaultHandlerApiError = (error: Error | unknown) => {
       return;
     }
 
-    if (error.response)
-      // Check response possible undefined error
-      console.error((error.response.data as TApiErrorResponse).error.message);
+    if (error.response) {
+      // TODO: Check possible responses, from api response or axios generic
+      if (Object.keys(error.response.data).length > 0) {
+        console.error((error.response.data as TApiErrorResponse).error.message);
+        return;
+      }
 
-    return;
+      console.error(error.message);
+      return;
+    }
   }
 
   if (error instanceof Error) {

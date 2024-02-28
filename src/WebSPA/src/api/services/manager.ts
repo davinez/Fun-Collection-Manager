@@ -11,7 +11,9 @@ import type {
   TGroupInfo,
   TCollectionInfo,
   TGetBookmarks,
+  TGetCollectionsAllIcons,
   TDeleteCollectionPayload,
+  TCollectionUpdateIconFormPayload,
   TGetBookmarksParams,
   TAddCollectionMutationParams
 } from "@/shared/types/api/manager.types";
@@ -77,7 +79,7 @@ export const useGetCollectionByIdQueryClientAsync = async (id: number) => {
   });
 }
 
-export const useGetAllBookmarks = ({ page, pageLimit, filterType, debounceSearchValue }: TGetBookmarksParams) => {
+export const useGetAllBookmarksQuery = ({ page, pageLimit, filterType, debounceSearchValue }: TGetBookmarksParams) => {
   return useQuery({
     queryKey: ["bookmarks", { currentPage: page, debounceSearchValue }],
     queryFn: async () => {
@@ -94,6 +96,16 @@ export const useGetAllBookmarks = ({ page, pageLimit, filterType, debounceSearch
             page_limit: pageLimit
           }
       );
+      return response.data.data
+    }
+  });
+}
+
+export const useGetCollectionsAllIconsQuery = () => {
+  return useQuery({
+    queryKey: ["collections-all-icons"],
+    queryFn: async () => {
+      const response = await $apiClient.get<TApiResponse<TGetCollectionsAllIcons>>("/manager/collections/icons");
       return response.data.data
     }
   });
@@ -180,8 +192,24 @@ type TuseUpdateCollectionMutationVariables = {
 export const useUpdateCollectionMutation = () => {
   return useMutation({
     mutationFn: async ({ collectionId, payload }: TuseUpdateCollectionMutationVariables) => {
-      const response = await $apiClient.patch<TApiResponse>('/manager/collections',
-        { ...payload, collectionId }
+      const response = await $apiClient.patch<TApiResponse>(`/manager/collections/${collectionId}`,
+        payload
+      );
+      return response.data;
+    },
+  });
+}
+
+type TuseUpdateCollectionIconMutationVariables = {
+  collectionId: number;
+  payload: TCollectionUpdateIconFormPayload;
+}
+
+export const useUpdateCollectionIconMutation = () => {
+  return useMutation({
+    mutationFn: async ({ collectionId, payload }: TuseUpdateCollectionIconMutationVariables) => {
+      const response = await $apiClient.patch<TApiResponse>(`/manager/collections/${collectionId}/icon`,
+        payload
       );
       return response.data;
     },
