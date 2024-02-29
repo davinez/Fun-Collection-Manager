@@ -81,9 +81,31 @@ export const useGetCollectionByIdQueryClientAsync = async (id: number) => {
 
 export const useGetAllBookmarksQuery = ({ page, pageLimit, filterType, debounceSearchValue }: TGetBookmarksParams) => {
   return useQuery({
-    queryKey: ["bookmarks", { currentPage: page, debounceSearchValue }],
+    queryKey: ["all-bookmarks", { currentPage: page, debounceSearchValue }],
     queryFn: async () => {
-      const response = await $apiClient.get<TApiResponse<TGetBookmarks>>('/manager/bookmarks',
+      const response = await $apiClient.get<TApiResponse<TGetBookmarks>>('/manager/collections/bookmarks',
+        debounceSearchValue.length !== 0 ?
+          {
+            page: page,
+            page_limit: pageLimit,
+            filter_type: filterType,
+            search_value: debounceSearchValue
+          } :
+          {
+            page: page,
+            page_limit: pageLimit
+          }
+      );
+      return response.data.data
+    }
+  });
+}
+
+export const useGetBookmarksByCollectionQuery = ({ page, pageLimit, filterType, debounceSearchValue }: TGetBookmarksParams, collectionId: string) => {
+  return useQuery({
+    queryKey: ["collection-bookmarks", { currentPage: page, debounceSearchValue }],
+    queryFn: async () => {
+      const response = await $apiClient.get<TApiResponse<TGetBookmarks>>(`/manager/collections/${collectionId}/bookmarks`,
         debounceSearchValue.length !== 0 ?
           {
             page: page,

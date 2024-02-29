@@ -25,8 +25,8 @@ export const SearchInputField = ({
 		// function
 		(event: React.SyntheticEvent<EventTarget>) => {
 			if (event.target instanceof HTMLInputElement) {
-				// Pending value sanitization
-				console.log("handleOnChangeSearchInput " + event.target.value);
+				// TODO: Pending value sanitization
+				// console.log("handleOnChangeSearchInput " + event.target.value);
 				setSearchValue(event.target.value.trim());
 			}
 		},

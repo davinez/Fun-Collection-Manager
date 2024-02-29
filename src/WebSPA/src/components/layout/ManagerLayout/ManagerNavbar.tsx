@@ -4,7 +4,6 @@ import {
 	InputGroup,
 	InputLeftElement,
 	InputRightElement,
-	Input,
 	Button,
 	Menu,
 	MenuList,
@@ -18,7 +17,6 @@ import {
 	PopoverContent,
 	PopoverCloseButton,
 	PopoverBody,
-	Spinner,
 	Flex,
 	Text,
 } from "@chakra-ui/react";
@@ -70,6 +68,8 @@ export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 			(option) => option.value === managerSlice.getBookmarkParams.filterType
 		)
 	);
+
+	// TODO: reset getBookmarkParams on page change
 
 	const handleOnChangeBookmarkFilterOption = (value: string | string[]) => {
 		if (typeof value === "string") {
