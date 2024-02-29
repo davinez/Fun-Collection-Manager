@@ -45,9 +45,15 @@ export type TCollectionInfo = {
   hasCollections:  boolean;
 }
 
-export type TGetBookmarks = {
+export type TGetAllBookmarks = {
   bookmarks: TBookmark[];
   total: number;
+}
+
+export type TGetBookmarksByCollection = {
+  bookmarks: TBookmark[];
+  total: number;
+  collectionName: string;
 }
 
 export type TBookmark = {
@@ -59,7 +65,7 @@ export type TBookmark = {
 }
 
 type TBookmarkDetail = {
-  collection: { id: number, icon: string, name: string };
+  collectionDetail?: { icon: string, name: string };
   websiteURL: string;
   createdAt: string;
 }

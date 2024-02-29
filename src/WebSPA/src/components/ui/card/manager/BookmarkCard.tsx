@@ -60,7 +60,8 @@ export const BookmarkCard = ({
 			(event.target as HTMLDivElement).getAttribute("aria-label") ===
 				"card-overlay-container"
 		) {
-		//	console.log("Clicked overlay card");
+			//	console.log("Clicked overlay card");
+			// TODO: Open tab in browser with the url
 		}
 	};
 
@@ -244,30 +245,42 @@ export const BookmarkCard = ({
 								fontSize=".8rem"
 								fontWeight="400"
 							>
-								<Flex w="100%" direction="row" gap={1} align="center">
-									<Image
-										w="auto"
-										boxSize="4"
-										objectFit="contain"
-										src={bookmark.bookmarkDetail.collection.icon}
-										fallbackSrc={DEFAULT_ICON}
-										alt="Default Icon"
-									/>
-									<Box w="auto" color="brandPrimary.150">
-										<Text
-											wordBreak="break-all"
-											overflow="hidden"
-											textOverflow="ellipsis"
-											sx={{
-												display: "-webkit-box",
-												WebkitLineClamp: 1,
-												WebkitBoxOrient: "vertical",
-											}}
+								{
+									// Not render section in collection page
+									bookmark.bookmarkDetail.collectionDetail && (
+										<Flex
+											aria-label="collection-detail"
+											w="100%"
+											direction="row"
+											gap={1}
+											align="center"
 										>
-											{bookmark.bookmarkDetail.collection.name}
-										</Text>
-									</Box>
-								</Flex>
+											<Image
+												w="auto"
+												boxSize="4"
+												objectFit="contain"
+												src={bookmark.bookmarkDetail.collectionDetail.icon}
+												fallbackSrc={DEFAULT_ICON}
+												alt="Default Icon"
+											/>
+											<Box w="auto" color="brandPrimary.150">
+												<Text
+													wordBreak="break-all"
+													overflow="hidden"
+													textOverflow="ellipsis"
+													sx={{
+														display: "-webkit-box",
+														WebkitLineClamp: 1,
+														WebkitBoxOrient: "vertical",
+													}}
+												>
+													{bookmark.bookmarkDetail.collectionDetail.name}
+												</Text>
+											</Box>
+										</Flex>
+									)
+								}
+
 								<Box w="100%" lineHeight="1.2" color="brandPrimary.150">
 									<Text
 										wordBreak="break-all"
@@ -338,7 +351,7 @@ export const BookmarkCard = ({
 								mt={2}
 								mr={2}
 							>
-								<Button	
+								<Button
 									aria-label="Edit bookmark"
 									size="sm"
 									_hover={{

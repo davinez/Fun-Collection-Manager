@@ -27,7 +27,7 @@ import {
 } from "@/components/forms/manager";
 import { CollectionModal } from "components/ui/modal/manager";
 // Assets
-
+import { DEFAULT_ICON } from "shared/config";
 // Types
 import {
 	type TCollection,
@@ -45,7 +45,7 @@ import { useStore } from "@/store/UseStore";
 import { useState } from "react";
 import queryClient from "@/api/query-client";
 import { defaultHandlerApiError } from "@/api/apiClient";
-import { DEFAULT_ICON } from "shared/config";
+import { useNavigate } from "react-router-dom";
 
 // All bookmarks and group NavItem in sidebar
 
@@ -79,6 +79,7 @@ export const RecursiveNavItem = ({
 		onClose: onCloseCollectionModal,
 	} = useDisclosure();
 	const deleteCollectionMutation = useDeleteCollectionMutation();
+	const navigate = useNavigate();
 
 	const handleMouseOver = () => {
 		setIsHovering(true);
@@ -102,9 +103,20 @@ export const RecursiveNavItem = ({
 	};
 
 	const handleOnClickNavItem = (event: React.SyntheticEvent<EventTarget>) => {
-		// Navigate to collection page
-
-		if (isShowingInput) setIsShowingInput(false);
+		// Only open collection page if the clicked element it is the div and not an inside element
+		if (
+			(event.target instanceof HTMLDivElement &&
+			(event.target as HTMLDivElement).getAttribute("aria-label") ===
+				"navitem-main-container") ||
+				event.target instanceof HTMLImageElement ||
+				event.target instanceof HTMLParagraphElement
+		) {
+			// Navigate to collection page
+			if (isShowingInput) {
+				setIsShowingInput(false);
+			}
+			navigate(`/my/manager/${collection.id}`);
+		}
 	};
 
 	const handleOnClickCreateNestedCollection = () => {
@@ -223,6 +235,7 @@ export const RecursiveNavItem = ({
 				/>
 			) : (
 				<Flex
+					aria-label="navitem-main-container"
 					align="center"
 					justify="space-between"
 					py={2}
@@ -266,7 +279,7 @@ export const RecursiveNavItem = ({
 							objectFit="contain"
 							src={collection.icon}
 							fallbackSrc={DEFAULT_ICON}
-							alt="Default Icon"	
+							alt="Default Icon"
 						/>
 						<Text
 							aria-label="navitem-name"

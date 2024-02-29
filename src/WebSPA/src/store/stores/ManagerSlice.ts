@@ -33,6 +33,7 @@ export type TManagerSliceActions = {
   setSelectedShowInValueCollectionFilter: (payload: string[]) => void;
   setSelectedBookmarksCheckbox: (payload: number | number[]) => void;
   resetSelectedBookmarksCheckbox: () => void;
+  resetGetBookmarkParams: () => void;
   setSelectAllBookmarks: (payload: boolean) => void;
   setShowHeadSelectOptions: (payload: boolean) => void;
   setGetBookmarkParamsFilter: (payload: string) => void;
@@ -127,6 +128,15 @@ export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
   setGetBookmarkParamsSearchValue: (payload): void =>
     set((state) => {
       state.managerSlice.getBookmarkParams.debounceSearchValue = payload;
+    }),
+  resetGetBookmarkParams: (): void =>
+    set((state) => {
+      state.managerSlice.getBookmarkParams = {
+        page: 1,
+        pageLimit: PAGE_ITEM_LIMIT,
+        filterType: FilterBookmarksEnum.Info,
+        debounceSearchValue: ""
+      };
     }),
   //   updateWallet: (payload) =>
   //   set(

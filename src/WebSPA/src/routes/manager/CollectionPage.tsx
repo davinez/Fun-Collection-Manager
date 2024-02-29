@@ -15,7 +15,7 @@ import useBookmarkSort from "@/hooks/manager/useBookmarkSort";
 // Types
 import type {
 	TBookmark,
-	TGetBookmarks,
+	TGetBookmarksByCollection,
 } from "@/shared/types/api/manager.types";
 // General
 import { useParams } from "react-router-dom";
@@ -24,7 +24,7 @@ import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/apiClient";
 
 type TMainContentProps = {
-	data: TGetBookmarks;
+	data: TGetBookmarksByCollection;
 };
 
 const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
@@ -61,7 +61,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 			) : (
 				<FiltersHead
 					aria-label="page-head"
-					headerName="All bookmarks"
+					headerName={data.collectionName}
 					icon={AiFillCloud}
 				/>
 			)}
@@ -105,6 +105,7 @@ export const CollectionPage =
 		// Get the Collection Id param from the URL.
 		const { id } = useParams();
 		const { managerSlice } = useStore();
+		// TODO: manage unexistant ud or id = 0
 		const {
 			isPending: isPendingGetBookmarks,
 			isError: isErrorGetBookmarks,
@@ -127,8 +128,6 @@ export const CollectionPage =
 		}, [isErrorGetBookmarks]);
 
 		// Handlers
-
-		// Return handling
 
 	// Return handling
 

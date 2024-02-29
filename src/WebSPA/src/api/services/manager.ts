@@ -10,7 +10,8 @@ import type {
   TCollectionUpdateFormPayload,
   TGroupInfo,
   TCollectionInfo,
-  TGetBookmarks,
+  TGetAllBookmarks,
+  TGetBookmarksByCollection,
   TGetCollectionsAllIcons,
   TDeleteCollectionPayload,
   TCollectionUpdateIconFormPayload,
@@ -83,7 +84,7 @@ export const useGetAllBookmarksQuery = ({ page, pageLimit, filterType, debounceS
   return useQuery({
     queryKey: ["all-bookmarks", { currentPage: page, debounceSearchValue }],
     queryFn: async () => {
-      const response = await $apiClient.get<TApiResponse<TGetBookmarks>>('/manager/collections/bookmarks',
+      const response = await $apiClient.get<TApiResponse<TGetAllBookmarks>>('/manager/collections/bookmarks',
         debounceSearchValue.length !== 0 ?
           {
             page: page,
@@ -105,7 +106,7 @@ export const useGetBookmarksByCollectionQuery = ({ page, pageLimit, filterType, 
   return useQuery({
     queryKey: ["collection-bookmarks", { currentPage: page, debounceSearchValue }],
     queryFn: async () => {
-      const response = await $apiClient.get<TApiResponse<TGetBookmarks>>(`/manager/collections/${collectionId}/bookmarks`,
+      const response = await $apiClient.get<TApiResponse<TGetBookmarksByCollection>>(`/manager/collections/${collectionId}/bookmarks`,
         debounceSearchValue.length !== 0 ?
           {
             page: page,

@@ -4,14 +4,16 @@ import { Input, InputProps } from "@chakra-ui/react";
 
 // Assets
 
-// Hooks
-
 // Types
 
 // General
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 import { useDebouncedCallback } from "use-debounce";
+import {
+	Location,
+	useLocation,
+} from "react-router-dom";
 
 type TSearchInputFieldProps = {};
 
@@ -28,6 +30,7 @@ export const SearchInputField = ({
 				// TODO: Pending value sanitization
 				// console.log("handleOnChangeSearchInput " + event.target.value);
 				setSearchValue(event.target.value.trim());
+				//managerSlice.setGetBookmarkParamsSearchValue(event.target.value.trim());
 			}
 		},
 		// delay in ms
@@ -37,6 +40,7 @@ export const SearchInputField = ({
 			leading: false,
 		}
 	);
+	const location: Location = useLocation();
 
 	useEffect(() => {
 		if (searchValue) {
@@ -46,5 +50,6 @@ export const SearchInputField = ({
 		}
 	}, [searchValue]);
 
-	return <Input onChange={debounced} {...rest} />;
+// Re-render on url change
+	return <Input key={location.pathname} defaultValue="" onChange={debounced} {...rest} />;
 };

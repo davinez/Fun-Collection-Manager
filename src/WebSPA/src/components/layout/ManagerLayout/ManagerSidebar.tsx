@@ -25,8 +25,6 @@ import { LoadingBox, ErrorBox } from "@/components/ui/box";
 import { GroupNavItem, GeneralNavItem } from "@/components/ui/box/manager";
 // Assets
 
-// Hooks
-import { useGetCollectionsQuery } from "@/api/services/manager";
 // Types
 import type {
 	TGetCollectionGroups,
@@ -38,6 +36,7 @@ import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/apiClient";
 import { useNavigate } from "react-router-dom";
 import { renderNodesState } from "@/shared/utils";
+import { useGetCollectionsQuery } from "@/api/services/manager";
 
 type TMainContentProps = {
 	data: TGetCollectionGroups;

@@ -37,8 +37,12 @@ import { URLAddForm, SearchInputField } from "@/components/forms/manager";
 // Types
 import { FilterBookmarksEnum } from "@/shared/types/global.types";
 // General
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
+import {
+	Location,
+	useLocation,
+} from "react-router-dom";
 
 type TManagerNavbarProps = {};
 
@@ -68,8 +72,15 @@ export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 			(option) => option.value === managerSlice.getBookmarkParams.filterType
 		)
 	);
+	const location: Location = useLocation();
 
-	// TODO: reset getBookmarkParams on page change
+	// Reset state get params on url change
+	useEffect(() => {
+		//console.log(location);
+		managerSlice.resetGetBookmarkParams();
+	}, [location.pathname]);
+
+	// Handlers
 
 	const handleOnChangeBookmarkFilterOption = (value: string | string[]) => {
 		if (typeof value === "string") {
@@ -153,7 +164,7 @@ export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 							<MenuOptionGroup
 								title="Filter By"
 								type="radio"
-								defaultValue={managerSlice.getBookmarkParams.filterType.toString()}
+								value={managerSlice.getBookmarkParams.filterType.toString()}
 								onChange={handleOnChangeBookmarkFilterOption}
 							>
 								{filterbookmarkOptions.map((option, index) => {

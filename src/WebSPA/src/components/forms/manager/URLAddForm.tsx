@@ -1,10 +1,5 @@
 // Design
-import {
-	Button,
-	Stack,
-	useToast,
-	Box,
-} from "@chakra-ui/react";
+import { Button, Stack, useToast, Box } from "@chakra-ui/react";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
 import { InputField } from "components/forms";
@@ -22,10 +17,12 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
 import { defaultHandlerApiError } from "@/api/apiClient";
+import { Location, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 type TURLAddFormProps = {};
 
-// Validation is triggered on the changeevent for each input, leading to multiple re-renders. 
+// Validation is triggered on the changeevent for each input, leading to multiple re-renders.
 // Warning: this often comes with a significant impact on performance.
 export const URLAddForm = ({}: TURLAddFormProps) => {
 	const methods = useForm<TAddURLPayload>({
@@ -38,6 +35,14 @@ export const URLAddForm = ({}: TURLAddFormProps) => {
 	} = methods;
 	const mutationAddURL = useAddURLMutation();
 	const toast = useToast();
+	const location: Location = useLocation();
+
+	// Re-render-reset on url change
+	useEffect(() => {
+		reset();
+	}, [location.pathname]);
+
+	// Handlers
 
 	const onSubmit: SubmitHandler<TAddURLPayload> = (
 		data: TAddURLPayload
