@@ -1,11 +1,32 @@
 import type {
-	TCollectionGroup,
-	TCollection,
-	TDynamicCollapseState
+  TCollectionGroup,
+  TCollection,
+  TDynamicCollapseState
 } from "@/shared/types/api/manager.types";
 
 export const bytesToMegaBytes = (sizeInBytes: number) => {
-return sizeInBytes / (1024 * 1024);
+  return sizeInBytes / (1024 * 1024);
+}
+
+export const isValidHttpUrl = (value: string) => {
+  let url;
+  try {
+    url = new URL(value);
+  } catch (_) {
+    return false;
+  }
+  return url.protocol === "http:" || url.protocol === "https:";
+}
+
+export const getUrlHostname = (value: string) => {
+  let url;
+  try {
+    url = new URL(value);
+  } catch (_) {
+    return "http:";
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:" ? url.hostname : "http:";
 }
 
 export const renderNodesState = (

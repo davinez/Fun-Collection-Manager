@@ -61,12 +61,12 @@ export type TBookmark = {
   cover: string;
   title: string;
   description: string;
+  websiteURL: string;
   bookmarkDetail: TBookmarkDetail;
 }
 
 type TBookmarkDetail = {
   collectionDetail?: { icon: string, name: string };
-  websiteURL: string;
   createdAt: string;
 }
 

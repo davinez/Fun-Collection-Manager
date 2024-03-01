@@ -27,6 +27,7 @@ import {
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 import { DEFAULT_ICON, DEFAULT_BOOKMARK_COVER } from "shared/config";
+import { getUrlHostname, isValidHttpUrl } from "@/shared/utils";
 
 type TBookmarkCardProps = {
 	bookmark: TBookmark;
@@ -54,21 +55,29 @@ export const BookmarkCard = ({
 	};
 
 	const handleOnClickCard = (event: React.SyntheticEvent<EventTarget>) => {
-		// Only open website if the clicked element it is the card and not an inside element
+		// Only open website if the clicked element it is the card and not an inside element (checkbox or card overlay buttons)
 		if (
 			event.target instanceof HTMLDivElement &&
 			(event.target as HTMLDivElement).getAttribute("aria-label") ===
 				"card-overlay-container"
 		) {
-			//	console.log("Clicked overlay card");
-			// TODO: Open tab in browser with the url
+			// Click card again to deselected
+			if (managerSlice.showHeadSelectOptions) {
+				handleOnClickCheckbox(event);
+			} else {
+				// Open website
+				if (isValidHttpUrl(bookmark.websiteURL)) {
+					window.open(bookmark.websiteURL, "_blank");
+				}
+				// TODO: Open not found page or invalid URL
+			}
 		}
 	};
 
 	const handleOnClickCheckbox = (event: React.SyntheticEvent<EventTarget>) => {
 		// Last card to uncheck, so remove headselectoptions component
 		if (
-			(event.target as HTMLInputElement).checked === false &&
+			checkedCard === true &&
 			managerSlice.selectedBookmarksCheckbox.length === 1
 		) {
 			setCheckedCard(false);
@@ -86,7 +95,7 @@ export const BookmarkCard = ({
 		}
 
 		// isChecked now it is a controlled component, we need to manage state
-		setCheckedCard((event.target as HTMLInputElement).checked);
+		setCheckedCard(checkedCard ? false : true);
 		managerSlice.setSelectedBookmarksCheckbox(bookmark.id);
 	};
 
@@ -292,7 +301,7 @@ export const BookmarkCard = ({
 											WebkitBoxOrient: "vertical",
 										}}
 									>
-										&#x2022; {bookmark.bookmarkDetail.websiteURL}
+										&#x2022; {getUrlHostname(bookmark.websiteURL)}
 									</Text>
 								</Box>
 								<Box w="100%" lineHeight="1.2" color="brandPrimary.150">
