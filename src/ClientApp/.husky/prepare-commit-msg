@@ -1,3 +1,5 @@
 #!/bin/sh
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 . "$(dirname "$0")/_/husky.sh"
 cd ./src/ClientApp && pnpm run commitizen # commitizen
+fi
