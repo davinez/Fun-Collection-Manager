@@ -10,7 +10,7 @@
 	"private": true,
 	"version": "1.0.0",
 	"scripts": {
-		"prepare": "cd ../../ && husky install ./src/WebSPA/.husky",
+		"prepare": "cd ../../ && husky install ./src/ClientApp/.husky",
 		"commitlint": "commitlint --edit",
 		"commitizen": "exec < /dev/tty && git cz --hook || true",
 		"setup:e2e": "npx playwright install",

@@ -1,4 +1,4 @@
 #!/bin/sh
 #. "$(dirname "$0")/_/husky.sh"
-#cd ./src/WebSPA && pnpm format && pnpm lint
+#cd ./src/ClientApp && pnpm format && pnpm lint
 

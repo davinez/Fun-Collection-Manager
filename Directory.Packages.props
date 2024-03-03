@@ -1,0 +1,13 @@
+<Project>
+  <ItemGroup>
+    <!-- Version together with ASP.NET -->
+    <!-- Version together with EF -->
+    <!-- Version together with runtime -->
+    <!-- Test -->
+    <!-- Scaffolding -->
+    <!-- Grpc -->
+    <!-- Miscellaneous -->
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
+  </ItemGroup>  
+</Project>
