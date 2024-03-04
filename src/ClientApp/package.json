@@ -11,8 +11,7 @@
 	"version": "1.0.0",
 	"scripts": {
 		"prepare": "cd ../../ && husky install ./src/ClientApp/.husky",
-		"commitlint": "commitlint --edit",
-		"commitizen": "exec < /dev/tty && git cz --hook || true",
+		"prepare-commit-msg": "exec < /dev/tty && npx cz --hook || true",
 		"setup:e2e": "npx playwright install",
 		"format": "prettier src/**/*.{ts,tsx} --write",
 		"lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -58,8 +57,6 @@
 	},
 	"devDependencies": {
 		"@chakra-ui/storybook-addon": "^5.0.1",
-		"@commitlint/cli": "^17.6.7",
-		"@commitlint/config-conventional": "^17.6.7",
 		"@faker-js/faker": "^8.0.2",
 		"@heroicons/react": "^2.0.18",
 		"@hookform/devtools": "^4.3.1",
