@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # platform='unknown'
 # unamestr=$(uname)
 # if [[ "$unamestr" == 'Linux' ]]; then
@@ -12,6 +12,20 @@
 # . "$(dirname "$0")/_/husky.sh"
 # cd ./src/ClientApp && pnpm run commitizen # commitizen
 # fi
-commit_message="$(cat "$1")"
-echo $commit_message
-echo "$(uname)"
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+echo "aaaaa"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # Mac OSX
+elif [[ "$OSTYPE" == "cygwin" ]]; then
+        # POSIX compatibility layer and Linux environment emulation for Windows
+elif [[ "$OSTYPE" == "msys" ]]; then
+        # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
+        echo "gfdgdfgdf"
+elif [[ "$OSTYPE" == "win32" ]]; then
+        # I'm not sure this can happen.
+elif [[ "$OSTYPE" == "freebsd"* ]]; then
+        # ...
+else
+        # Unknown.
+fi
+
