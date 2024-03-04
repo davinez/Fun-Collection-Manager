@@ -3,6 +3,7 @@ platform='unknown'
 unamestr=$(uname)
 if [[ "$unamestr" == 'Linux' ]]; then
    platform='linux'
+   ECHO $OSTYPE
 elif [[ "$unamestr" == 'FreeBSD' ]]; then
    platform='freebsd'
 fi
