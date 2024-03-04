@@ -13,7 +13,7 @@
 # cd ./src/ClientApp && pnpm run commitizen # commitizen
 # fi
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-echo "aaaaa"
+echo "aaaaaaaaaaa"
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         # Mac OSX
 elif [[ "$OSTYPE" == "cygwin" ]]; then
