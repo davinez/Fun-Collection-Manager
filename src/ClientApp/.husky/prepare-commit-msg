@@ -36,5 +36,5 @@ case $OS in
   *) ;;
 esac
 echo "$OS"
-echo "testdsfsgfddghghgh"
+echo "testdsfsgfddghgghfghgh"
 
