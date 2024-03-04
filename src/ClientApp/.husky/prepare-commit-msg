@@ -14,3 +14,4 @@
 # fi
 commit_message="$(cat "$1")"
 echo $commit_message
+echo "$OSTYPE"
