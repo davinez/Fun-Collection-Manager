@@ -12,6 +12,7 @@
 # . "$(dirname "$0")/_/husky.sh"
 # cd ./src/ClientApp && pnpm run commitizen # commitizen
 # fi
+echo "test"
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 echo "aaaaaaaaaaa"
 elif [[ "$OSTYPE" == "darwin"* ]]; then
