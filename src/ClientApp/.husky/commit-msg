@@ -7,7 +7,7 @@ if [[ "$unamestr" == 'Linux' ]]; then
 elif [[ "$unamestr" == 'FreeBSDj' ]]; then
    platform='freebsd'
 fi
-if [[ $platform == 'linux' ]]; then
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 . "$(dirname "$0")/_/husky.sh"
 cd ./src/ClientApp && pnpm run commitlint ${1}
 fi
