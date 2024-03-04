@@ -1,7 +1,10 @@
-export type TLoginPayload = {
-  email: string;
-  password: string;
-}
+import * as z from "zod";
+
+// Components Types //
+
+
+
+// API/Service Types //
 
 export type TLoginResponse = {
   userName: string;
@@ -10,3 +13,20 @@ export type TLoginResponse = {
   refreshtoken: string;
 }
 
+// Form Types //
+
+export const loginFormPayload = z.object({
+  email: z
+    .string()
+    .trim()
+    .email({ message: "Email required" }),
+  password: z
+  .string()
+  .trim()
+  .min(8, { message: "Password is required" }),
+});
+export type TLoginPayload = z.infer<typeof loginFormPayload>;
+
+
+
+// Query Params Types //

@@ -135,7 +135,7 @@ export const BookmarkUpdateForm = ({
 					errorMessage={
 						errors.websiteURL ? errors.websiteURL.message : undefined
 					}
-					defaultValue={bookmark.bookmarkDetail.websiteURL}
+					defaultValue={bookmark.websiteURL}
 				/>
 
 				<ModalFooter>

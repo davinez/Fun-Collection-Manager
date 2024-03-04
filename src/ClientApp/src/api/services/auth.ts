@@ -10,13 +10,14 @@ const API_BASE_URL = "http://localhost:7000/api";
 
 const $apiClient = apiClient(API_BASE_URL);
 
-export const useSubmitLoginMutation = () => {
+export const useLoginMutation = () => {
   return useMutation({
-    mutationFn: async (submitData: TLoginPayload) => {
-      const apiResponse = await $apiClient.post<TApiResponse<TLoginResponse>>("/auth/login", submitData);
+    mutationFn: async (payload: TLoginPayload) => {
+      const apiResponse = await $apiClient.post<TApiResponse<TLoginResponse>>("/auth/loginn", payload);
       return apiResponse.data
   },
   });
 }
+
 
 
