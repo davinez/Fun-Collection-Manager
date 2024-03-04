@@ -11,7 +11,7 @@
 	"version": "1.0.0",
 	"scripts": {
 		"prepare": "cd ../../ && husky install ./src/ClientApp/.husky",
-		"prepare-commit-msg": "exec < /dev/tty && npx cz --hook || true",
+		"commitlint": "commitlint --edit",
 		"setup:e2e": "npx playwright install",
 		"format": "prettier src/**/*.{ts,tsx} --write",
 		"lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -25,7 +25,7 @@
 		"test:e2e:report": "playwright show-report",
 		"build": "tsc && vite build",
 		"preview": "vite preview",
-		"server:mock": "json-server --port 7000 --middlewares ./data/mock/middleware.ts --routes ./data/mock/routes.json --watch ./data/mock/db.json"
+		"server:mock": "json-server --port 7000 --middlewares ./data/mock/middleware.ts --routes ./data/mock/routes.json --watch ./data/mock/db.json",
 	},
 	"dependencies": {
 		"@chakra-ui/anatomy": "^2.2.2",
@@ -57,6 +57,8 @@
 	},
 	"devDependencies": {
 		"@chakra-ui/storybook-addon": "^5.0.1",
+		"@commitlint/cli": "^19.0.3",
+		"@commitlint/config-conventional": "^19.0.3",
 		"@faker-js/faker": "^8.0.2",
 		"@heroicons/react": "^2.0.18",
 		"@hookform/devtools": "^4.3.1",
@@ -80,8 +82,6 @@
 		"@typescript-eslint/parser": "^6.2.0",
 		"@vitejs/plugin-react-swc": "^3.3.2",
 		"@vitest/coverage-v8": "^0.33.0",
-		"commitizen": "^4.3.0",
-		"cz-conventional-changelog": "^3.3.0",
 		"eslint": "^8.45.0",
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-react": "^7.33.0",
