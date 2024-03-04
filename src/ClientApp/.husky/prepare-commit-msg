@@ -12,6 +12,7 @@
 # . "$(dirname "$0")/_/husky.sh"
 # cd ./src/ClientApp && pnpm run commitizen # commitizen
 # fi
+exec < /dev/tty && git cz --hook || true
 OS="`uname`"
 case $OS in
   'Linux')
@@ -37,4 +38,5 @@ case $OS in
 esac
 echo "$OS"
 echo "testdsfsgfddghgghfghgh"
+
 

@@ -28,11 +28,6 @@
 		"preview": "vite preview",
 		"server:mock": "json-server --port 7000 --middlewares ./data/mock/middleware.ts --routes ./data/mock/routes.json --watch ./data/mock/db.json"
 	},
-	"husky": {
-		"hooks": {
-			"prepare-commit-msg": "exec < /dev/tty && npx cz --hook || true"
-		}
-	},
 	"dependencies": {
 		"@chakra-ui/anatomy": "^2.2.2",
 		"@chakra-ui/icons": "^2.1.1",
