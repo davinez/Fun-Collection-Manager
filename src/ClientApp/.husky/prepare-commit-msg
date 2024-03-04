@@ -19,8 +19,7 @@ if [[ "$unamestr" == 'Linux' ]]; then
 elif [[ "$unamestr" == 'FreeBSD' ]]; then
    platform='freebsd'
 fi
-echo "$platform"
-
+echo $(uname)
 echo "testdsfsgfdd"
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
    echo "aaaaaaaaaaa"
