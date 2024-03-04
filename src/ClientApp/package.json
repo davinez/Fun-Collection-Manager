@@ -25,7 +25,7 @@
 		"test:e2e:report": "playwright show-report",
 		"build": "tsc && vite build",
 		"preview": "vite preview",
-		"server:mock": "json-server --port 7000 --middlewares ./data/mock/middleware.ts --routes ./data/mock/routes.json --watch ./data/mock/db.json",
+		"server:mock": "json-server --port 7000 --middlewares ./data/mock/middleware.ts --routes ./data/mock/routes.json --watch ./data/mock/db.json"
 	},
 	"dependencies": {
 		"@chakra-ui/anatomy": "^2.2.2",
