@@ -1,13 +1,26 @@
 <Project>
   <ItemGroup>
-    <!-- Version together with ASP.NET -->
+    <!-- ASP.NET -->
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="8.4.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
     <!-- Version together with EF -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4" />
     <!-- Version together with runtime -->
     <!-- Test -->
     <!-- Scaffolding -->
     <!-- Grpc -->
+    <!-- Open Telemetry -->
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.8.1" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.8.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.8.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.8.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.8.0" />
     <!-- Miscellaneous -->
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
-  </ItemGroup>  
+    <PackageVersion Include="Dapper" Version="2.1.35" />
+    <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageVersion Include="MediatR" Version="12.2.0" />
+  </ItemGroup>
 </Project>
