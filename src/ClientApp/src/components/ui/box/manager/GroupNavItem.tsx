@@ -38,7 +38,7 @@ import {
 import { useState } from "react";
 import { useStore } from "@/store/UseStore";
 import queryClient from "@/api/query-client";
-import { defaultHandlerApiError } from "@/api/apiClient";
+import { defaultHandlerApiError } from "@/api/useApiClient";
 
 type TGroupNavItemProps = {
 	group: TCollectionGroup;

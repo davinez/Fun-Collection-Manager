@@ -24,7 +24,7 @@ import {
 	useUpdateCollectionIconMutation,
 	useGetCollectionsAllIconsQuery,
 } from "@/api/services/manager";
-import { defaultHandlerApiError } from "@/api/apiClient";
+import { defaultHandlerApiError } from "@/api/useApiClient";
 import queryClient from "@/api/query-client";
 import { useState, useEffect } from "react";
 import { DEFAULT_ICON } from "shared/config";

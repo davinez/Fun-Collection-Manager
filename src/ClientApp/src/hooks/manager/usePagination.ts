@@ -14,6 +14,11 @@ type TusePaginationProps = {
   currentPage: number;
 };
 
+/**
+ * Custom hook to manage pagination state
+ * @param
+ * @returns 
+ */
 export const usePagination = ({
   totalCount,
   pageSize,

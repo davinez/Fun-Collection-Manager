@@ -21,7 +21,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginMutation } from "@/api/services/auth";
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
-import { defaultHandlerApiError } from "@/api/apiClient";
+import { defaultHandlerApiError } from "@/api/useApiClient";
 
 type TLoginFormProps = {
 	onOpenAlert: () => void;

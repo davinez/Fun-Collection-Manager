@@ -8,7 +8,7 @@ import { AiFillAlert } from "react-icons/ai";
 
 // Hooks
 import { useDeleteBookmarkMutation } from "@/api/services/manager";
-import { defaultHandlerApiError } from "@/api/apiClient";
+import { defaultHandlerApiError } from "@/api/useApiClient";
 import { useStore } from "@/store/UseStore";
 // Types
 import {

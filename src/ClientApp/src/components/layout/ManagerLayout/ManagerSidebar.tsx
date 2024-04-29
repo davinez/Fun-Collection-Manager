@@ -33,10 +33,12 @@ import type {
 // General
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
-import { defaultHandlerApiError } from "@/api/apiClient";
+import { defaultHandlerApiError } from "@/api/useApiClient";
 import { useNavigate } from "react-router-dom";
 import { renderNodesState } from "@/shared/utils";
 import { useGetCollectionsQuery } from "@/api/services/manager";
+import { useMsal } from "@azure/msal-react";
+import { AccountInfo } from "@azure/msal-browser";
 
 type TMainContentProps = {
 	data: TGetCollectionGroups;
@@ -44,7 +46,8 @@ type TMainContentProps = {
 
 const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 	// Hooks
-	const { managerSlice } = useStore();
+	const { authSlice } = useStore();
+	const { instance, accounts, inProgress } = useMsal();
 	const [nodesState, setNodesState] = useState<TDynamicCollapseState[]>(
 		renderNodesState(data.groups)
 	);
@@ -54,8 +57,20 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 		onOpen: onOpenGroupModal,
 		onClose: onCloseGroupModal,
 	} = useDisclosure();
+	const currentAccount = instance.getAccountByHomeId(
+		authSlice.accountIdentifiers.homeAccountId as string
+	) as AccountInfo;
 
 	// Handlers
+	const handleOnClickLogOut = async () => {
+		await instance.logoutPopup({
+			account: currentAccount,
+		});
+
+		authSlice.logout();
+
+		navigate("/");
+	};
 
 	const handleOnClickAllbookmarks = () => {
 		navigate("/my/manager/all");
@@ -74,10 +89,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 
 	return (
 		<>
-			<GroupModal
-				isOpen={isOpenGroupModal}
-				onClose={onCloseGroupModal}
-			/>
+			<GroupModal isOpen={isOpenGroupModal} onClose={onCloseGroupModal} />
 			<Flex w="100%" pl="3" py="2" alignItems="center">
 				<Menu>
 					<MenuButton
@@ -97,7 +109,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 						p="1"
 					>
 						<Text textStyle="primary" ml="2">
-							david.ibanezn
+							{currentAccount.name}
 						</Text>
 					</MenuButton>
 					<MenuList
@@ -126,6 +138,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 							}}
 							icon={<Icon as={AiOutlineLogout} />}
 							textStyle="primary"
+							onClick={handleOnClickLogOut}
 						>
 							Logout
 						</MenuItem>
@@ -157,11 +170,13 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 							color="brandPrimary.150"
 							group={group}
 							onOpenGroupModal={onOpenGroupModal}
-							handleOnClickCollapseAllCollections={handleOnClickCollapseAllCollections}
+							handleOnClickCollapseAllCollections={
+								handleOnClickCollapseAllCollections
+							}
 							nodesData={{
 								nodesState: nodesState,
 								setNodesState: setNodesState,
-							}}		
+							}}
 						>
 							{group.name}
 						</GroupNavItem>

@@ -12,6 +12,7 @@ import {
 	Image,
 	FormErrorMessage,
 	useDisclosure,
+	Box,
 } from "@chakra-ui/react";
 // Components
 import { GeneralAlert } from "components/ui/alert";
@@ -25,7 +26,8 @@ import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 // General
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { defaultHandlerApiError } from "@/api/apiClient";
+import { defaultHandlerApiError } from "@/api/useApiClient";
+import { useMsal } from "@azure/msal-react";
 
 export default function LoginPage(): React.ReactElement {
 	// Hooks
@@ -35,9 +37,11 @@ export default function LoginPage(): React.ReactElement {
 		onOpen: onOpenAlert,
 	} = useDisclosure({ defaultIsOpen: false });
 	const { authSlice } = useStore();
+	const { instance, accounts, inProgress } = useMsal();
 
 	// Handlers
 
+	// Return
 	return (
 		<>
 			{isAlertOpen ? (
@@ -51,12 +55,16 @@ export default function LoginPage(): React.ReactElement {
 			) : (
 				<></>
 			)}
-			<Stack direction={{ base: "column", md: "row" }}>
+			<Stack 
+			direction={{ base: "column", md: "row" }}
+			gap={{ base: 10, md: 0 }}
+			>
 				<Flex flex={1} alignItems="center" justifyContent="center">
-					<LoginForm onOpenAlert={onOpenAlert} />
+					{/* <LoginForm onOpenAlert={onOpenAlert} /> */}
+					<Box onClick={() => instance.loginPopup()}>Login</Box>
 				</Flex>
 
-				<Flex flex={1}>
+				<Flex flex={1} >
 					<Image alt="Login Image" objectFit="cover" src={imgUrl} />
 				</Flex>
 			</Stack>

@@ -44,7 +44,7 @@ import {
 import { useStore } from "@/store/UseStore";
 import { useState } from "react";
 import queryClient from "@/api/query-client";
-import { defaultHandlerApiError } from "@/api/apiClient";
+import { defaultHandlerApiError } from "@/api/useApiClient";
 import { useNavigate } from "react-router-dom";
 
 // All bookmarks and group NavItem in sidebar

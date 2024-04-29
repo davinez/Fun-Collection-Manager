@@ -16,7 +16,7 @@ import {
 // General
 import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
-import { defaultHandlerApiError } from "@/api/apiClient";
+import { defaultHandlerApiError } from "@/api/useApiClient";
 import { Location, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 

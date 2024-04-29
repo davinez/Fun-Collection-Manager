@@ -1,8 +1,5 @@
 // Design
-import {
-	Grid,
-	GridItem,
-} from "@chakra-ui/react";
+import { Grid, GridItem } from "@chakra-ui/react";
 // Components
 import { ManagerSidebar } from "./ManagerSidebar";
 import { ManagerNavbar } from "./ManagerNavbar";
@@ -15,21 +12,24 @@ import { useOutlet } from "react-router-dom";
 // General
 import { Suspense } from "react";
 
-
 export const ManagerLayout = (): JSX.Element => {
 	const outlet = useOutlet();
 
 	return (
 		<Grid
-			templateAreas={`"sidebar navbar" "sidebar main"`}
-			gridTemplateColumns= {{
+			// prettier-ignore
+			templateAreas={
+				`"sidebar navbar" 
+				 "sidebar main"`
+			}
+			gridTemplateColumns={{
 				sm: "200px 1fr",
-				md: "220px 1fr"
+				md: "220px 1fr",
 			}}
 			gridTemplateRows="48px 1fr"
 			gap="0"
 			minH="100vh"
-			maxWidth="100vw"		
+			maxWidth="100vw"
 			bg="gray.50"
 			overflowX="clip"
 		>
@@ -43,7 +43,7 @@ export const ManagerLayout = (): JSX.Element => {
 				pb="10"
 				overflowX="hidden"
 				overflowY="auto"
-				w={{sm:"200px", md:"220px"}}
+				w={{ sm: "200px", md: "220px" }}
 				bg="brandPrimary.900"
 				borderRight="1px solid"
 				borderRightColor="gray"
@@ -65,20 +65,14 @@ export const ManagerLayout = (): JSX.Element => {
 				bg="brandPrimary.800"
 				pl="20px"
 				pr="20px"
-				gap={2}	
+				gap={2}
 			>
 				<ManagerNavbar />
 			</GridItem>
 
-			<GridItem 
-			as="main" 
-			w="100%"
-			h="100%"
-			area="main"
-			bg="brandPrimary.800"
-			>
+			<GridItem as="main" w="100%" h="100%" area="main" bg="brandPrimary.800">
 				<Suspense>{outlet}</Suspense>
 			</GridItem>
 		</Grid>
 	);
-}
+};

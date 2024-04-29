@@ -21,7 +21,7 @@ import type {
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
-import { defaultHandlerApiError } from "@/api/apiClient";
+import { defaultHandlerApiError } from "@/api/useApiClient";
 
 type TMainContentProps = {
 	data: TGetBookmarksByCollection;

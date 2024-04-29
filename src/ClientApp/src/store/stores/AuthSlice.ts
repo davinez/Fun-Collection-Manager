@@ -1,15 +1,15 @@
 import type { TStateSlice } from "shared/types/store/store.types";
 import type {
+  AccountIdentifiers,
   TLoginResponse
 } from "@/shared/types/api/auth.types";
 
 export type TAuthSliceDefinition = {
   hasHydrated: boolean;
-  username: string | undefined;
+  accountIdentifiers: AccountIdentifiers;
   userEmail: string | undefined;
+  userScopes: string[] | undefined;
   accessToken: string | undefined;
-  refreshToken: string | undefined;
-  storage: string;
 };
 
 export type TAuthSliceActions = {
@@ -23,11 +23,14 @@ export type TAuthSlice = TAuthSliceDefinition & TAuthSliceActions;
 
 const initialAuthSliceState: TAuthSliceDefinition = {
   hasHydrated: false,
-  username: undefined,
+  accountIdentifiers: {
+    localAccountId:  undefined,
+    homeAccountId: undefined,
+    username: undefined
+  },
   userEmail: undefined,
+  userScopes: undefined,
   accessToken: undefined,
-  refreshToken: undefined,
-  storage: "A",
 };
 
 export const AuthSlice: TStateSlice<TAuthSlice> = (set) => ({
@@ -43,19 +46,27 @@ export const AuthSlice: TStateSlice<TAuthSlice> = (set) => ({
   logout: (): void =>
     // Logout user code
     set((state) => {
-      state.authSlice.accessToken = undefined;
-      state.authSlice.refreshToken = undefined;
-      state.authSlice.username = undefined;
+      state.authSlice.accountIdentifiers = {
+        localAccountId: undefined,
+        homeAccountId: undefined,
+        username: undefined
+      }
       state.authSlice.userEmail = undefined;
+      state.authSlice.userScopes = undefined;
+      state.authSlice.accessToken = undefined;
     }),
   setLoginUser: (payload: TLoginResponse): void =>
     set((state) => {
       state.authSlice = {
         ...state.authSlice,
-        username: payload.userName,
+        accountIdentifiers: {
+          localAccountId: payload.localAccountId,
+          homeAccountId: payload.homeAccountId,
+          username: payload.username
+        },
         userEmail: payload.userEmail,
-        accessToken: payload.token,
-        refreshToken: payload.refreshtoken
+        userScopes: payload.userScopes,
+        accessToken: payload.accessToken
       };
     }),
 });

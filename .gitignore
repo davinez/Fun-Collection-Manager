@@ -11,6 +11,10 @@
 *.userosscache
 *.sln.docstates
 .vscode/
+.env.*
+
+# Used for develop files / mockups
+.tempdev/ 
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

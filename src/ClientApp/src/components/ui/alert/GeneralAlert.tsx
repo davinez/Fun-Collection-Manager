@@ -17,6 +17,7 @@ export const GeneralAlert = ({
 	description,
 	...rest
 }: TGeneralAlertProps & AlertProps): JSX.Element => {
+
 	return (
 		<Alert {...rest}>
 			<AlertIcon />

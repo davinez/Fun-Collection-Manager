@@ -26,11 +26,11 @@ export const useStore = create<TCombinedStore>()(
       name: "auth",
       partialize: (state) => ({
         // Include the keys you want to persist in here.
-        authSlice: {
-          username: state.authSlice.username,
-          userEmail: state.authSlice.username,
+        authSlice: {          
+          accountIdentifiers: state.authSlice.accountIdentifiers,
+          userEmail: state.authSlice.userEmail,
+          userScopes: state.authSlice.userScopes,
           accessToken: state.authSlice.accessToken,
-          refreshToken: state.authSlice.refreshToken,
         },
       }),
       merge: (persistedState, currentState) => {

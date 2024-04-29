@@ -2,15 +2,22 @@ import * as z from "zod";
 
 // Components Types //
 
+export type AccountIdentifiers = {
+  localAccountId: string | undefined;
+	homeAccountId:  string | undefined;
+	username:  string | undefined;
+}
 
 
 // API/Service Types //
 
 export type TLoginResponse = {
-  userName: string;
+  localAccountId: string;
+	homeAccountId: string;
+	username: string;
   userEmail: string;
-  token: string;
-  refreshtoken: string;
+  userScopes: string[];
+  accessToken: string;
 }
 
 // Form Types //

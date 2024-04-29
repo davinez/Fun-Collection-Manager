@@ -28,6 +28,8 @@
 		"server:mock": "json-server --port 7000 --middlewares ./data/mock/middleware.ts --routes ./data/mock/routes.json --watch ./data/mock/db.json"
 	},
 	"dependencies": {
+		"@azure/msal-browser": "^3.13.0",
+		"@azure/msal-react": "^2.0.15",
 		"@chakra-ui/anatomy": "^2.2.2",
 		"@chakra-ui/icons": "^2.1.1",
 		"@chakra-ui/react": "^2.8.1",

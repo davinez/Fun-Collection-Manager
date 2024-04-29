@@ -17,7 +17,7 @@ import { InputField } from "components/forms";
 // Hooks
 import { useAddCollectionMutation } from "@/api/services/manager";
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
-import { defaultHandlerApiError } from "@/api/apiClient";
+import { defaultHandlerApiError } from "@/api/useApiClient";
 // Types
 import {
 	collectionAddFormPayload,
