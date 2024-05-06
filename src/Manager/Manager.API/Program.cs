@@ -2,16 +2,14 @@
 using Manager.API.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.AddApiServices();
-builder.AddDefaultOpenApi();
 builder.AddApplicationServices();
-builder.Services.AddProblemDetails();
+builder.AddDefaultOpenApi();
 
 var app = builder.Build();
 

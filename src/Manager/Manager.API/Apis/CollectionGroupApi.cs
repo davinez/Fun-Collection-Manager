@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Manager.API.Application.Models.Requests.AuthApi;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -10,17 +11,23 @@ using Microsoft.Extensions.Logging;
 
 namespace Manager.API.Apis;
 
-public static class AuthApi
+public static class CollectionGroupApi
 {
-    public static RouteGroupBuilder MapAuthApi(this RouteGroupBuilder app)
+    public static RouteGroupBuilder MapCollectionGroupApi(this RouteGroupBuilder app)
     {
-        app.MapPost("/authenticate", AuthenticateAsync);
+        app.MapGet("/", GetCollectionGroups);
+        //app.MapGet("/{groupId:int}", AuthenticateAsync);
+        //app.MapPost("/", AuthenticateAsync);
+        //app.MapPut("/", AuthenticateAsync);
+        //app.MapDelete("/", AuthenticateAsync);
+
         return app;
     }
 
-    public static async Task<Results<Ok, BadRequest<string>>> AuthenticateAsync(
+    public static async Task<Results<Ok, BadRequest<string>>> GetCollectionGroups(
     [AsParameters] CommonServices services,
     [FromHeader(Name = "x-requestid")] Guid requestId,
+    // [FromRoute] int groupId,
     [AsParameters] AuthenticateRequest request
      )
     {

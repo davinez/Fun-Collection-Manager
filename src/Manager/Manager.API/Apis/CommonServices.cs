@@ -3,10 +3,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Manager.API.Apis;
 
-public class AuthServices(
+public class CommonServices(
     IMediator mediator,
-    ILogger<AuthServices> logger)
+    ILogger<CommonServices> logger)
 {
     public IMediator Mediator { get; set; } = mediator;
-    public ILogger<AuthServices> Logger { get; } = logger;
+    public ILogger<CommonServices> Logger { get; } = logger;
 }

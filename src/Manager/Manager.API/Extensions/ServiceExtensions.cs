@@ -45,7 +45,7 @@ public static class ServiceExtensions
 
         services.AddDbContext<ManagerContext>(options =>
         {
-            options.UseSqlServer(configuration.GetConnectionString("managerdb"));
+            options.UseNpgsql(builder.Configuration.GetConnectionString("managerdb"));
         });
 
         services.AddHttpContextAccessor();
@@ -61,7 +61,9 @@ public static class ServiceExtensions
         // Register the command validators for the validator behavior (validators based on FluentValidation library)
         // services.AddSingleton<IValidator<CreateOrderCommand>, CreateOrderCommandValidator>();
 
-       // services.AddScoped<IOrderQueries, OrderQueries>();
+        // services.AddScoped<IOrderQueries, OrderQueries>();
+
+        services.AddProblemDetails();
 
         return builder;
     }
