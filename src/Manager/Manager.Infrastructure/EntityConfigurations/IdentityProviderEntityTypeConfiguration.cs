@@ -11,6 +11,6 @@ public class IdentityProviderEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.ToTable("identity_provider");
 
         builder.Property(p => p.ProviderName)
-              .HasColumnName("provider_name");
+               .HasColumnName("provider_name");
     }
 }

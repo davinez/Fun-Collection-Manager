@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Manager.Domain.Common;
 
 namespace Manager.Domain.Entities;
@@ -11,4 +12,6 @@ public class Offer : AuditableEntity
     public string? Description { get; set; }
     public decimal? DiscountAmount { get; set; }
     public decimal? DiscountPercentage { get; set; }
+
+    public List<Subscription> Subscriptions { get; } = [];
 }

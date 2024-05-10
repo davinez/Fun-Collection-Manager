@@ -11,5 +11,11 @@ public class UserAccountIdentityProviderEntityTypeConfiguration : IEntityTypeCon
     {
         builder.ToTable("use_account_identity_provider");
 
+        builder.Property(p => p.UserAccountId)
+               .HasColumnName("user_account_id");
+
+        builder.Property(p => p.IdentityProviderId)
+               .HasColumnName("identity_provider_id");
+
     }
 }

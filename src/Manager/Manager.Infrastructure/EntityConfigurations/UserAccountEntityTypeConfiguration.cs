@@ -10,13 +10,13 @@ public class UserAccountEntityTypeConfiguration : IEntityTypeConfiguration<UserA
     {
         builder.ToTable("user_account");
 
-        builder.HasKey(p => p.Id);
-
         builder.Property(p => p.UserName)
+               .HasColumnName("username")
                .HasMaxLength(100)
                .IsRequired();
 
         builder.Property(p => p.Name)
+               .HasColumnName("name")
                .HasMaxLength(100)
                .IsRequired();
 
@@ -24,16 +24,19 @@ public class UserAccountEntityTypeConfiguration : IEntityTypeConfiguration<UserA
                .HasColumnName("date_of_birth")
                .IsRequired();
 
+        builder.Property(p => p.Country)
+               .HasColumnName("country")
+               .HasMaxLength(100)
+               .IsRequired();
+
+        builder.Property(p => p.ZipCode)
+               .HasColumnName("zip_code")
+               .HasMaxLength(20)
+               .IsRequired();
+
         builder.Property(p => p.PaymentProviderCustomerId)
               .HasColumnName("payment_provider_customer_id")
               .IsRequired();
-
-        // Auditable
-        builder.Property(p => p.Created)
-       .IsRequired();
-
-        builder.Property(p => p.LastModified)
-                .HasColumnName("last_modified");
 
         // Foreign Keys
         builder.Property(p => p.RoleId)
@@ -47,8 +50,8 @@ public class UserAccountEntityTypeConfiguration : IEntityTypeConfiguration<UserA
         builder.HasMany(p => p.IdentityProviders) // Many to Many with join table
           .WithMany(p => p.UserAccounts)
           .UsingEntity<UserAccountIdentityProvider>(
-            l => l.HasOne<IdentityProvider>().WithMany(p => p.UserAccountIdentityProviders),
-            r => r.HasOne<UserAccount>().WithMany(p => p.UserAccountIdentityProviders));
+            l => l.HasOne<IdentityProvider>().WithMany(p => p.UserAccountIdentityProviders).HasForeignKey(p => p.IdentityProviderId),
+            r => r.HasOne<UserAccount>().WithMany(p => p.UserAccountIdentityProviders).HasForeignKey(p => p.UserAccountId));
     
         // TODO: Check the generation of unique rule in user_account_id in subscription
         builder.HasOne(p => p.Subscription)  // One to One
