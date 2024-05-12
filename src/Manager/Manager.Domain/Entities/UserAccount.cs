@@ -19,4 +19,7 @@ public class UserAccount : AuditableEntity
     public UserRole UserRole { get; set; } = null!; // Required reference navigation to principal
     public List<IdentityProvider> IdentityProviders { get; } = []; // Skip navigation of join table
     public List<UserAccountIdentityProvider> UserAccountIdentityProviders { get; } = []; // Join Table many to many
+
+    public List<CollectionGroup> CollectionGroups { get; } = []; 
+
 }

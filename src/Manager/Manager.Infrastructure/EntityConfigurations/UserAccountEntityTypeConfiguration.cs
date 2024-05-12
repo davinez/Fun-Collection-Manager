@@ -43,21 +43,21 @@ public class UserAccountEntityTypeConfiguration : IEntityTypeConfiguration<UserA
                .HasColumnName("role_id");
 
         builder.HasOne(p => p.UserRole)  // One to Many
-        .WithMany(p => p.UserAccounts)
-        .HasForeignKey(p => p.RoleId)
-        .IsRequired();
+               .WithMany(p => p.UserAccounts)
+               .HasForeignKey(p => p.RoleId)
+               .IsRequired();
         
         builder.HasMany(p => p.IdentityProviders) // Many to Many with join table
-          .WithMany(p => p.UserAccounts)
-          .UsingEntity<UserAccountIdentityProvider>(
-            l => l.HasOne<IdentityProvider>().WithMany(p => p.UserAccountIdentityProviders).HasForeignKey(p => p.IdentityProviderId),
-            r => r.HasOne<UserAccount>().WithMany(p => p.UserAccountIdentityProviders).HasForeignKey(p => p.UserAccountId));
+               .WithMany(p => p.UserAccounts)
+               .UsingEntity<UserAccountIdentityProvider>(
+                   l => l.HasOne<IdentityProvider>().WithMany(p => p.UserAccountIdentityProviders).HasForeignKey(p => p.IdentityProviderId),
+                   r => r.HasOne<UserAccount>().WithMany(p => p.UserAccountIdentityProviders).HasForeignKey(p => p.UserAccountId));
     
         // TODO: Check the generation of unique rule in user_account_id in subscription
         builder.HasOne(p => p.Subscription)  // One to One
-        .WithOne(p => p.UserAccount)
-        .HasForeignKey<Subscription>(p => p.UserAccountId)
-        .IsRequired();
+               .WithOne(p => p.UserAccount)
+               .HasForeignKey<Subscription>(p => p.UserAccountId)
+               .IsRequired();
 
         // Index
         builder.HasIndex(p => p.UserName);
