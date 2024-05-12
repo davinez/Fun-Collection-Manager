@@ -35,14 +35,17 @@ public class SubscriptionEntityTypeConfiguration : IEntityTypeConfiguration<Subs
         builder.Property(p => p.OfferId)
                .HasColumnName("offer_id");
 
+        builder.Property(p => p.CurrentPlanId)
+               .HasColumnName("current_plan_id");
+
         builder.HasOne(p => p.Offer)  // One to Many
-        .WithMany(p => p.Subscriptions)
-        .HasForeignKey(p => p.OfferId);
+               .WithMany(p => p.Subscriptions)
+               .HasForeignKey(p => p.OfferId);
 
         builder.HasOne(p => p.Plan)  // One to Many
-       .WithMany(p => p.Subscriptions)
-       .HasForeignKey(p => p.CurrentPlanId)
-       .IsRequired();
+               .WithMany(p => p.Subscriptions)
+               .HasForeignKey(p => p.CurrentPlanId)
+               .IsRequired();
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Manager.Domain.Common;
 
 namespace Manager.Domain.Entities;
@@ -19,4 +20,6 @@ public class Subscription : AuditableEntity
     public UserAccount UserAccount { get; set; } = null!;
     public Offer Offer { get; set; } = null!;
     public Plan Plan { get; set; } = null!;
+    public List<Invoice> Invoices { get; } = [];
+    public List<PlanHistory> PlanHistories { get; } = [];
 }
