@@ -3,7 +3,7 @@ using Manager.Domain.Common;
 
 namespace Manager.Domain.Entities;
 
-public class Plan : AuditableEntity
+public class Plan : BaseAuditableEntity
 {
     public string? PlanName { get; set; }
     public decimal CurrentPrice { get; set; }

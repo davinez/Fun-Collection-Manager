@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Manager.Domain.Common;
 
-public class AuditableEntity : BaseEntity
+public abstract class BaseAuditableEntity : BaseEntity
 {
     [Column("created")]
     [Required]
-    public DateTime Created { get; set; }
+    public DateTimeOffset Created { get; set; }
     [Column("last_modified")]
-    public DateTime? LastModified { get; set; }
+    public DateTimeOffset? LastModified { get; set; }
 }

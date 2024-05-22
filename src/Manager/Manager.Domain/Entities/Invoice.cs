@@ -3,7 +3,7 @@ using Manager.Domain.Common;
 
 namespace Manager.Domain.Entities;
 
-public class Invoice : AuditableEntity
+public class Invoice : BaseAuditableEntity
 {
     public string? CustomerInvoiceData { get; set; }
     public DateTime InvoicePeriodStartDate { get; set; }

@@ -2,7 +2,7 @@
 
 namespace Manager.Domain.Entities;
 
-public class Bookmark : AuditableEntity
+public class Bookmark : BaseAuditableEntity
 {
     public string? Cover { get; set; }
 

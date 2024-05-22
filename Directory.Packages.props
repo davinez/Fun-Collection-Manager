@@ -1,27 +1,35 @@
 <Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
   <ItemGroup>
     <!-- ASP.NET -->
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.4" />
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="8.4.0" />
-    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.4" />
     <!-- Version together with EF -->
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
+    <PackageVersion Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.4" />
     <!-- Version together with runtime -->
     <!-- Test -->
+
     <!-- Scaffolding -->
     <!-- Grpc -->
     <!-- Open Telemetry -->
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.8.1" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.8.1" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.8.1" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.8.1" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.8.0" />
+
     <!-- Miscellaneous -->
+    <PackageVersion Include="Ardalis.GuardClauses" Version="4.5.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageVersion Include="Dapper" Version="2.1.35" />
     <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
     <PackageVersion Include="MediatR" Version="12.2.0" />
   </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@ using Manager.Domain.Common;
 
 namespace Manager.Domain.Entities;
 
-public class Offer : AuditableEntity
+public class Offer : BaseAuditableEntity
 {
     public string? OfferName { get; set; }
     public DateTime OfferStartDate { get; set; }

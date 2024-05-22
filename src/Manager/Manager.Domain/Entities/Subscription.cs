@@ -4,7 +4,7 @@ using Manager.Domain.Common;
 
 namespace Manager.Domain.Entities;
 
-public class Subscription : AuditableEntity
+public class Subscription : BaseAuditableEntity
 {
     public DateTime? TrialPeriodStartDate { get; set; }
     public DateTime? TrialPeriodEndDate { get; set; }

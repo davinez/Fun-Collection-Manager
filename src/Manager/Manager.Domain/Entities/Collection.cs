@@ -3,7 +3,7 @@ using Manager.Domain.Common;
 
 namespace Manager.Domain.Entities;
 
-public class Collection : AuditableEntity
+public class Collection : BaseAuditableEntity
 {
     public string? Name { get; set; }
 

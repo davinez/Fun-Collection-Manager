@@ -5,7 +5,7 @@ using Manager.Domain.Common;
 
 namespace Manager.Domain.Entities;
 
-public class UserAccount : AuditableEntity
+public class UserAccount : BaseAuditableEntity
 {
     public string? UserName { get; set; }
     public string? Name { get; set; }
