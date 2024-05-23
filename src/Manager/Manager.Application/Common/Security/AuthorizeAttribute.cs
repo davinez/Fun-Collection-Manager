@@ -1,4 +1,6 @@
-﻿namespace Manager.Application.Common.Security;
+﻿using System;
+
+namespace Manager.Application.Common.Security;
 
 /// <summary>
 /// Specifies the class this attribute is applied to requires authorization.

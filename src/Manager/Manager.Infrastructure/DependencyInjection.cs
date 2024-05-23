@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Manager.Infrastructure;
+namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyInjection
 {

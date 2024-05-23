@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MediatR;
 using Manager.Application.Common.Behaviors;
 
-namespace Manager.Application;
+namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyInjection
 {

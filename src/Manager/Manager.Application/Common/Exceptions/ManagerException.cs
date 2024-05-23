@@ -1,4 +1,6 @@
-﻿namespace Manager.Application.Common.Exceptions;
+﻿using System;
+
+namespace Manager.Application.Common.Exceptions;
 
 /// <summary>
 /// Exception type for domain exceptions

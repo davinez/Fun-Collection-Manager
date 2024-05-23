@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Manager.API;
+namespace Microsoft.Extensions.DependencyInjection;
+
 
 public static class DependencyInjection
 {

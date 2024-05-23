@@ -19,11 +19,19 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.4" />
     <!-- Version together with runtime -->
     <!-- Test -->
-
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.5" />
+    <PackageVersion Include="nunit" Version="3.14.0" />
+    <PackageVersion Include="NUnit.Analyzers" Version="4.2.0" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
+    <PackageVersion Include="Respawn" Version="6.2.1" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <PackageVersion Include="FluentAssertions" Version="6.12.0" />
+    <PackageVersion Include="Moq" Version="4.20.70" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="3.8.0" />
     <!-- Scaffolding -->
     <!-- Grpc -->
     <!-- Open Telemetry -->
-
     <!-- Miscellaneous -->
     <PackageVersion Include="Ardalis.GuardClauses" Version="4.5.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
