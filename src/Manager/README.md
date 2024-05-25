@@ -42,7 +42,7 @@ For example, to add a new migration from the root folder:
 
 
  ``` Bash
- dotnet ef migrations add "SampleMigration" --project src\Infrastructure --startup-project src\Web --output-dir Data\Migration
+ dotnet ef migrations add "SampleMigration"  --project src\Manager\Manager.Infrastructure  --startup-project src\Manager\Manager.API --output-dir Data\Migrations
  ```
 
  ``` PM
@@ -50,6 +50,10 @@ For example, to add a new migration from the root folder:
  ```
 
  For removing last migration use:
+
+``` Bash
+dotnet ef migrations remove --project src\Manager\Manager.Infrastructure  --startup-project src\Manager\Manager.API
+ ```
 
 ``` PM
 Remove-Migration

@@ -9,11 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Manager.Infrastructure.Migrations
+namespace Manager.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ManagerContext))]
-    [Migration("20240513221944_FirstDBSchema")]
-    partial class FirstDBSchema
+    [Migration("20240524032329_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,7 +45,7 @@ namespace Manager.Infrastructure.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("cover");
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
@@ -55,7 +55,7 @@ namespace Manager.Infrastructure.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("description");
 
-                    b.Property<DateTime?>("LastModified")
+                    b.Property<DateTimeOffset?>("LastModified")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified");
 
@@ -91,7 +91,7 @@ namespace Manager.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("collection_group_id");
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
@@ -101,7 +101,7 @@ namespace Manager.Infrastructure.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("icon");
 
-                    b.Property<DateTime?>("LastModified")
+                    b.Property<DateTimeOffset?>("LastModified")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified");
 
@@ -134,11 +134,11 @@ namespace Manager.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
-                    b.Property<DateTime?>("LastModified")
+                    b.Property<DateTimeOffset?>("LastModified")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified");
 
@@ -169,17 +169,7 @@ namespace Manager.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("user_role_id");
 
-                    b.Property<int>("PermissionId1")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserAccountId")
-                        .HasColumnType("integer");
-
                     b.HasKey("PermissionId", "UserRoleId");
-
-                    b.HasIndex("PermissionId1");
-
-                    b.HasIndex("UserAccountId");
 
                     b.HasIndex("UserRoleId");
 
@@ -213,7 +203,7 @@ namespace Manager.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
@@ -251,7 +241,7 @@ namespace Manager.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("invoice_period_start_date");
 
-                    b.Property<DateTime?>("LastModified")
+                    b.Property<DateTimeOffset?>("LastModified")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified");
 
@@ -281,7 +271,7 @@ namespace Manager.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
@@ -299,7 +289,7 @@ namespace Manager.Infrastructure.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("discount_percentage");
 
-                    b.Property<DateTime?>("LastModified")
+                    b.Property<DateTimeOffset?>("LastModified")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified");
 
@@ -351,7 +341,7 @@ namespace Manager.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
@@ -363,7 +353,7 @@ namespace Manager.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
 
-                    b.Property<DateTime?>("LastModified")
+                    b.Property<DateTimeOffset?>("LastModified")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified");
 
@@ -387,7 +377,7 @@ namespace Manager.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
@@ -399,7 +389,7 @@ namespace Manager.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date_start");
 
-                    b.Property<DateTime?>("LastModified")
+                    b.Property<DateTimeOffset?>("LastModified")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified");
 
@@ -429,7 +419,7 @@ namespace Manager.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
@@ -445,7 +435,7 @@ namespace Manager.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date_unsubscribed");
 
-                    b.Property<DateTime?>("LastModified")
+                    b.Property<DateTimeOffset?>("LastModified")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified");
 
@@ -499,7 +489,7 @@ namespace Manager.Infrastructure.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("country");
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
@@ -507,7 +497,7 @@ namespace Manager.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date_of_birth");
 
-                    b.Property<DateTime?>("LastModified")
+                    b.Property<DateTimeOffset?>("LastModified")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified");
 
@@ -556,19 +546,9 @@ namespace Manager.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("user_account_id");
 
-                    b.Property<int>("IdentityProviderId1")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserAccountId1")
-                        .HasColumnType("integer");
-
                     b.HasKey("IdentityProviderId", "UserAccountId");
 
-                    b.HasIndex("IdentityProviderId1");
-
                     b.HasIndex("UserAccountId");
-
-                    b.HasIndex("UserAccountId1");
 
                     b.ToTable("use_account_identity_provider", "manager");
                 });
@@ -676,27 +656,11 @@ namespace Manager.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Manager.Domain.Entities.Permission", "Permission")
-                        .WithMany()
-                        .HasForeignKey("PermissionId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Manager.Domain.Entities.UserAccount", "UserAccount")
-                        .WithMany()
-                        .HasForeignKey("UserAccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Manager.Domain.Entities.UserRole", null)
                         .WithMany("GrantedPermissions")
                         .HasForeignKey("UserRoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Permission");
-
-                    b.Navigation("UserAccount");
                 });
 
             modelBuilder.Entity("Manager.Domain.Entities.Invoice", b =>
@@ -783,27 +747,11 @@ namespace Manager.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Manager.Domain.Entities.IdentityProvider", "IdentityProvider")
-                        .WithMany()
-                        .HasForeignKey("IdentityProviderId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Manager.Domain.Entities.UserAccount", null)
                         .WithMany("UserAccountIdentityProviders")
                         .HasForeignKey("UserAccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Manager.Domain.Entities.UserAccount", "UserAccount")
-                        .WithMany()
-                        .HasForeignKey("UserAccountId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("IdentityProvider");
-
-                    b.Navigation("UserAccount");
                 });
 
             modelBuilder.Entity("Manager.Domain.Entities.Collection", b =>

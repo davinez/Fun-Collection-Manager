@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manager.Application", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manager.FunctionalTests", "tests\Manager.FunctionalTests\Manager.FunctionalTests.csproj", "{4DD553F0-E21F-4EF7-A105-47A9867BB6BD}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{EF188C48-ED3F-46C6-AFF7-01C66A2063D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{4DD553F0-E21F-4EF7-A105-47A9867BB6BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DD553F0-E21F-4EF7-A105-47A9867BB6BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DD553F0-E21F-4EF7-A105-47A9867BB6BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF188C48-ED3F-46C6-AFF7-01C66A2063D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF188C48-ED3F-46C6-AFF7-01C66A2063D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF188C48-ED3F-46C6-AFF7-01C66A2063D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF188C48-ED3F-46C6-AFF7-01C66A2063D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

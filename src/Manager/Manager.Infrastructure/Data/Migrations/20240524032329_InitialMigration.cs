@@ -4,10 +4,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Manager.Infrastructure.Migrations
+namespace Manager.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstDBSchema : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -42,8 +42,8 @@ namespace Manager.Infrastructure.Migrations
                     description = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     discount_amount = table.Column<decimal>(type: "numeric", nullable: true),
                     discount_percentage = table.Column<decimal>(type: "numeric", nullable: true),
-                    created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    last_modified = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    last_modified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -74,8 +74,8 @@ namespace Manager.Infrastructure.Migrations
                     plan_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     current_price = table.Column<decimal>(type: "numeric", nullable: false),
                     is_active = table.Column<bool>(type: "boolean", nullable: false),
-                    created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    last_modified = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    last_modified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -114,6 +114,33 @@ namespace Manager.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "granted_permission",
+                schema: "manager",
+                columns: table => new
+                {
+                    user_role_id = table.Column<int>(type: "integer", nullable: false),
+                    permission_id = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_granted_permission", x => new { x.permission_id, x.user_role_id });
+                    table.ForeignKey(
+                        name: "FK_granted_permission_permission_permission_id",
+                        column: x => x.permission_id,
+                        principalSchema: "manager",
+                        principalTable: "permission",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_granted_permission_user_role_user_role_id",
+                        column: x => x.user_role_id,
+                        principalSchema: "manager",
+                        principalTable: "user_role",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "user_account",
                 schema: "manager",
                 columns: table => new
@@ -127,8 +154,8 @@ namespace Manager.Infrastructure.Migrations
                     zip_code = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     payment_provider_customer_id = table.Column<int>(type: "integer", nullable: false),
                     role_id = table.Column<int>(type: "integer", nullable: false),
-                    created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    last_modified = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    last_modified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -151,8 +178,8 @@ namespace Manager.Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     user_account_id = table.Column<int>(type: "integer", nullable: false),
-                    created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    last_modified = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    last_modified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -162,49 +189,6 @@ namespace Manager.Infrastructure.Migrations
                         column: x => x.user_account_id,
                         principalSchema: "manager",
                         principalTable: "user_account",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "granted_permission",
-                schema: "manager",
-                columns: table => new
-                {
-                    user_role_id = table.Column<int>(type: "integer", nullable: false),
-                    permission_id = table.Column<int>(type: "integer", nullable: false),
-                    UserAccountId = table.Column<int>(type: "integer", nullable: false),
-                    PermissionId1 = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_granted_permission", x => new { x.permission_id, x.user_role_id });
-                    table.ForeignKey(
-                        name: "FK_granted_permission_permission_PermissionId1",
-                        column: x => x.PermissionId1,
-                        principalSchema: "manager",
-                        principalTable: "permission",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_granted_permission_permission_permission_id",
-                        column: x => x.permission_id,
-                        principalSchema: "manager",
-                        principalTable: "permission",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_granted_permission_user_account_UserAccountId",
-                        column: x => x.UserAccountId,
-                        principalSchema: "manager",
-                        principalTable: "user_account",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_granted_permission_user_role_user_role_id",
-                        column: x => x.user_role_id,
-                        principalSchema: "manager",
-                        principalTable: "user_role",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -225,8 +209,8 @@ namespace Manager.Infrastructure.Migrations
                     offer_id = table.Column<int>(type: "integer", nullable: false),
                     current_plan_id = table.Column<int>(type: "integer", nullable: false),
                     UserAccountId = table.Column<int>(type: "integer", nullable: false),
-                    created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    last_modified = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    last_modified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -260,32 +244,16 @@ namespace Manager.Infrastructure.Migrations
                 columns: table => new
                 {
                     user_account_id = table.Column<int>(type: "integer", nullable: false),
-                    identity_provider_id = table.Column<int>(type: "integer", nullable: false),
-                    UserAccountId1 = table.Column<int>(type: "integer", nullable: false),
-                    IdentityProviderId1 = table.Column<int>(type: "integer", nullable: false)
+                    identity_provider_id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_use_account_identity_provider", x => new { x.identity_provider_id, x.user_account_id });
                     table.ForeignKey(
-                        name: "FK_use_account_identity_provider_identity_provider_IdentityPro~",
-                        column: x => x.IdentityProviderId1,
-                        principalSchema: "manager",
-                        principalTable: "identity_provider",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_use_account_identity_provider_identity_provider_identity_pr~",
                         column: x => x.identity_provider_id,
                         principalSchema: "manager",
                         principalTable: "identity_provider",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_use_account_identity_provider_user_account_UserAccountId1",
-                        column: x => x.UserAccountId1,
-                        principalSchema: "manager",
-                        principalTable: "user_account",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -308,8 +276,8 @@ namespace Manager.Infrastructure.Migrations
                     icon = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     parent_node_id = table.Column<int>(type: "integer", nullable: false),
                     collection_group_id = table.Column<int>(type: "integer", nullable: false),
-                    created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    last_modified = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    last_modified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -341,8 +309,8 @@ namespace Manager.Infrastructure.Migrations
                     date_end = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     plan_id = table.Column<int>(type: "integer", nullable: false),
                     subscription_id = table.Column<int>(type: "integer", nullable: false),
-                    created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    last_modified = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    last_modified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -375,8 +343,8 @@ namespace Manager.Infrastructure.Migrations
                     description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     website_url = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     collection_id = table.Column<int>(type: "integer", nullable: false),
-                    created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    last_modified = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    last_modified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -407,8 +375,8 @@ namespace Manager.Infrastructure.Migrations
                     invoice_paid_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     plan_history_id = table.Column<int>(type: "integer", nullable: false),
                     subscription_id = table.Column<int>(type: "integer", nullable: false),
-                    created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    last_modified = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    last_modified = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -455,22 +423,10 @@ namespace Manager.Infrastructure.Migrations
                 column: "user_account_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_granted_permission_PermissionId1",
-                schema: "manager",
-                table: "granted_permission",
-                column: "PermissionId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_granted_permission_user_role_id",
                 schema: "manager",
                 table: "granted_permission",
                 column: "user_role_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_granted_permission_UserAccountId",
-                schema: "manager",
-                table: "granted_permission",
-                column: "UserAccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_invoice_plan_history_id",
@@ -516,22 +472,10 @@ namespace Manager.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_use_account_identity_provider_IdentityProviderId1",
-                schema: "manager",
-                table: "use_account_identity_provider",
-                column: "IdentityProviderId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_use_account_identity_provider_user_account_id",
                 schema: "manager",
                 table: "use_account_identity_provider",
                 column: "user_account_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_use_account_identity_provider_UserAccountId1",
-                schema: "manager",
-                table: "use_account_identity_provider",
-                column: "UserAccountId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_account_role_id",

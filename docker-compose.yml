@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+
+  manager.api:
+    container_name: ${DOCKER_REGISTRY-}manager-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+     - manager.db
+    networks:
+      - fucoma-app-network
+  
+  manager.db:
+    container_name: ${DOCKER_REGISTRY-}manager-db
+    image: postgres
+    ports:
+      - "5002:5432"
+    environment:
+      POSTGRES_USER: managerdev
+      POSTGRES_PASSWORD: managerpassdev
+      POSTGRES_DB: postgres
+    volumes:
+      - ./data/manager.db:/var/lib/postgresql/data
+    networks:
+      - fucoma-app-network
+
+networks:
+  fucoma-app-network:
+    driver: bridge

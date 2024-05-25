@@ -21,7 +21,7 @@ public static class InitialiserExtensions
 
         await initialiser.InitialiseAsync();
 
-        await initialiser.SeedAsync();
+       // await initialiser.SeedAsync();
     }
 }
 
@@ -105,15 +105,14 @@ public class ApplicationDbContextInitialiser
 
             foreach (KeyValuePair<Permission, UserRole> rolePermission in rolePermissions)
             {
-                rolePermission.Value.GrantedPermissions.Add(new GrantedPermission()
-                                                            {
-                                                                Permission = rolePermission.Key,
-                                                                UserRole = rolePermission.Value
-                                                            });
-
-
                 _context.Permissions.Add(rolePermission.Key);
                 _context.UserRoles.Add(rolePermission.Value);
+
+                _context.GrantedPermissions.Add(new GrantedPermission()
+                {
+                    PermissionId = rolePermission.Key.Id,
+                    UserRoleId = rolePermission.Value.Id
+                });
             }
         }
 

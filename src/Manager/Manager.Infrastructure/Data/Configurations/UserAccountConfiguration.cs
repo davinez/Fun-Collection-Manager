@@ -49,9 +49,7 @@ public class UserAccountConfiguration : IEntityTypeConfiguration<UserAccount>
 
         builder.HasMany(p => p.IdentityProviders) // Many to Many with join table
                .WithMany(p => p.UserAccounts)
-               .UsingEntity<UserAccountIdentityProvider>(
-                   l => l.HasOne<IdentityProvider>().WithMany(p => p.UserAccountIdentityProviders).HasForeignKey(p => p.IdentityProviderId),
-                   r => r.HasOne<UserAccount>().WithMany(p => p.UserAccountIdentityProviders).HasForeignKey(p => p.UserAccountId));
+               .UsingEntity<UserAccountIdentityProvider>();
 
         // TODO: Check the generation of unique rule in user_account_id in subscription
         builder.HasOne(p => p.Subscription)  // One to One

@@ -15,12 +15,9 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
                .HasMaxLength(100)
                .IsRequired();
 
-        // Foreign Keys
         builder.HasMany(p => p.Permissions) // Many to Many with join table
-        .WithMany(p => p.UserRoles)
-        .UsingEntity<GrantedPermission>(
-          l => l.HasOne<Permission>().WithMany(p => p.GrantedPermissions).HasForeignKey(p => p.PermissionId),
-          r => r.HasOne<UserRole>().WithMany(p => p.GrantedPermissions).HasForeignKey(p => p.UserRoleId));
+       .WithMany(p => p.UserRoles)
+       .UsingEntity<GrantedPermission>();
 
 
     }
