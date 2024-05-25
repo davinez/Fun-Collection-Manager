@@ -4,6 +4,7 @@
 ## Local history files
 .history/
 .vshistory/
+data/
 
 # User-specific files
 *.suo
@@ -281,3 +282,4 @@ pub/
 src/**/app.yaml
 src/**/inf.yaml
 
+/src/Manager/Manager.API/appsettings.Development.json

@@ -23,13 +23,12 @@ public static class DependencyInjection
         services.AddDbContext<ManagerContext>((sp, options) =>
         {
             options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
-            options.UseNpgsql(connectionString);
+            options.UseNpgsql(connectionString, x => x.MigrationsHistoryTable("__EFMigrationsHistory", "manager"));
         });
 
         services.AddScoped<IManagerContext>(provider => provider.GetRequiredService<ManagerContext>());
 
         services.AddScoped<ApplicationDbContextInitialiser>();
-
 
         services.AddAuthentication()
                 .AddBearerToken(IdentityConstants.BearerScheme);

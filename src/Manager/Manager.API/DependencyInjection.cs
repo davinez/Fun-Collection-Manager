@@ -3,7 +3,6 @@ using Manager.API.Infrastructure.Extensions;
 using Manager.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -24,8 +23,6 @@ public static class DependencyInjection
         // Customise default API behaviour
         services.Configure<ApiBehaviorOptions>(options =>
             options.SuppressModelStateInvalidFilter = true);
-
-        services.AddEndpointsApiExplorer();
 
         services.AddDefaultOpenApi(configuration);
 

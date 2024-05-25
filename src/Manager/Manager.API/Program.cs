@@ -8,10 +8,9 @@ using Microsoft.Extensions.Hosting;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddAPIServices(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddAPIServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -30,10 +29,6 @@ app.UseHealthChecks("/health");
 app.UseHttpsRedirection();
 
 app.UseDefaultOpenApi();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
 
 app.UseExceptionHandler(options => { });
 
