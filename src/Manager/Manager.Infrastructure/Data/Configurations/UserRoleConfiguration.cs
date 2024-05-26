@@ -16,8 +16,8 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
                .IsRequired();
 
         builder.HasMany(p => p.Permissions) // Many to Many with join table
-       .WithMany(p => p.UserRoles)
-       .UsingEntity<GrantedPermission>();
+               .WithMany(p => p.UserRoles)
+               .UsingEntity<GrantedPermission>();
 
 
     }

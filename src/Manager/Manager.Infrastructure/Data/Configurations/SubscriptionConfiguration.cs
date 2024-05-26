@@ -38,6 +38,9 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
         builder.Property(p => p.CurrentPlanId)
                .HasColumnName("current_plan_id");
 
+        builder.Property(p => p.UserAccountId)
+               .HasColumnName("user_account_id");
+
         builder.HasOne(p => p.Offer)  // One to Many
                .WithMany(p => p.Subscriptions)
                .HasForeignKey(p => p.OfferId);

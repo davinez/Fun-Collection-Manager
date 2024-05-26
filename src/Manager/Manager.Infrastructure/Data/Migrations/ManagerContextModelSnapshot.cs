@@ -453,7 +453,8 @@ namespace Manager.Infrastructure.Data.Migrations
                         .HasColumnName("trial_period_start_date");
 
                     b.Property<int>("UserAccountId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("user_account_id");
 
                     b.Property<DateTime>("ValidTo")
                         .HasColumnType("timestamp with time zone")
