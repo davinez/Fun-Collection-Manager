@@ -20,6 +20,8 @@ public static class DependencyInjection
 
         services.AddExceptionHandler<CustomExceptionHandler>();
 
+        services.AddRazorPages();
+
         // Customise default API behaviour
         services.Configure<ApiBehaviorOptions>(options =>
             options.SuppressModelStateInvalidFilter = true);

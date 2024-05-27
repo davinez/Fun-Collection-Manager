@@ -18,6 +18,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     await app.InitialiseDatabaseAsync();
+    app.UseDefaultOpenApi();
 }
 else
 {
@@ -28,7 +29,9 @@ else
 app.UseHealthChecks("/health");
 app.UseHttpsRedirection();
 
-app.UseDefaultOpenApi();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller}/{action=Index}/{id?}");
 
 app.UseExceptionHandler(options => { });
 
