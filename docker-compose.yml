@@ -22,7 +22,7 @@ services:
     container_name: manager-db
     image: postgres
     ports:
-      - "8082:5432"
+      - "5432:5432"
     environment:
       POSTGRES_USER: managerdev
       POSTGRES_PASSWORD: managerpassdev

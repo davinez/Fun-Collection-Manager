@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MediatR;
 using Manager.Application.Common.Behaviors;
+using Manager.Application.Common.Interfaces.Services;
 
 namespace Microsoft.Extensions.DependencyInjection;
 

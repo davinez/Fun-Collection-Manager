@@ -1,11 +1,12 @@
 ﻿using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
 using Manager.Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Identity.Web;
 
 namespace Microsoft.Extensions.DependencyInjection;
-
 
 public static class DependencyInjection
 {
@@ -27,6 +28,10 @@ public static class DependencyInjection
             options.SuppressModelStateInvalidFilter = true);
 
         services.AddDefaultOpenApi(configuration);
+
+        // Add authentication scheme
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApi(configuration, "EntraExternalID");
 
         return services;
     }

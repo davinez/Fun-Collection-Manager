@@ -51,27 +51,15 @@ For example, to add a new migration from the root folder:
 
  For removing last migration use:
 
+ *Note, we can use flag --force but it will not be sync or know about the state of the database
+
 ``` Bash
-dotnet ef migrations remove --project src\Manager\Manager.Infrastructure  --startup-project src\Manager\Manager.API
+dotnet ef migrations remove --force --project src\Manager\Manager.Infrastructure  --startup-project src\Manager\Manager.API
  ```
 
 ``` PM
-Remove-Migration
+Remove-Migration 
  ```
-
-Note: If the migration is already applied to the database, then you will get this error:
-
-```
-The migration '20190721162938_001' has already been applied to the database. 
-Revert it and try again. 
-If the migration has been applied to other databases, consider reverting its changes using a new migration.
-```
-
-Then run:
-
-```
-Remove-Migration -Force
-```
 
 If your migration is not the last migration. first, rollback to the migration you need 
 by Update-Database then delete all migration classes after that migration.
@@ -79,6 +67,13 @@ by Update-Database then delete all migration classes after that migration.
 ```
 Update-Database -Migration 001
 ```
+
+```
+dotnet ef database update 20240526211921_InitialSetup --project src\Manager\Manager.Infrastructure  --startup-project src\Manager\Manager.API 
+
+dotnet ef database update 20240526211921_InitialSetup --connection "Server=localhost;Port=5432;Database=ManagerDB;Username=managerdev;Password=managerpassdev" --project src\Manager\Manager.Infrastructure  --startup-project src\Manager\Manager.API 
+```
+
 
 ```
 Remove-Migration 002

@@ -35,8 +35,7 @@ public class UserAccountConfiguration : IEntityTypeConfiguration<UserAccount>
                .IsRequired();
 
         builder.Property(p => p.PaymentProviderCustomerId)
-              .HasColumnName("payment_provider_customer_id")
-              .IsRequired();
+               .HasColumnName("payment_provider_customer_id");
 
         // Foreign Keys
         builder.Property(p => p.RoleId)

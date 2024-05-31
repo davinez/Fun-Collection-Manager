@@ -41,7 +41,7 @@ public class ApplicationDbContextInitialiser
         try
         {
             if ((await _context.Database.GetPendingMigrationsAsync()).Any())
-            {
+            {         
                 await _context.Database.MigrateAsync();
             }       
         }

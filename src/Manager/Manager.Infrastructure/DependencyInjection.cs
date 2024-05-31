@@ -1,8 +1,10 @@
 ﻿using System;
 using Ardalis.GuardClauses;
 using Manager.Application.Common.Interfaces;
+using Manager.Application.Common.Interfaces.Services;
 using Manager.Infrastructure.Data;
 using Manager.Infrastructure.Data.Interceptors;
+using Manager.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -30,6 +32,9 @@ public static class DependencyInjection
 
         services.AddScoped<ApplicationDbContextInitialiser>();
 
+        services.AddScoped<IMicrosoftGraphService, MicrosoftGraphService>();
+
+        // TODO: Is nessecary?
         services.AddAuthentication()
                 .AddBearerToken(IdentityConstants.BearerScheme);
 

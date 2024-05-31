@@ -19,7 +19,6 @@
   <ItemGroup>
     <Folder Include="CollectionsGroups\EventHandlers\" />
     <Folder Include="CollectionsGroups\Queries\" />
-    <Folder Include="Common\Interfaces\Services\" />
   </ItemGroup>
 
 </Project>
