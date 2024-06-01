@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Manager.Application.CollectionsGroups.Commands.CreateCollectionGroup;
 using Manager.Application.Common.Exceptions;
 using Manager.Application.Common.Interfaces;
 using Manager.Application.Common.Interfaces.Services;
@@ -24,10 +20,10 @@ public record CreateUserAccountCommand : IRequest<int>
 
 }
 
-public record CreateSubscription 
+public record CreateSubscription
 {
     public bool IsTrialPeriod { get; init; }
-    public DateTime? TrialValidTo { get; init; } 
+    public DateTime? TrialValidTo { get; init; }
     public bool OfferAcquired { get; init; }
     public int? OfferId { get; init; }
     public int PlanAcquired { get; init; }
@@ -48,20 +44,10 @@ public class CreateUserAccountCommandHandler : IRequestHandler<CreateUserAccount
     public async Task<int> Handle(CreateUserAccountCommand request, CancellationToken cancellationToken)
     {
         // Add role to user
-       bool roleResponse = await _microsoftGraphService.AssignRoleToUser(request.IdentityProviderId);
+        bool roleResponse = await _microsoftGraphService.AssignRoleToUser(request.IdentityProviderId);
 
         if (!roleResponse)
             throw new ManagerException($"Error in role assing for EntraUserId {request.IdentityProviderId}");
-
-        /*
-     public string? UserName { get; set; }
-    public string? Name { get; set; }
-    public DateTime DateOfBirth { get; set; }
-    public string? Country { get; set; }
-    public string? ZipCode { get; set; }
-    public int? PaymentProviderCustomerId { get; set; } // Not in use for the moment until payment module its implementes
-    public int RoleId { get; set; } // Required foreign key property
-        */
 
         var entity = new UserAccount
         {

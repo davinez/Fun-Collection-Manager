@@ -67,91 +67,89 @@ public class ApplicationDbContextInitialiser
 
     public async Task TrySeedAsync()
     {
-        var rolePermissions = new Dictionary<Permission, UserRole>()
-        {
-            {
-                new Permission()
-                {
-                    Description = Permissions.CanAccessAdminSection
-                },
-                new UserRole()
-                {
-                    Description = Roles.Administrator
-                }
-            },
-            {
-                new Permission()
-                {
-                    Description = Permissions.CanAccessManagerSection
-                },
-                new UserRole()
-                {
-                    Description = Roles.User
-                }
-            },
-            {
-                new Permission()
-                {
-                    Description = Permissions.CanAccessManagerSection
-                },
-                new UserRole()
-                {
-                    Description = Roles.Administrator
-                }
-            },
-        };
+        //var rolePermissions = new Dictionary<Permission, UserRole>()
+        //{
+        //    {
+        //        new Permission()
+        //        {
+        //            Description = Permissions.CanAccessAdminSection
+        //        },
+        //        new UserRole()
+        //        {
+        //            Description = Roles.Administrator
+        //        }
+        //    },
+        //    {
+        //        new Permission()
+        //        {
+        //            Description = Permissions.CanAccessManagerSection
+        //        },
+        //        new UserRole()
+        //        {
+        //            Description = Roles.User
+        //        }
+        //    },
+        //    {
+        //        new Permission()
+        //        {
+        //            Description = Permissions.CanAccessManagerSection
+        //        },
+        //        new UserRole()
+        //        {
+        //            Description = Roles.Administrator
+        //        }
+        //    },
+        //};
 
-        // Default permissions
-        if (!_context.Permissions.Any() && !_context.UserRoles.Any() && !_context.GrantedPermissions.Any())
-        {
-            // var grantedPermissions = new List<GrantedPermission>();
+        //// Default permissions
+        //if (!_context.Permissions.Any() && !_context.UserRoles.Any() && !_context.GrantedPermissions.Any())
+        //{
+        //    // var grantedPermissions = new List<GrantedPermission>();
 
-            foreach (KeyValuePair<Permission, UserRole> rolePermission in rolePermissions)
-            {
-                _context.Permissions.Add(rolePermission.Key);
-                _context.UserRoles.Add(rolePermission.Value);
+        //    foreach (KeyValuePair<Permission, UserRole> rolePermission in rolePermissions)
+        //    {
+        //        _context.Permissions.Add(rolePermission.Key);
+        //        _context.UserRoles.Add(rolePermission.Value);
 
-                _context.GrantedPermissions.Add(new GrantedPermission()
-                {
-                    PermissionId = rolePermission.Key.Id,
-                    UserRoleId = rolePermission.Value.Id
-                });
-            }
-        }
+        //        _context.GrantedPermissions.Add(new GrantedPermission()
+        //        {
+        //            PermissionId = rolePermission.Key.Id,
+        //            UserRoleId = rolePermission.Value.Id
+        //        });
+        //    }
+        //}
 
-        // Default roles
-        if (!_context.UserRoles.Any())
-        {
-            _context.UserRoles.AddRange(
-             new UserRole()
-             {
-                 Description = Roles.Administrator
-             },
-             new UserRole()
-             {
-                 Description = Roles.User
-             }
-            );
-        }
+        //// Default roles
+        //if (!_context.UserRoles.Any())
+        //{
+        //    _context.UserRoles.AddRange(
+        //     new UserRole()
+        //     {
+        //         Description = Roles.Administrator
+        //     },
+        //     new UserRole()
+        //     {
+        //         Description = Roles.User
+        //     }
+        //    );
+        //}
 
-        // Default GrantedPermissions
-        if (!_context.UserRoles.Any())
-        {
-            _context.UserRoles.AddRange(
-             new UserRole()
-             {
-                 Description = Roles.Administrator,
-
-
-             },
-             new UserRole()
-             {
-                 Description = Roles.User
-             }
-            );
-        }
+        //// Default GrantedPermissions
+        //if (!_context.UserRoles.Any())
+        //{
+        //    _context.UserRoles.AddRange(
+        //     new UserRole()
+        //     {
+        //         Description = Roles.Administrator,
 
 
+        //     },
+        //     new UserRole()
+        //     {
+        //         Description = Roles.User
+        //     }
+        //    );
+        //}
 
 
         await _context.SaveChangesAsync();

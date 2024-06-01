@@ -42,13 +42,6 @@ public class UserAccountConfiguration : IEntityTypeConfiguration<UserAccount>
                .HasColumnName("payment_provider_customer_id");
 
         // Foreign Keys
-        builder.Property(p => p.RoleId)
-               .HasColumnName("role_id");
-
-        builder.HasOne(p => p.UserRole)  // One to Many
-               .WithMany(p => p.UserAccounts)
-               .HasForeignKey(p => p.RoleId)
-               .IsRequired();
 
         // TODO: Check the generation of unique rule in user_account_id in subscription
         builder.HasOne(p => p.Subscription)  // One to One

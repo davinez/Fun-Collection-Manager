@@ -2,6 +2,6 @@
 
 public abstract class Roles
 {
-    public const string Administrator = nameof(Administrator);
-    public const string User = nameof(User);
+    public const string GeneralLevel1 = "General.Level1";
+    public const string Administrator = "Administrator";
 }

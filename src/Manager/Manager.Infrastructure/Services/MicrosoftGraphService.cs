@@ -40,6 +40,8 @@ public class MicrosoftGraphService : IMicrosoftGraphService
 
     public async Task<bool> AssignRoleToUser(Guid userId)
     {
+        // TODO Get AppRoleId fron constant role name
+
         var requestBody = new AppRoleAssignment
         {
             PrincipalId = userId,

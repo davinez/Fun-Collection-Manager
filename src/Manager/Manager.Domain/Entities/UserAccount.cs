@@ -14,10 +14,8 @@ public class UserAccount : BaseAuditableEntity
     public string? Country { get; set; }
     public string? ZipCode { get; set; }
     public int? PaymentProviderCustomerId { get; set; } // Not in use for the moment until payment module its implementes
-    public int RoleId { get; set; } // Required foreign key property
 
     public Subscription Subscription { get; set; } = null!;
-    public UserRole UserRole { get; set; } = null!; // Required reference navigation to principal
     public List<CollectionGroup> CollectionGroups { get; } = []; 
 
 }
