@@ -11,7 +11,6 @@ public interface IManagerContext
     DbSet<Collection> Collectionss { get; }
     DbSet<CollectionGroup> CollectionGroups { get; }
     DbSet<GrantedPermission> GrantedPermissions { get; }
-    DbSet<IdentityProvider> IdentityProviders { get; }
     DbSet<Invoice> Invoices { get; }
     DbSet<Offer> Offers { get; }
     DbSet<Permission> Permissions { get; }
@@ -19,7 +18,6 @@ public interface IManagerContext
     DbSet<PlanHistory> PlanHistories { get; }
     DbSet<Subscription> Subscriptions { get; }
     DbSet<UserAccount> UserAccounts { get; }
-    DbSet<UserAccountIdentityProvider> UserAccountIdentityProviders { get; }
     DbSet<UserRole> UserRoles { get; }
     DbSet<WebhookEvent> WebhookEvents { get; }
 

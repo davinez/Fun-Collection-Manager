@@ -7,6 +7,7 @@ namespace Manager.Domain.Entities;
 
 public class UserAccount : BaseAuditableEntity
 {
+    public Guid IdentityProviderId { get; set; }
     public string? UserName { get; set; }
     public string? Name { get; set; }
     public DateTime DateOfBirth { get; set; }
@@ -17,9 +18,6 @@ public class UserAccount : BaseAuditableEntity
 
     public Subscription Subscription { get; set; } = null!;
     public UserRole UserRole { get; set; } = null!; // Required reference navigation to principal
-    public List<IdentityProvider> IdentityProviders { get; } = []; // Skip navigation of join table
-    public List<UserAccountIdentityProvider> UserAccountIdentityProviders { get; } = []; // Join Table many to many
-
     public List<CollectionGroup> CollectionGroups { get; } = []; 
 
 }

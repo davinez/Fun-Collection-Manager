@@ -10,6 +10,10 @@ public class UserAccountConfiguration : IEntityTypeConfiguration<UserAccount>
     {
         builder.ToTable("user_account");
 
+        builder.Property(p => p.IdentityProviderId)
+              .HasColumnName("identity_provider_id")
+              .IsRequired();
+
         builder.Property(p => p.UserName)
                .HasColumnName("username")
                .HasMaxLength(100)
@@ -45,10 +49,6 @@ public class UserAccountConfiguration : IEntityTypeConfiguration<UserAccount>
                .WithMany(p => p.UserAccounts)
                .HasForeignKey(p => p.RoleId)
                .IsRequired();
-
-        builder.HasMany(p => p.IdentityProviders) // Many to Many with join table
-               .WithMany(p => p.UserAccounts)
-               .UsingEntity<UserAccountIdentityProvider>();
 
         // TODO: Check the generation of unique rule in user_account_id in subscription
         builder.HasOne(p => p.Subscription)  // One to One
