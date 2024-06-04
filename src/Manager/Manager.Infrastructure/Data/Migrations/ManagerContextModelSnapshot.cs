@@ -156,41 +156,6 @@ namespace Manager.Infrastructure.Data.Migrations
                     b.ToTable("collection_group", "manager");
                 });
 
-            modelBuilder.Entity("Manager.Domain.Entities.GrantedPermission", b =>
-                {
-                    b.Property<int>("PermissionId")
-                        .HasColumnType("integer")
-                        .HasColumnName("permission_id");
-
-                    b.Property<int>("UserRoleId")
-                        .HasColumnType("integer")
-                        .HasColumnName("user_role_id");
-
-                    b.HasKey("PermissionId", "UserRoleId");
-
-                    b.HasIndex("UserRoleId");
-
-                    b.ToTable("granted_permission", "manager");
-                });
-
-            modelBuilder.Entity("Manager.Domain.Entities.IdentityProvider", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ProviderName")
-                        .HasColumnType("text")
-                        .HasColumnName("provider_name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("identity_provider", "manager");
-                });
-
             modelBuilder.Entity("Manager.Domain.Entities.Invoice", b =>
                 {
                     b.Property<int>("Id")
@@ -307,26 +272,6 @@ namespace Manager.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("offer", "manager");
-                });
-
-            modelBuilder.Entity("Manager.Domain.Entities.Permission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("description");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("permission", "manager");
                 });
 
             modelBuilder.Entity("Manager.Domain.Entities.Plan", b =>
@@ -481,6 +426,12 @@ namespace Manager.Infrastructure.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("city");
+
                     b.Property<string>("Country")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -495,80 +446,40 @@ namespace Manager.Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date_of_birth");
 
-                    b.Property<DateTimeOffset?>("LastModified")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_modified");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
-                        .HasColumnName("name");
+                        .HasColumnName("display_name");
+
+                    b.Property<string>("GivenName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("given_name");
+
+                    b.Property<Guid>("IdentityProviderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("identity_provider_id");
+
+                    b.Property<DateTimeOffset?>("LastModified")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modified");
 
                     b.Property<int?>("PaymentProviderCustomerId")
                         .HasColumnType("integer")
                         .HasColumnName("payment_provider_customer_id");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("integer")
-                        .HasColumnName("role_id");
-
                     b.Property<string>("UserName")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("username");
 
-                    b.Property<string>("ZipCode")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("zip_code");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
 
                     b.HasIndex("UserName");
 
                     b.ToTable("user_account", "manager");
-                });
-
-            modelBuilder.Entity("Manager.Domain.Entities.UserAccountIdentityProvider", b =>
-                {
-                    b.Property<int>("IdentityProviderId")
-                        .HasColumnType("integer")
-                        .HasColumnName("identity_provider_id");
-
-                    b.Property<int>("UserAccountId")
-                        .HasColumnType("integer")
-                        .HasColumnName("user_account_id");
-
-                    b.HasKey("IdentityProviderId", "UserAccountId");
-
-                    b.HasIndex("UserAccountId");
-
-                    b.ToTable("use_account_identity_provider", "manager");
-                });
-
-            modelBuilder.Entity("Manager.Domain.Entities.UserRole", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("description");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("user_role", "manager");
                 });
 
             modelBuilder.Entity("Manager.Domain.Entities.WebhookEvent", b =>
@@ -646,21 +557,6 @@ namespace Manager.Infrastructure.Data.Migrations
                     b.Navigation("UserAccount");
                 });
 
-            modelBuilder.Entity("Manager.Domain.Entities.GrantedPermission", b =>
-                {
-                    b.HasOne("Manager.Domain.Entities.Permission", null)
-                        .WithMany("GrantedPermissions")
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Manager.Domain.Entities.UserRole", null)
-                        .WithMany("GrantedPermissions")
-                        .HasForeignKey("UserRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Manager.Domain.Entities.Invoice", b =>
                 {
                     b.HasOne("Manager.Domain.Entities.PlanHistory", "PlanHistory")
@@ -726,32 +622,6 @@ namespace Manager.Infrastructure.Data.Migrations
                     b.Navigation("UserAccount");
                 });
 
-            modelBuilder.Entity("Manager.Domain.Entities.UserAccount", b =>
-                {
-                    b.HasOne("Manager.Domain.Entities.UserRole", "UserRole")
-                        .WithMany("UserAccounts")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserRole");
-                });
-
-            modelBuilder.Entity("Manager.Domain.Entities.UserAccountIdentityProvider", b =>
-                {
-                    b.HasOne("Manager.Domain.Entities.IdentityProvider", null)
-                        .WithMany("UserAccountIdentityProviders")
-                        .HasForeignKey("IdentityProviderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Manager.Domain.Entities.UserAccount", null)
-                        .WithMany("UserAccountIdentityProviders")
-                        .HasForeignKey("UserAccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Manager.Domain.Entities.Collection", b =>
                 {
                     b.Navigation("Bookmarks");
@@ -765,19 +635,9 @@ namespace Manager.Infrastructure.Data.Migrations
                     b.Navigation("Collections");
                 });
 
-            modelBuilder.Entity("Manager.Domain.Entities.IdentityProvider", b =>
-                {
-                    b.Navigation("UserAccountIdentityProviders");
-                });
-
             modelBuilder.Entity("Manager.Domain.Entities.Offer", b =>
                 {
                     b.Navigation("Subscriptions");
-                });
-
-            modelBuilder.Entity("Manager.Domain.Entities.Permission", b =>
-                {
-                    b.Navigation("GrantedPermissions");
                 });
 
             modelBuilder.Entity("Manager.Domain.Entities.Plan", b =>
@@ -805,15 +665,6 @@ namespace Manager.Infrastructure.Data.Migrations
 
                     b.Navigation("Subscription")
                         .IsRequired();
-
-                    b.Navigation("UserAccountIdentityProviders");
-                });
-
-            modelBuilder.Entity("Manager.Domain.Entities.UserRole", b =>
-                {
-                    b.Navigation("GrantedPermissions");
-
-                    b.Navigation("UserAccounts");
                 });
 #pragma warning restore 612, 618
         }

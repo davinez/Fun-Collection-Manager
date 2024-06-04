@@ -11,13 +11,12 @@ namespace Manager.Application.Accounts.Commands.CreateUserAccount;
 public record CreateUserAccountCommand : IRequest<int>
 {
     public Guid IdentityProviderId { get; init; }
-    public string? Username { get; init; } = string.Empty;
-    public string? Name { get; init; } = string.Empty;
+    public string Username { get; init; } = string.Empty;
+    public string Name { get; init; } = string.Empty;
     public DateTime DateOfBirth { get; init; }
-    public string? Country { get; init; } = string.Empty;
-    public string? ZipCode { get; init; } = string.Empty;
-    public CreateSubscription? CreateSubscription { get; init; }
-
+    public string Country { get; init; } = string.Empty;
+    public string City { get; init; } = string.Empty;
+    public CreateSubscription CreateSubscription { get; init; } = new CreateSubscription(); 
 }
 
 public record CreateSubscription
@@ -43,20 +42,24 @@ public class CreateUserAccountCommandHandler : IRequestHandler<CreateUserAccount
 
     public async Task<int> Handle(CreateUserAccountCommand request, CancellationToken cancellationToken)
     {
+        // TODO: Check if user account exists, if exists then only assing role
+        
         // Add role to user
         bool roleResponse = await _microsoftGraphService.AssignRoleToUser(request.IdentityProviderId);
 
         if (!roleResponse)
             throw new ManagerException($"Error in role assing for EntraUserId {request.IdentityProviderId}");
 
+        // TODO: Obtain user attributes
+
         var entity = new UserAccount
         {
             IdentityProviderId = request.IdentityProviderId,
             UserName = request.Username,
-            Name = request.Name,
+            GivenName = request.Name,
             DateOfBirth = request.DateOfBirth,
             Country = request.Country,
-            ZipCode = request.ZipCode,
+            City = request.City,
         };
 
         _context.UserAccounts.Add(entity);

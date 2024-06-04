@@ -16,11 +16,15 @@ public class UserAccountConfiguration : IEntityTypeConfiguration<UserAccount>
 
         builder.Property(p => p.UserName)
                .HasColumnName("username")
+               .HasMaxLength(100);
+
+        builder.Property(p => p.DisplayName)
+               .HasColumnName("display_name")
                .HasMaxLength(100)
                .IsRequired();
 
-        builder.Property(p => p.Name)
-               .HasColumnName("name")
+        builder.Property(p => p.GivenName)
+               .HasColumnName("given_name")
                .HasMaxLength(100)
                .IsRequired();
 
@@ -33,9 +37,9 @@ public class UserAccountConfiguration : IEntityTypeConfiguration<UserAccount>
                .HasMaxLength(100)
                .IsRequired();
 
-        builder.Property(p => p.ZipCode)
-               .HasColumnName("zip_code")
-               .HasMaxLength(20)
+        builder.Property(p => p.City)
+               .HasColumnName("city")
+               .HasMaxLength(100)
                .IsRequired();
 
         builder.Property(p => p.PaymentProviderCustomerId)
