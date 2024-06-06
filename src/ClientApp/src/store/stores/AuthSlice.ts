@@ -7,6 +7,7 @@ import type {
 export type TAuthSliceDefinition = {
   hasHydrated: boolean;
   accountIdentifiers: AccountIdentifiers;
+  userDisplayName: string | undefined;
   userEmail: string | undefined;
   userScopes: string[] | undefined;
   accessToken: string | undefined;
@@ -28,6 +29,7 @@ const initialAuthSliceState: TAuthSliceDefinition = {
     homeAccountId: undefined,
     username: undefined
   },
+  userDisplayName: undefined,
   userEmail: undefined,
   userScopes: undefined,
   accessToken: undefined,
@@ -64,6 +66,7 @@ export const AuthSlice: TStateSlice<TAuthSlice> = (set) => ({
           homeAccountId: payload.homeAccountId,
           username: payload.username
         },
+        userDisplayName: payload.userDisplayName,
         userEmail: payload.userEmail,
         userScopes: payload.userScopes,
         accessToken: payload.accessToken

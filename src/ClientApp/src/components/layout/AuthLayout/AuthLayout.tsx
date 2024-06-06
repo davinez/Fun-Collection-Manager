@@ -30,6 +30,7 @@ export const AuthLayout = (): React.ReactElement => {
 		//Runs on the first render
 		//And any time any dependency value change
 		if (
+			// One of the 2 values is empty / null activeAccount || homeAccountId
 			(authSlice.hasHydrated &&
 				activeAccount !== null &&
 				!authSlice.accountIdentifiers.homeAccountId) ||
@@ -37,16 +38,11 @@ export const AuthLayout = (): React.ReactElement => {
 				activeAccount === null &&
 				authSlice.accountIdentifiers.homeAccountId)
 		) {
-			console.log("sdfsd");
 			authSlice.logout();
 			instance.clearCache();
 			navigate("/");
 		}
 	}, [authSlice.hasHydrated]);
-
-	// useEffect(() => {
-
-	// }, [authSlice.accountIdentifiers.homeAccountId]);
 
 	// Manage state when hydrated changes
 	if (!authSlice.hasHydrated) {
@@ -58,7 +54,7 @@ export const AuthLayout = (): React.ReactElement => {
 		return <Navigate to="/" />;
 	}
 
-	// Negate acces to Home/None auth routes
+	// Negate acces to Home/None auth routes y is already authenticated
 	if (IsAuthenticated && location.pathname.indexOf("/my/") === -1) {
 		return <Navigate to="/my/manager/dashboard" />;
 	}

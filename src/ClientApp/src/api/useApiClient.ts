@@ -1,6 +1,6 @@
 // General
 import { useNavigate } from "react-router-dom";
-import axios, { type AxiosResponse } from "axios";
+import axios, { type AxiosResponse, AxiosRequestConfig } from "axios";
 import { useStore } from "@/store/UseStore";
 import type { TApiErrorResponse } from "@/shared/types/api/api-responses.types";
 import { useMsal } from "@azure/msal-react";
@@ -35,6 +35,14 @@ export const defaultHandlerApiError = (error: Error | unknown) => {
 
   console.error(`Unknown Error: ${error}`);
 }
+
+interface AxiosRetryConfig extends AxiosRequestConfig {
+  _retry: boolean;
+}
+
+const axiosRetryConfig: AxiosRetryConfig = {
+  _retry: false,
+};
 
 type TApi = {
   get: <T>(url: string, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
@@ -84,7 +92,7 @@ export const useApiClient = (baseURL: string): TApi => {
   apiClientAxios.interceptors.response.use(
     (response) => response,
     async (error) => {
-      const originalRequest = error.config;
+      const originalRequest: AxiosRetryConfig = error.config;
       // If the error status is 401 and there is no originalRequest._retry flag,
       // it means the token has expired and we need to refresh it
       if (error.response.status === 401 && !originalRequest._retry) {
@@ -106,26 +114,45 @@ export const useApiClient = (baseURL: string): TApi => {
           authSlice.setAccessToken(requestResponse.accessToken);
 
           // Retry the original request with the new token
-          originalRequest.headers.Authorization = `Bearer ${requestResponse.accessToken}`;
+          if (originalRequest.headers) {
+            originalRequest.headers.Authorization = `Bearer ${requestResponse.accessToken}`;
+          }
+
           return axios(originalRequest);
         } catch (error) {
           // Catch interaction_required errors and call interactive method to resolve
           if (error instanceof InteractionRequiredAuthError && activeAccount !== null) {
             originalRequest._retry = true;
+
             const tokenRequest = {
               account: activeAccount,
               scopes: authSlice.userScopes as string[],
             };
-            const requestResponse = await instance.acquireTokenPopup(tokenRequest);
-            authSlice.setAccessToken(requestResponse.accessToken);
-            // Retry the original request with the new token
-            originalRequest.headers.Authorization = `Bearer ${requestResponse.accessToken}`;
-            return axios(originalRequest);
+            try {
+              // Before Retry the original request a new login is required to update access and refresh tokens
+              const requestResponse = await instance.acquireTokenPopup(tokenRequest);
+              authSlice.setAccessToken(requestResponse.accessToken);
+
+              if (originalRequest.headers) {
+                originalRequest.headers.Authorization = `Bearer ${requestResponse.accessToken}`;
+              }
+
+              return axios(originalRequest);
+            } catch (error) {
+              defaultHandlerApiError(error);
+              authSlice.logout();
+              instance.clearCache();
+              navigate("/");
+            }
+
+
+          } else {
+            defaultHandlerApiError(error);
+            authSlice.logout();
+            instance.clearCache();
+            navigate("/");
           }
-          defaultHandlerApiError(error);
-          authSlice.logout();
-          instance.clearCache();
-          navigate("/");
+
         }
       }
 

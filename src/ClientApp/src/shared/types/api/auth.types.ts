@@ -15,6 +15,7 @@ export type TLoginResponse = {
   localAccountId: string;
 	homeAccountId: string;
 	username: string;
+  userDisplayName: string,
   userEmail: string;
   userScopes: string[];
   accessToken: string;

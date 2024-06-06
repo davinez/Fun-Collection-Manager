@@ -32,7 +32,7 @@ import {
 import { FormActionEnum } from "@/shared/types/global.types";
 // General
 import {
-	useGetGroupByIdQueryClientAsync,
+	useGetGroupByIdFetchQuery,
 	useDeleteGroupMutation,
 } from "@/api/services/manager";
 import { useState } from "react";
@@ -129,7 +129,7 @@ export const GroupNavItem = ({
 				return;
 			}
 
-			const groupData = await useGetGroupByIdQueryClientAsync(id);
+			const groupData = await useGetGroupByIdFetchQuery(id);
 
 			// Validate that group it is not empty
 			if (groupData.hasCollections) {

@@ -60,7 +60,7 @@ export const useGetGroupByIdQuery = (id: number) => {
   });
 }
 
-export const useGetGroupByIdQueryClientAsync = async (id: number) => {
+export const useGetGroupByIdFetchQuery = async (id: number) => {
   const apiClient = useApiClient(API_BASE_URL);
   return await queryClient.fetchQuery({
     queryKey: ["group", id],

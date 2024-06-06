@@ -109,7 +109,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 						p="1"
 					>
 						<Text textStyle="primary" ml="2">
-							{currentAccount.name}
+							{authSlice.userDisplayName}
 						</Text>
 					</MenuButton>
 					<MenuList

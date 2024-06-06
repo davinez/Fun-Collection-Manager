@@ -42,11 +42,24 @@ export default function HomeNavbar(): React.ReactElement {
 		try {
 			const loginResponse = await instance.loginPopup();
 
+			// const json = JSON.stringify(loginResponse);
+
+			const idTokenClaims = loginResponse.account.idTokenClaims;	
+
+			if(!idTokenClaims ||
+				 !idTokenClaims['roles'] ||
+				!Array.isArray(idTokenClaims['roles']) ||
+				 !idTokenClaims['roles'].length){
+					// Call register user account endpoint
+					
+				 }
+	
 			// Handle login response
 			authSlice.setLoginUser({
 				localAccountId: loginResponse.account.localAccountId,
 				homeAccountId: loginResponse.account.homeAccountId,
-				username: loginResponse.account.username,
+				username: loginResponse.account.username, // Possible null
+				userDisplayName: "ssdfds",
 				userEmail: "email placeholder obtener de claims",
 				userScopes: loginResponse.scopes,
 				accessToken: loginResponse.accessToken,

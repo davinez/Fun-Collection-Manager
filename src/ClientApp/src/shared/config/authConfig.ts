@@ -8,7 +8,7 @@ import { LogLevel, Configuration, PopupRequest } from '@azure/msal-browser';
 // store Azure AD settings and export them as constants
 export const msalConfig: Configuration = {
     auth: {
-        clientId: import.meta.env.VITE_ENTRA_CLIENTID, // This is the ONLY mandatory field that you need to supply.
+        clientId:  import.meta.env.VITE_ENTRA_CLIENTID, // This is the ONLY mandatory field that you need to supply.
         authority: import.meta.env.VITE_ENTRA_AUTHORITY,  
         // https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/initialization.md#redirecturi-considerations
         redirectUri: window.location.origin + '/blank.html', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
@@ -53,18 +53,9 @@ export const msalConfig: Configuration = {
  * https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest: PopupRequest = {
-    scopes: [],
+    scopes: ["email", "openid", "profile", "User.Read"],
     // Prevents Single sign-on
-    prompt: "select_account" // https://learn.microsoft.com/en-us/entra/identity-platform/msal-js-prompt-behavior
-};
-
-/**
- * An optional silentRequest object can be used to achieve silent SSO
- * between applications by providing a "login_hint" property.
- */
-export const silentRequest = {
-    scopes: ["openid", "profile"],
-    loginHint: "example@domain.net",
+  //  prompt: "select_account" // https://learn.microsoft.com/en-us/entra/identity-platform/msal-js-prompt-behavior
 };
 
 /**
@@ -78,6 +69,15 @@ export const protectedResources = {
     armBlobStorage: {
         scopes: ['https://storage.azure.com/user_impersonation'],
     },
+};
+
+/**
+ * An optional silentRequest object can be used to achieve silent SSO
+ * between applications by providing a "login_hint" property.
+ */
+export const silentRequest = {
+    scopes: ["openid", "profile"],
+    loginHint: "example@domain.net",
 };
 
 // Add here the endpoints for MS Graph API services you would like to use.
