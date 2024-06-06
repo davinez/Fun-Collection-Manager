@@ -1,0 +1,255 @@
+// Design
+import {
+	ModalCloseButton,
+	Text,
+	Button,
+	Stack,
+	useToast,
+	Flex,
+	Box,
+	Image,
+} from "@chakra-ui/react";
+import textStylesTheme from "shared/styles/theme/foundations/textStyles";
+// Components
+import { LoadingBox, ErrorBox } from "@/components/ui/box";
+// Assets
+
+// Types
+import {
+	collectionUpdateIconFormPayload,
+	type TCollectionUpdateIconFormPayload,
+} from "@/shared/types/api/manager.types";
+// General
+import {
+	useUpdateCollectionIconMutation,
+	useGetCollectionsAllIconsQuery,
+} from "@/api/services/manager";
+import { defaultHandlerApiError } from "@/api/useApiClient";
+import queryClient from "@/api/query-client";
+import { useState, useEffect } from "react";
+import { DEFAULT_ICON } from "shared/config";
+
+type TCollectionIconFormProps = {
+	collectionId: number;
+	collectionIcon: string;
+	onClose: () => void;
+};
+
+export const CollectionIconForm = ({
+	collectionId,
+	collectionIcon,
+	onClose
+}: TCollectionIconFormProps) => {
+	// Hooks
+	const {
+		isPending: isPendingGetAllIcons,
+		isError: isErrorGetAllIcons,
+		error: errorGetAllIcons,
+		data: getGetAllIconsResponse,
+	} = useGetCollectionsAllIconsQuery();
+	const updateCollectionCoverMutation = useUpdateCollectionIconMutation();
+	const toast = useToast();
+
+	useEffect(() => {
+		if (isErrorGetAllIcons) {
+			toast({
+				title: "Error",
+				description: "Error in fetching all icons",
+				status: "error",
+				duration: 5000,
+				isClosable: true,
+			});
+			defaultHandlerApiError(errorGetAllIcons);
+		}
+	}, [isErrorGetAllIcons]);
+
+	// Handlers
+
+	//const onSubmit = (data): void => {};
+
+	const handleOnClickResetIcon = () => {
+		if (collectionIcon === DEFAULT_ICON) {
+			toast({
+				title: "Default icon already set",
+				status: "success",
+				duration: 5000,
+				isClosable: true,
+			});
+		} else {
+			const payload: TCollectionUpdateIconFormPayload = {
+				iconURL: DEFAULT_ICON,
+			};
+
+			const validationResult =
+				collectionUpdateIconFormPayload.safeParse(payload);
+
+			if (!validationResult.success) {
+				console.error(validationResult.error.message);
+				toast({
+					title: "Error",
+					description: "Error in validation",
+					status: "error",
+					duration: 5000,
+					isClosable: true,
+				});
+				return;
+			}
+
+			updateCollectionCoverMutation.mutate(
+				{
+					collectionId,
+					payload,
+				},
+				{
+					onSuccess: (data, variables, context) => {
+						// TODO: validate invalidating key "collection-groups" to avoid re fetch all
+						queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
+						toast({
+							title: "Icon updated.",
+							status: "success",
+							duration: 5000,
+							isClosable: true,
+						});
+						onClose();
+					},
+					onError: (error, variables, context) => {
+						toast({
+							title: "Error",
+							description: "Error in updating icon",
+							status: "error",
+							duration: 5000,
+							isClosable: true,
+						});
+						defaultHandlerApiError(error);
+					},
+				}
+			);
+		}
+	};
+
+	const handleOnClickSelectedIcon = (url: string) => {
+		const payload: TCollectionUpdateIconFormPayload = {
+			iconURL: url,
+		};
+
+		const validationResult = collectionUpdateIconFormPayload.safeParse(payload);
+
+		if (!validationResult.success) {
+			console.error(validationResult.error.message);
+			toast({
+				title: "Error",
+				description: "Error in validation",
+				status: "error",
+				duration: 5000,
+				isClosable: true,
+			});
+			return;
+		}
+
+		updateCollectionCoverMutation.mutate(
+			{
+				collectionId,
+				payload,
+			},
+			{
+				onSuccess: (data, variables, context) => {
+					// TODO: validate invalidating key "collection-groups" to avoid re fetch all
+					queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
+					toast({
+						title: "Icon updated.",
+						status: "success",
+						duration: 5000,
+						isClosable: true,
+					});
+				},
+				onError: (error, variables, context) => {
+					toast({
+						title: "Error",
+						description: "Error in updating icon",
+						status: "error",
+						duration: 5000,
+						isClosable: true,
+					});
+					defaultHandlerApiError(error);
+				},
+			}
+		);
+	};
+
+	// Return handling
+
+	if (isPendingGetAllIcons)
+		return (
+			<Flex p={5} align="center" justify="space-between">
+				<LoadingBox />
+				<ModalCloseButton size="lg" position="unset" />
+			</Flex>
+		);
+
+	if (isErrorGetAllIcons)
+		return (
+			<Flex p={5} align="center" justify="space-between">
+				<ErrorBox />
+				<ModalCloseButton size="lg" position="unset" />
+			</Flex>
+		);
+
+	return (
+		<Stack p={5}>
+			<Flex align="center" justify="space-between" mb={3}>
+				<Text fontSize="large">Change Icon</Text>
+				<Flex align="center" justify="space-between" gap={3}>
+					<Button
+						fontSize={textStylesTheme.textStyles.primary.fontSize}
+						bg="brandPrimary.900"
+						color="brandSecondary.600"
+						_hover={{
+							bg: "brandPrimary.950",
+						}}
+						p={2}
+						onClick={handleOnClickResetIcon}
+					>
+						Reset
+					</Button>
+					<ModalCloseButton size="lg" position="unset" />
+				</Flex>
+			</Flex>
+
+			{getGetAllIconsResponse.items.map((item, index) => {
+				return (
+					<Stack key={`GroupIcons_${index}`} aria-label="icons-group-container">
+						<Text>{item.title}</Text>
+						<Box
+							aria-label="icons-container"
+							mb={3}
+							display="grid"
+							gridAutoRows="auto" /* make all rows the same height */
+							gridTemplateColumns="repeat(8, 1fr)"
+							gap={4}
+							justifyItems="center"
+							alignItems="center"
+						>
+							{item.icons.map((icon) => {
+								return (
+									<Box w="100%">
+										<Image
+											key={`Icon_${icon.name}`}
+											borderRadius="2px"
+											color="brandPrimary.150"
+											objectFit="contain"
+											src={icon.url}
+											fallbackSrc={DEFAULT_ICON}
+											alt="Default Icon"
+											onClick={() => handleOnClickSelectedIcon(icon.url)}
+											cursor="pointer"
+										/>
+									</Box>
+								);
+							})}
+						</Box>
+					</Stack>
+				);
+			})}
+		</Stack>
+	);
+};

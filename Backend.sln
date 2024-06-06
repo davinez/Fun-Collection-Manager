@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{18F30434-5426-44A2-BD8C-8785E3B31A50}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{405AA732-C5D2-4FF9-B919-B0D8F69DBAAF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{48BD28FD-5721-4115-B571-B1D50F885F7D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CoreAPI", "CoreAPI", "{5F32C89A-9407-42EC-9EA2-F7770261E8F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreAPI.API", "src\CoreAPI\CoreAPI.API\CoreAPI.API.csproj", "{0FF0480F-1701-485D-9FDF-FB33F6EEB822}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0FF0480F-1701-485D-9FDF-FB33F6EEB822}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FF0480F-1701-485D-9FDF-FB33F6EEB822}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FF0480F-1701-485D-9FDF-FB33F6EEB822}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FF0480F-1701-485D-9FDF-FB33F6EEB822}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5F32C89A-9407-42EC-9EA2-F7770261E8F9} = {48BD28FD-5721-4115-B571-B1D50F885F7D}
+		{0FF0480F-1701-485D-9FDF-FB33F6EEB822} = {5F32C89A-9407-42EC-9EA2-F7770261E8F9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E09AF19B-62B7-4D94-84B6-1FCC9AC1E391}
+	EndGlobalSection
+EndGlobal

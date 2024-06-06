@@ -1,0 +1,14 @@
+{
+  "/api/auth/login": "/login",
+  "/api/manager/groups/collection-groups": "/collection-groups",
+  "/api/manager/groups/:id": "/groups",
+  "/api/manager/collections/bookmarks?*": "/bookmarks",
+  "/api/manager/collections/:id/bookmarks?*": "/bookmarksbycollection",
+  "/api/manager/collection/:id": "/collection/:id",
+  "/api/manager/collection/create": "/collection",
+  "/api/manager/bookmarks/:id": "/bookmarks/:id",
+  "/api/manager/bookmark/:id": "/bookmark/:id",
+  "/api/manager/bookmark/create": "/bookmark",
+  "/api/manager/collections/icons": "/icons"
+}
+
