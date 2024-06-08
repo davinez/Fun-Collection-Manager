@@ -51,7 +51,8 @@ export default function HomeNavbar(): React.ReactElement {
 				!Array.isArray(idTokenClaims['roles']) ||
 				 !idTokenClaims['roles'].length){
 					// Call register user account endpoint
-					
+					onOpenFailedLoginAlert();
+					return;
 				 }
 	
 			// Handle login response
