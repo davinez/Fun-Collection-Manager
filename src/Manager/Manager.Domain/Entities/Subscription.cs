@@ -12,7 +12,7 @@ public class Subscription : BaseAuditableEntity
     public DateTime DateSubscribed { get; set; }
     public DateTime ValidTo { get; set; }
     public DateTime? DateUnsubscribed { get; set; }
-    public int OfferId { get; set; }
+    public int? OfferId { get; set; }
     public int CurrentPlanId { get; set; }
     public int UserAccountId { get; set; }
 

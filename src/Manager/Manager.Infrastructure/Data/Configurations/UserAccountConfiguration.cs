@@ -28,10 +28,6 @@ public class UserAccountConfiguration : IEntityTypeConfiguration<UserAccount>
                .HasMaxLength(100)
                .IsRequired();
 
-        builder.Property(p => p.DateOfBirth)
-               .HasColumnName("date_of_birth")
-               .IsRequired();
-
         builder.Property(p => p.Country)
                .HasColumnName("country")
                .HasMaxLength(100)

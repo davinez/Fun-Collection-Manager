@@ -6,24 +6,20 @@ using Manager.Application.Common.Interfaces;
 using Manager.Application.Common.Interfaces.Services;
 using Manager.Domain.Entities;
 using MediatR;
+using Microsoft.Graph.Models;
 
 namespace Manager.Application.Accounts.Commands.CreateUserAccount;
 public record CreateUserAccountCommand : IRequest<int>
 {
     public Guid IdentityProviderId { get; init; }
-    public string Username { get; init; } = string.Empty;
-    public string Name { get; init; } = string.Empty;
-    public DateTime DateOfBirth { get; init; }
-    public string Country { get; init; } = string.Empty;
-    public string City { get; init; } = string.Empty;
     public CreateSubscription CreateSubscription { get; init; } = new CreateSubscription(); 
 }
 
 public record CreateSubscription
 {
     public bool IsTrialPeriod { get; init; }
-    public DateTime? TrialValidTo { get; init; }
-    public bool OfferAcquired { get; init; }
+    public bool? SubscribeAfterTrial { get; init; }
+    public DateTime ValidTo { get; init; }
     public int? OfferId { get; init; }
     public int PlanAcquired { get; init; }
 }
@@ -42,30 +38,44 @@ public class CreateUserAccountCommandHandler : IRequestHandler<CreateUserAccount
 
     public async Task<int> Handle(CreateUserAccountCommand request, CancellationToken cancellationToken)
     {
-        // TODO: Check if user account exists, if exists then only assing role
-        
         // Add role to user
         bool roleResponse = await _microsoftGraphService.AssignRoleToUser(request.IdentityProviderId);
 
         if (!roleResponse)
-            throw new ManagerException($"Error in role assing for EntraUserId {request.IdentityProviderId}");
+            throw new ManagerException($"Error in role assign for EntraUserId {request.IdentityProviderId}");
 
-        // TODO: Obtain user attributes
+        User userEntra = await _microsoftGraphService.GetUserById(request.IdentityProviderId);
 
-        var entity = new UserAccount
+        var newUserAccount = new UserAccount
         {
             IdentityProviderId = request.IdentityProviderId,
-            UserName = request.Username,
-            GivenName = request.Name,
-            DateOfBirth = request.DateOfBirth,
-            Country = request.Country,
-            City = request.City,
+            DisplayName = userEntra.DisplayName,
+            GivenName = userEntra.GivenName,
+            Country = userEntra.Country,
+            City = userEntra.City,
         };
 
-        _context.UserAccounts.Add(entity);
+        var newSubscription = new Domain.Entities.Subscription()
+        {
+            CurrentPlanId = request.CreateSubscription.PlanAcquired,
+            DateSubscribed = DateTime.UtcNow,
+            ValidTo = request.CreateSubscription.ValidTo,
+            OfferId = request.CreateSubscription.OfferId
+        };
+
+        if (request.CreateSubscription.IsTrialPeriod)
+        {
+            newSubscription.TrialPeriodStartDate = DateTime.UtcNow;
+            newSubscription.TrialPeriodEndDate = request.CreateSubscription.ValidTo;
+            newSubscription.SubscribeAfterTrial = request.CreateSubscription.SubscribeAfterTrial ?? false;
+        }
+
+        newUserAccount.Subscription = newSubscription;
+
+        _context.UserAccounts.Add(newUserAccount);
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return entity.Id;
+        return newUserAccount.Id;
     }
 }

@@ -7,9 +7,7 @@
   
   <ItemGroup>
     <PackageReference Include="Azure.Identity" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
-    <PackageReference Include="Microsoft.Graph" />
-    <PackageReference Include="Microsoft.Graph.Core" />      
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />    
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
