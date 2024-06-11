@@ -26,8 +26,8 @@ public class MicrosoftGraphService : IMicrosoftGraphService
 
         // Values from app registration
         string clientId = configuration["EntraID:ManagerApiApp:ClientId"] ?? throw new ManagerException($"Empty config section in {nameof(MicrosoftGraphService)}");
-        string tenantId = configuration["EntraID:ManagerApiApp:ClientId"] ?? throw new ManagerException($"Empty config section in {nameof(MicrosoftGraphService)}");
-        string clientSecret = configuration["EntraID:ManagerApiApp:ClientId"] ?? throw new ManagerException($"Empty config section in {nameof(MicrosoftGraphService)}");
+        string tenantId = configuration["EntraID:ManagerApiApp:TenantId"] ?? throw new ManagerException($"Empty config section in {nameof(MicrosoftGraphService)}");
+        string clientSecret = configuration["EntraID:ManagerApiApp:ClientSecret"] ?? throw new ManagerException($"Empty config section in {nameof(MicrosoftGraphService)}");
 
         // using Azure.Identity;
         var options = new ClientSecretCredentialOptions
@@ -44,7 +44,7 @@ public class MicrosoftGraphService : IMicrosoftGraphService
 
     public async Task<bool> AssignRoleToUser(Guid userId)
     {
-        string clientId = _configuration["ManagerClientApp:ClientId"] ?? throw new ManagerException("Empty config section in ManagerClientApp:ClientId");
+        string servicePrincipalId = _configuration["EntraID:ManagerClientApp:ServicePrincipalId"] ?? throw new ManagerException("Empty config section in ManagerClientApp:ServicePrincipalId");
         string clientAppId = _configuration["EntraID:ManagerClientApp:ClientAppId"] ?? throw new ManagerException("Empty config section in ManagerClientApp:ClientAppId");
 
         var clientApp = await _graphServiceClient.Applications[clientAppId].GetAsync() ?? throw new ManagerException($"Error in get clientApp with ID {clientAppId}");
@@ -53,9 +53,6 @@ public class MicrosoftGraphService : IMicrosoftGraphService
             (clientApp.AppRoles ?? throw new ManagerException($"Error in get app roles of clientApp with ID {clientAppId}"))
             .FirstOrDefault(r => string.Compare(r.Value, Roles.GeneralLevel1, StringComparison.OrdinalIgnoreCase) == 0) ?? throw new ManagerException($"Error in get app role of clientApp with ID {clientAppId}")
             ).Id ?? throw new ManagerException($"Error in get app role ID of clientApp with ID {clientAppId}");
-
-        // TODO: Dont assign defult role if already user has it
-        // To ensure complete results for users with many indirect app role assignments
 
         var userRoles = await _graphServiceClient.Users[userId.ToString()].AppRoleAssignments.GetAsync((requestConfiguration) =>
         {
@@ -74,7 +71,7 @@ public class MicrosoftGraphService : IMicrosoftGraphService
         var requestBody = new AppRoleAssignment
         {
             PrincipalId = userId,
-            ResourceId = Guid.Parse(clientId),
+            ResourceId = Guid.Parse(servicePrincipalId),
             AppRoleId = defaultRoleAppId,
         };
 
@@ -87,7 +84,11 @@ public class MicrosoftGraphService : IMicrosoftGraphService
 
     public async Task<User> GetUserById(Guid userId)
     {
-        return await _graphServiceClient.Users[userId.ToString()].GetAsync() ?? throw new ManagerException($"Error in get Entra User with ID {userId}");
+        return await _graphServiceClient.Users[userId.ToString()]
+            .GetAsync((requestConfiguration) =>
+            {
+                requestConfiguration.QueryParameters.Select = ["city", "country", "displayName", "givenName"];
+            }) ?? throw new ManagerException($"Error in get Entra User with ID {userId}");
 
     }
 }

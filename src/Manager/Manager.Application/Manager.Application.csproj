@@ -21,6 +21,7 @@
   <ItemGroup>
     <Folder Include="CollectionsGroups\EventHandlers\" />
     <Folder Include="CollectionsGroups\Queries\" />
+    <Folder Include="Common\Models\Requests\Accounts\" />
   </ItemGroup>
 
 </Project>

@@ -3,8 +3,11 @@
     "Docker Compose": {
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
+      "composeLaunchAction": "None",
+      "composeLaunchServiceName": "manager.api",
       "serviceActions": {
-        "manager.api": "StartDebugging"
+        "manager.api": "StartDebugging",
+        "manager.db": "StartWithoutDebugging"
       }
     }
   }

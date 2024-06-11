@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddAPIServices(builder.Configuration);
+builder.Services.AddAPIServices(builder.Configuration, builder.Environment);
 
 var app = builder.Build();
 
@@ -27,7 +27,10 @@ else
 }
 
 app.UseHealthChecks("/health");
+
 app.UseHttpsRedirection();
+
+app.UseCors("fucoma_policy");
 
 app.MapControllerRoute(
     name: "default",

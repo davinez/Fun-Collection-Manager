@@ -8,7 +8,7 @@ namespace Manager.Application.Common.Interfaces;
 public interface IManagerContext
 {
     DbSet<Bookmark> Bookmarkss { get; }
-    DbSet<Collection> Collectionss { get; }
+    DbSet<Collection> Collections { get; }
     DbSet<CollectionGroup> CollectionGroups { get; }
     DbSet<Invoice> Invoices { get; }
     DbSet<Offer> Offers { get; }

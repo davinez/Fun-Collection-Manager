@@ -9,7 +9,7 @@ using MediatR;
 using Microsoft.Graph.Models;
 
 namespace Manager.Application.Accounts.Commands.CreateUserAccount;
-public record CreateUserAccountCommand : IRequest<int>
+public record CreateUserAccountCommand : IRequest<Unit>
 {
     public Guid IdentityProviderId { get; init; }
     public CreateSubscription CreateSubscription { get; init; } = new CreateSubscription(); 
@@ -25,7 +25,7 @@ public record CreateSubscription
 }
 
 
-public class CreateUserAccountCommandHandler : IRequestHandler<CreateUserAccountCommand, int>
+public class CreateUserAccountCommandHandler : IRequestHandler<CreateUserAccountCommand, Unit>
 {
     private readonly IManagerContext _context;
     private readonly IMicrosoftGraphService _microsoftGraphService;
@@ -36,7 +36,7 @@ public class CreateUserAccountCommandHandler : IRequestHandler<CreateUserAccount
         _microsoftGraphService = microsoftGraphService;
     }
 
-    public async Task<int> Handle(CreateUserAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(CreateUserAccountCommand request, CancellationToken cancellationToken)
     {
         // Add role to user
         bool roleResponse = await _microsoftGraphService.AssignRoleToUser(request.IdentityProviderId);
@@ -76,6 +76,9 @@ public class CreateUserAccountCommandHandler : IRequestHandler<CreateUserAccount
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return newUserAccount.Id;
+        // TODO: Add default / empty collection group
+
+
+       return Unit.Value;
     }
 }
