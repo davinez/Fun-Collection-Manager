@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Manager.Application.Common.Exceptions;
+using Manager.Application.Common.Models;
 using Manager.Domain.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Manager.API.Infrastructure;
 
@@ -25,6 +26,7 @@ public class CustomExceptionHandler : IExceptionHandler
                 { typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException },
                 { typeof(ForbiddenAccessException), HandleForbiddenAccessException },
                 { typeof(RemoteServiceException), HandleRemoteServiceException },
+                { typeof(ManagerException), HandleManagerException },
             };
     }
 
@@ -47,10 +49,22 @@ public class CustomExceptionHandler : IExceptionHandler
 
         httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
 
-        await httpContext.Response.WriteAsJsonAsync(new ValidationProblemDetails(exception.Errors)
+        var errors = exception.Errors.Select(e => new ApiError()
         {
-            Status = StatusCodes.Status400BadRequest,
-            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1"
+            Domain = exception.Source,
+            Message = exception.Message,
+        }).ToList();
+
+        await httpContext.Response.WriteAsJsonAsync(new ApiErrorResponse()
+        {
+            ApiVersion = "1.0",
+            Error = new ApiTopLevelError()
+            {
+                Code = StatusCodes.Status400BadRequest,
+                Message = "Validation Problem. https://tools.ietf.org/html/rfc7231#section-6.5.1",
+                Errors = errors
+            }
+
         });
     }
 
@@ -60,12 +74,24 @@ public class CustomExceptionHandler : IExceptionHandler
 
         httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
 
-        await httpContext.Response.WriteAsJsonAsync(new ProblemDetails()
+        await httpContext.Response.WriteAsJsonAsync(new ApiErrorResponse()
         {
-            Status = StatusCodes.Status404NotFound,
-            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-            Title = "The specified resource was not found.",
-            Detail = exception.Message
+            ApiVersion = "1.0",
+            Error = new ApiTopLevelError()
+            {
+                Code = StatusCodes.Status404NotFound,
+                Message = "The specified resource was not found.",
+                Errors =
+                [
+                    new()
+                    {
+                        Domain = exception.Source,
+                        Reason = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                        Message = exception.Message
+                    }
+                ]
+            }
+
         });
     }
 
@@ -73,11 +99,24 @@ public class CustomExceptionHandler : IExceptionHandler
     {
         httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
 
-        await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
+        await httpContext.Response.WriteAsJsonAsync(new ApiErrorResponse()
         {
-            Status = StatusCodes.Status401Unauthorized,
-            Title = "Unauthorized",
-            Type = "https://tools.ietf.org/html/rfc7235#section-3.1"
+            ApiVersion = "1.0",
+            Error = new ApiTopLevelError()
+            {
+                Code = StatusCodes.Status401Unauthorized,
+                Message = "Unauthorized",
+                Errors =
+               [
+                   new()
+                    {
+                        Domain = "",
+                        Reason = "https://tools.ietf.org/html/rfc7235#section-3.1",
+                        Message = ""
+                    }
+               ]
+            }
+
         });
     }
 
@@ -85,23 +124,76 @@ public class CustomExceptionHandler : IExceptionHandler
     {
         httpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
 
-        await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
+        await httpContext.Response.WriteAsJsonAsync(new ApiErrorResponse()
         {
-            Status = StatusCodes.Status403Forbidden,
-            Title = "Forbidden",
-            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.3"
+            ApiVersion = "1.0",
+            Error = new ApiTopLevelError()
+            {
+                Code = StatusCodes.Status403Forbidden,
+                Message = "Forbidden",
+                Errors =
+                [
+                    new()
+                    {
+                        Domain = "",
+                        Reason = "https://tools.ietf.org/html/rfc7231#section-6.5.3",
+                        Message = ""
+                    }
+                ]
+            }
+
         });
     }
- 
+
     private async Task HandleRemoteServiceException(HttpContext httpContext, Exception ex)
     {
         httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
 
-        await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
+        await httpContext.Response.WriteAsJsonAsync(new ApiErrorResponse()
         {
-            Status = StatusCodes.Status409Conflict,
-            Title = "Conflict",
-            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.8"
+            ApiVersion = "1.0",
+            Error = new ApiTopLevelError()
+            {
+                Code = StatusCodes.Status409Conflict,
+                Message = "Conflict",
+                Errors =
+                [
+                    new()
+                    {
+                        Domain = "",
+                        Reason = "https://tools.ietf.org/html/rfc7231#section-6.5.8",
+                        Message = ""
+                    }
+                ]
+            }
+
+        });
+    }
+
+    private async Task HandleManagerException(HttpContext httpContext, Exception ex)
+    {
+        var exception = (ManagerException)ex;
+
+        httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
+
+        await httpContext.Response.WriteAsJsonAsync(new ApiErrorResponse()
+        {
+            ApiVersion = "1.0",
+            Error = new ApiTopLevelError()
+            {
+                Code = StatusCodes.Status409Conflict,
+                Message = "Conflict",
+                Errors =
+                [
+                    new()
+                    {
+                        Domain = exception.Source,
+                        Reason = "https://tools.ietf.org/html/rfc7231#section-6.5.8",
+                        Message = exception.Message,
+                    }
+                ]
+            }
+
         });
     }
 }

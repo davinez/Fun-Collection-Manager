@@ -32,6 +32,7 @@ public class Accounts : EndpointGroupBase
         [FromBody] CreateUserAccountCommand command
         )
     {
+
         await sender.Send(command);
     }
 }
