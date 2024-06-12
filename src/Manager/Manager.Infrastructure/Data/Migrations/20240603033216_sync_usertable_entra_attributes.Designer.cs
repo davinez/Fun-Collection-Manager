@@ -3,6 +3,7 @@ using System;
 using Manager.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Manager.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ManagerContext))]
-    partial class ManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20240603033216_sync_usertable_entra_attributes")]
+    partial class sync_usertable_entra_attributes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -381,7 +384,7 @@ namespace Manager.Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified");
 
-                    b.Property<int?>("OfferId")
+                    b.Property<int>("OfferId")
                         .HasColumnType("integer")
                         .HasColumnName("offer_id");
 
@@ -441,6 +444,10 @@ namespace Manager.Infrastructure.Data.Migrations
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_of_birth");
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
@@ -601,7 +608,9 @@ namespace Manager.Infrastructure.Data.Migrations
 
                     b.HasOne("Manager.Domain.Entities.Offer", "Offer")
                         .WithMany("Subscriptions")
-                        .HasForeignKey("OfferId");
+                        .HasForeignKey("OfferId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Manager.Domain.Entities.UserAccount", "UserAccount")
                         .WithOne("Subscription")

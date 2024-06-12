@@ -21,7 +21,7 @@ public static class InitialiserExtensions
 
         await initialiser.InitialiseAsync();
 
-       // await initialiser.SeedAsync();
+        await initialiser.SeedAsync();
     }
 }
 
@@ -134,23 +134,16 @@ public class ApplicationDbContextInitialiser
         //    );
         //}
 
-        //// Default GrantedPermissions
-        //if (!_context.UserRoles.Any())
-        //{
-        //    _context.UserRoles.AddRange(
-        //     new UserRole()
-        //     {
-        //         Description = Roles.Administrator,
-
-
-        //     },
-        //     new UserRole()
-        //     {
-        //         Description = Roles.User
-        //     }
-        //    );
-        //}
-
+        // Default Plan
+        if (!_context.Plans.Any())
+        {
+            _context.Plans.Add(new()
+            {
+               PlanName = "Basic",
+               CurrentPrice = 0.0m,
+               IsActive = true,
+            });
+        }
 
         await _context.SaveChangesAsync();
     }

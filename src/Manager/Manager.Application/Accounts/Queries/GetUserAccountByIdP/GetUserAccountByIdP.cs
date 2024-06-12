@@ -4,13 +4,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Manager.Application.Common.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Manager.Application.Accounts.Queries.GetUserAccountByIdP;
 
 public record GetUserAccountByIdPQuery : IRequest<UserAccountDto?>
 {
-    [JsonPropertyName("identity_provider_id")]
+    [FromQuery(Name = "identity_provider_id")]
     public Guid IdentityProviderId { get; init; }
 }
 

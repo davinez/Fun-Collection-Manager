@@ -3,6 +3,7 @@ using System;
 using Manager.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Manager.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ManagerContext))]
-    partial class ManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20240601181222_RBAC_Tables_Removed")]
+    partial class RBAC_Tables_Removed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -381,7 +384,7 @@ namespace Manager.Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified");
 
-                    b.Property<int?>("OfferId")
+                    b.Property<int>("OfferId")
                         .HasColumnType("integer")
                         .HasColumnName("offer_id");
 
@@ -442,17 +445,9 @@ namespace Manager.Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("display_name");
-
-                    b.Property<string>("GivenName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("given_name");
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_of_birth");
 
                     b.Property<Guid>("IdentityProviderId")
                         .HasColumnType("uuid")
@@ -462,11 +457,18 @@ namespace Manager.Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_modified");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
                     b.Property<int?>("PaymentProviderCustomerId")
                         .HasColumnType("integer")
                         .HasColumnName("payment_provider_customer_id");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("username");
@@ -601,7 +603,9 @@ namespace Manager.Infrastructure.Data.Migrations
 
                     b.HasOne("Manager.Domain.Entities.Offer", "Offer")
                         .WithMany("Subscriptions")
-                        .HasForeignKey("OfferId");
+                        .HasForeignKey("OfferId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Manager.Domain.Entities.UserAccount", "UserAccount")
                         .WithOne("Subscription")
