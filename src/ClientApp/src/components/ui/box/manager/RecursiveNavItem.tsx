@@ -38,7 +38,7 @@ import {
 import { CollectionModalActionEnum } from "@/shared/types/global.types";
 // General
 import {
-	useGetCollectionByIdQueryClientAsync,
+	useGetCollectionByIdQueryFetchQuery,
 	useDeleteCollectionMutation,
 } from "@/api/services/manager";
 import { useStore } from "@/store/UseStore";
@@ -194,7 +194,7 @@ export const RecursiveNavItem = ({
 
 	const handleOnClickRemoveCollection = async () => {
 		try {
-			const collectionData = await useGetCollectionByIdQueryClientAsync(
+			const collectionData = await useGetCollectionByIdQueryFetchQuery(
 				collection.id
 			);
 

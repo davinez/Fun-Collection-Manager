@@ -40,11 +40,7 @@ interface AxiosRetryConfig extends AxiosRequestConfig {
   _retry: boolean;
 }
 
-const axiosRetryConfig: AxiosRetryConfig = {
-  _retry: false,
-};
-
-type TApi = {
+export type TApi = {
   get: <T>(url: string, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
   post: <T>(url: string, data: object, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
   patch: <T>(url: string, data: object, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
@@ -95,7 +91,7 @@ export const useApiClient = (baseURL: string): TApi => {
       const originalRequest: AxiosRetryConfig = error.config;
       // If the error status is 401 and there is no originalRequest._retry flag,
       // it means the token has expired and we need to refresh it
-      if (error.response.status === 401 && !originalRequest._retry) {
+      if (error.code !== "ERR_NETWORK" && error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
         const { instance } = useMsal();
         const activeAccount = instance.getActiveAccount();
@@ -108,7 +104,7 @@ export const useApiClient = (baseURL: string): TApi => {
 
           const tokenRequest = {
             account: activeAccount,
-            scopes: authSlice.userScopes as string[],
+            scopes: [],
           };
           const requestResponse = await instance.acquireTokenSilent(tokenRequest);
           authSlice.setAccessToken(requestResponse.accessToken);
@@ -126,7 +122,7 @@ export const useApiClient = (baseURL: string): TApi => {
 
             const tokenRequest = {
               account: activeAccount,
-              scopes: authSlice.userScopes as string[],
+              scopes: [],
             };
             try {
               // Before Retry the original request a new login is required to update access and refresh tokens

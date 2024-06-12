@@ -6,6 +6,7 @@ import {
 	Button,
 	Stack,
 	useDisclosure,
+	useToast,
 } from "@chakra-ui/react";
 import { MoonIcon } from "@chakra-ui/icons";
 // Components
@@ -13,16 +14,23 @@ import { GeneralAlert } from "components/ui/alert";
 // Assets
 
 // Types
-
+import {
+	createUserAccountPayload,
+	type TCreateUserAccountPayload,
+} from "@/shared/types/api/auth.types";
 // General
 import { NavLink, useNavigate } from "react-router-dom";
 import type React from "react";
 import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/useApiClient";
-import { useMsal } from "@azure/msal-react";
 import {
-	InteractionStatus,
-} from "@azure/msal-browser";
+	API_BASE_URL as API_BASE_URL_AUTH,
+	useCreateUserAccountMutation,
+	useGetUserAccountByIdPFetchQuery,
+} from "@/api/services/auth";
+import { useMsal } from "@azure/msal-react";
+import { InteractionStatus } from "@azure/msal-browser";
+import { useApiClient } from "@/api/useApiClient";
 
 export default function HomeNavbar(): React.ReactElement {
 	// Hooks
@@ -34,6 +42,9 @@ export default function HomeNavbar(): React.ReactElement {
 		onClose,
 		onOpen: onOpenFailedLoginAlert,
 	} = useDisclosure({ defaultIsOpen: false });
+	const toast = useToast();
+	const createUserAccountMutation = useCreateUserAccountMutation();
+	const apiClient = useApiClient(API_BASE_URL_AUTH);
 
 	// Handlers
 	const handleOnClickSignIn = async () => {
@@ -41,32 +52,116 @@ export default function HomeNavbar(): React.ReactElement {
 
 		try {
 			const loginResponse = await instance.loginPopup();
-
 			// const json = JSON.stringify(loginResponse);
 
-			const idTokenClaims = loginResponse.account.idTokenClaims;	
+			const userAccount = await useGetUserAccountByIdPFetchQuery(
+				apiClient,
+				loginResponse.account.localAccountId,
+				true
+			);
 
-			if(!idTokenClaims ||
-				 !idTokenClaims['roles'] ||
-				!Array.isArray(idTokenClaims['roles']) ||
-				 !idTokenClaims['roles'].length){
-					// Call register user account endpoint
+			if (!userAccount) {
+				const payload: TCreateUserAccountPayload = {
+					identityProviderId: loginResponse.account.localAccountId,
+					createSubscription: {
+						isTrialPeriod: false,
+						validTo: new Date("January 01, 2034 00:01:00"),
+						planAcquired: 1,
+					},
+				};
+
+				const validationResult = createUserAccountPayload.safeParse(payload);
+
+				if (!validationResult.success) {
+					toast({
+						title: "Error",
+						description: "Error in validation create account",
+						status: "error",
+						duration: 5000,
+						isClosable: true,
+					});
+					return;
+				}
+
+				createUserAccountMutation.mutate(payload, {
+					onSuccess: async (data, variables, context) => {
+						const activeAccount = instance.getActiveAccount();
+
+						if (activeAccount === null) {
+							toast({
+								title: "Error",
+								description:
+									"Error after account creation. Please log in again",
+								status: "error",
+								duration: 5000,
+								isClosable: true,
+							});
+							return;
+						}
+
+						const newTokenRequest = {
+							account: activeAccount,
+							scopes: [],
+						};
+						const newTokenResponse =
+							await instance.acquireTokenSilent(newTokenRequest);
+
+						const newIdTokenClaims = newTokenResponse.account.idTokenClaims;
+
+						if (!newIdTokenClaims) {
+							toast({
+								title: "Error",
+								description:
+									"Error after account creation. Please log in again",
+								status: "error",
+								duration: 5000,
+								isClosable: true,
+							});
+							return;
+						}
+
+						authSlice.setLoginUser({
+							localAccountId: newTokenResponse.account.localAccountId,
+							homeAccountId: newTokenResponse.account.homeAccountId,
+							userDisplayName: newIdTokenClaims["userDisplayName"] as string,
+							userEmail: newIdTokenClaims["userEmail"] as string,
+							userRoles: newIdTokenClaims.roles as string[],
+							accessToken: newTokenResponse.accessToken,
+						});
+
+						navigate("/my/manager/dashboard");
+					},
+					onError: (error, variables, context) => {
+						toast({
+							title: "Error",
+							description: "Error in creating new account",
+							status: "error",
+							duration: 5000,
+							isClosable: true,
+						});
+						defaultHandlerApiError(error);
+					},
+				});
+			} else {
+				const idTokenClaims = loginResponse.account.idTokenClaims;
+
+				if (!idTokenClaims) {
 					onOpenFailedLoginAlert();
 					return;
-				 }
-	
-			// Handle login response
-			authSlice.setLoginUser({
-				localAccountId: loginResponse.account.localAccountId,
-				homeAccountId: loginResponse.account.homeAccountId,
-				username: loginResponse.account.username, // Possible null
-				userDisplayName: "ssdfds",
-				userEmail: "email placeholder obtener de claims",
-				userScopes: loginResponse.scopes,
-				accessToken: loginResponse.accessToken,
-			});
+				}
 
-			navigate("/my/manager/dashboard");
+				// Handle login response
+				authSlice.setLoginUser({
+					localAccountId: loginResponse.account.localAccountId,
+					homeAccountId: loginResponse.account.homeAccountId,
+					userDisplayName: idTokenClaims["userDisplayName"] as string,
+					userEmail: idTokenClaims["userEmail"] as string,
+					userRoles: idTokenClaims.roles as string[],
+					accessToken: loginResponse.accessToken,
+				});
+
+				navigate("/my/manager/dashboard");
+			}
 		} catch (error) {
 			defaultHandlerApiError(error);
 			onOpenFailedLoginAlert();

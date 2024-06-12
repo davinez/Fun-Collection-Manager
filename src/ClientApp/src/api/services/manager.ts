@@ -71,7 +71,7 @@ export const useGetGroupByIdFetchQuery = async (id: number) => {
   });
 }
 
-export const useGetCollectionByIdQueryClientAsync = async (id: number) => {
+export const useGetCollectionByIdQueryFetchQuery = async (id: number) => {
   const apiClient = useApiClient(API_BASE_URL);
   return await queryClient.fetchQuery({
     queryKey: ["collection", id],

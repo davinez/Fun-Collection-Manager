@@ -6,6 +6,7 @@ export const PAGE_ITEM_LIMIT = 15;
 export const PAGINATION_DOTS = '...'; 
 export const DEFAULT_ICON = '/assets/icons/bookmark.svg'; 
 export const DEFAULT_BOOKMARK_COVER = '/assets/images/default_bookmark_cover.jpg'; 
+export const ROLES = ["General.Level1", "Administrator"];
 
 
 
