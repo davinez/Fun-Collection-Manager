@@ -8,5 +8,8 @@ export const DEFAULT_ICON = '/assets/icons/bookmark.svg';
 export const DEFAULT_BOOKMARK_COVER = '/assets/images/default_bookmark_cover.jpg'; 
 export const ROLES = ["General.Level1", "Administrator"];
 
+export const API_BASE_URL_MANAGER = import.meta.env.VITE_API_BASE_MANAGER;
+export const API_BASE_URL_AUTH = import.meta.env.VITE_API_BASE_AUTH;
+
 
 

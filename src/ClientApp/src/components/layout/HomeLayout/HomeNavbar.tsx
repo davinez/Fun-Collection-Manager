@@ -24,13 +24,14 @@ import type React from "react";
 import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/useApiClient";
 import {
-	API_BASE_URL as API_BASE_URL_AUTH,
 	useCreateUserAccountMutation,
 	useGetUserAccountByIdPFetchQuery,
 } from "@/api/services/auth";
 import { useMsal } from "@azure/msal-react";
 import { InteractionStatus } from "@azure/msal-browser";
 import { useApiClient } from "@/api/useApiClient";
+import { API_BASE_URL_AUTH } from "shared/config";
+import { loginRequest, managerAPIRequest } from "shared/config/authConfig";
 
 export default function HomeNavbar(): React.ReactElement {
 	// Hooks
@@ -51,18 +52,40 @@ export default function HomeNavbar(): React.ReactElement {
 		// https://stackoverflow.com/questions/65958941/msal-js-loginpopup-vs-acquiretokenpop
 
 		try {
-			const loginResponse = await instance.loginPopup();
+			const loginResponse = await instance.loginPopup(loginRequest);
 			// const json = JSON.stringify(loginResponse);
+
+			const activeAccount = instance.getActiveAccount();
+
+			if (activeAccount === null) {
+				toast({
+					title: "Error",
+					description: "Error after login",
+					status: "error",
+					duration: 5000,
+					isClosable: true,
+				});
+				return;
+			}
+
+			const tokenRequest = {
+				account: activeAccount,
+				scopes: [...managerAPIRequest.scopes],
+			};
+
+			const managerAPIToken = await instance.acquireTokenSilent(tokenRequest);
+
+			authSlice.setAccessToken(managerAPIToken.accessToken);
 
 			const userAccount = await useGetUserAccountByIdPFetchQuery(
 				apiClient,
-				loginResponse.account.localAccountId,
+				loginResponse.account.homeAccountId,
 				true
 			);
 
 			if (!userAccount) {
 				const payload: TCreateUserAccountPayload = {
-					identityProviderId: loginResponse.account.localAccountId,
+					identityProviderId: loginResponse.account.homeAccountId,
 					createSubscription: {
 						isTrialPeriod: false,
 						validTo: new Date("January 01, 2034 00:01:00"),
@@ -85,28 +108,29 @@ export default function HomeNavbar(): React.ReactElement {
 
 				createUserAccountMutation.mutate(payload, {
 					onSuccess: async (data, variables, context) => {
-						const activeAccount = instance.getActiveAccount();
+						// const activeAccount = instance.getActiveAccount();
 
-						if (activeAccount === null) {
-							toast({
-								title: "Error",
-								description:
-									"Error after account creation. Please log in again",
-								status: "error",
-								duration: 5000,
-								isClosable: true,
-							});
-							return;
-						}
+						// if (activeAccount === null) {
+						// 	toast({
+						// 		title: "Error",
+						// 		description:
+						// 			"Error after account creation. Please log in again",
+						// 		status: "error",
+						// 		duration: 5000,
+						// 		isClosable: true,
+						// 	});
+						// 	return;
+						// }
 
-						const newTokenRequest = {
-							account: activeAccount,
-							scopes: [],
-						};
-						const newTokenResponse =
-							await instance.acquireTokenSilent(newTokenRequest);
+						// const tokenRequest = {
+						// 	account: activeAccount,
+						// 	scopes: [...managerAPIRequest.scopes],
+						// };
 
-						const newIdTokenClaims = newTokenResponse.account.idTokenClaims;
+						// const managerAPIToken =
+						// 	await instance.acquireTokenSilent(tokenRequest);
+
+						const newIdTokenClaims = managerAPIToken.account.idTokenClaims;
 
 						if (!newIdTokenClaims) {
 							toast({
@@ -121,12 +145,12 @@ export default function HomeNavbar(): React.ReactElement {
 						}
 
 						authSlice.setLoginUser({
-							localAccountId: newTokenResponse.account.localAccountId,
-							homeAccountId: newTokenResponse.account.homeAccountId,
+							localAccountId: managerAPIToken.account.localAccountId,
+							homeAccountId: managerAPIToken.account.homeAccountId,
 							userDisplayName: newIdTokenClaims["userDisplayName"] as string,
 							userEmail: newIdTokenClaims["userEmail"] as string,
 							userRoles: newIdTokenClaims.roles as string[],
-							accessToken: newTokenResponse.accessToken,
+							accessToken: managerAPIToken.accessToken,
 						});
 
 						navigate("/my/manager/dashboard");
@@ -150,6 +174,26 @@ export default function HomeNavbar(): React.ReactElement {
 					return;
 				}
 
+				const activeAccount = instance.getActiveAccount();
+
+				if (activeAccount === null) {
+					toast({
+						title: "Error",
+						description: "Error getting active account. Please log in again",
+						status: "error",
+						duration: 5000,
+						isClosable: true,
+					});
+					return;
+				}
+
+				const tokenRequest = {
+					account: activeAccount,
+					scopes: [...managerAPIRequest.scopes],
+				};
+
+				const managerAPIToken = await instance.acquireTokenSilent(tokenRequest);
+
 				// Handle login response
 				authSlice.setLoginUser({
 					localAccountId: loginResponse.account.localAccountId,
@@ -157,7 +201,7 @@ export default function HomeNavbar(): React.ReactElement {
 					userDisplayName: idTokenClaims["userDisplayName"] as string,
 					userEmail: idTokenClaims["userEmail"] as string,
 					userRoles: idTokenClaims.roles as string[],
-					accessToken: loginResponse.accessToken,
+					accessToken: managerAPIToken.accessToken,
 				});
 
 				navigate("/my/manager/dashboard");

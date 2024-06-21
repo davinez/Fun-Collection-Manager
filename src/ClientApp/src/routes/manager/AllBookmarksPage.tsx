@@ -18,7 +18,7 @@ import useBookmarkSort from "@/hooks/manager/useBookmarkSort";
 // Types
 import type {
 	TBookmark,
-	TGetBookmarks,
+	TGetAllBookmarks,
 } from "@/shared/types/api/manager.types";
 // General
 import { useState, useEffect } from "react";
@@ -26,7 +26,7 @@ import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/useApiClient";
 
 type TMainContentProps = {
-	data: TGetBookmarks;
+	data: TGetAllBookmarks;
 };
 
 const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
@@ -133,6 +133,6 @@ export const AllBookmarksPage =
 
 		if (isErrorGetAllBookmarks) return <ErrorBox />;
 
-		//TODO: if data.length === 0 and searchterm !== empty then render Not Found bookmarks Content - Message
+		// TODO: if data.length === 0 and searchterm !== empty then render Not Found bookmarks Content - Message
 		return <MainContent data={getAllBookmarksResponse} />;
 	};

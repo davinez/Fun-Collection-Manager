@@ -106,10 +106,10 @@ export const RecursiveNavItem = ({
 		// Only open collection page if the clicked element it is the div and not an inside element
 		if (
 			(event.target instanceof HTMLDivElement &&
-			(event.target as HTMLDivElement).getAttribute("aria-label") ===
-				"navitem-main-container") ||
-				event.target instanceof HTMLImageElement ||
-				event.target instanceof HTMLParagraphElement
+				(event.target as HTMLDivElement).getAttribute("aria-label") ===
+					"navitem-main-container") ||
+			event.target instanceof HTMLImageElement ||
+			event.target instanceof HTMLParagraphElement
 		) {
 			// Navigate to collection page
 			if (isShowingInput) {
@@ -192,6 +192,26 @@ export const RecursiveNavItem = ({
 		});
 	};
 
+	const GetNodeInStateIcon = () => {
+		const searchResult = nodesState.find(
+			(node) => node.nodeId === collection.id
+		);
+		if (searchResult && searchResult.isOpen) {
+			return AiFillCaretDown;
+		}
+		return AiFillCaretRight;
+	};
+
+	const GetNodeInStateStatus = () => {
+		const searchResult = nodesState.find(
+			(node) => node.nodeId === collection.id
+		);
+		if (searchResult) {
+			return searchResult.isOpen;
+		}
+		return undefined;
+	};
+
 	const handleOnClickRemoveCollection = async () => {
 		try {
 			const collectionData = await useGetCollectionByIdQueryFetchQuery(
@@ -261,12 +281,7 @@ export const RecursiveNavItem = ({
 								mx="0px"
 								boxSize="3"
 								color="brandPrimary.150"
-								as={
-									nodesState.find((node) => node.nodeId === collection.id)
-										?.isOpen
-										? AiFillCaretDown
-										: AiFillCaretRight
-								}
+								as={GetNodeInStateIcon()}
 								onClick={handleOnClickCollapseCollection}
 							/>
 						)}
@@ -399,10 +414,7 @@ export const RecursiveNavItem = ({
 			}
 			{collection.childCollections.length > 0 && ( // Rendering child collections
 				<Collapse
-					in={
-						nodesState.find((node) => node.nodeId === collection.id)
-							?.isOpen as boolean
-					}
+					in={GetNodeInStateStatus()}
 					animateOpacity
 				>
 					{collection.childCollections.map((item) => {

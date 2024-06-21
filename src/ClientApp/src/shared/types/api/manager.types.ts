@@ -12,7 +12,6 @@ export type TDynamicCollapseState = {
 
 // API/Service Types //
 
-
 export type TGetCollectionGroups = {
   allBookmarksCounter: number;
   groups: TCollectionGroup[];

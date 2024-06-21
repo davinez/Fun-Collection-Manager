@@ -3,7 +3,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       suspense: false,
-      retry: false,
+      retry: false
     },
   },
 });

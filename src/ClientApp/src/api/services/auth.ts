@@ -6,8 +6,7 @@ import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import { useMutation } from '@tanstack/react-query';
 import { useApiClient, type TApi } from "@/api/useApiClient";
 import queryClient from "@/api/query-client";
-
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_AUTH;
+import { API_BASE_URL_AUTH } from "shared/config";
 
 // Currently not implemented due to entra id external implementation for login
 // export const useLoginMutation = () => {
@@ -37,7 +36,7 @@ export const useGetUserAccountByIdPFetchQuery = async (apiClient: TApi,identityP
 }
 
 export const useCreateUserAccountMutation = () => {
-    const apiClient = useApiClient(API_BASE_URL);
+    const apiClient = useApiClient(API_BASE_URL_AUTH);
     return useMutation({
       mutationFn: async (payload: TCreateUserAccountPayload) => {
         const apiResponse = await apiClient.post<TApiResponse>("/accounts", payload);

@@ -7,6 +7,7 @@ import { useMsal } from "@azure/msal-react";
 import {
   InteractionRequiredAuthError,
 } from "@azure/msal-browser";
+import { managerAPIRequest } from "@/shared/config";
 
 
 export const defaultHandlerApiError = (error: Error | unknown) => {
@@ -51,6 +52,7 @@ export const useApiClient = (baseURL: string): TApi => {
   // Hooks
   const navigate = useNavigate();
   const { authSlice } = useStore();
+  const { instance } = useMsal();
   const apiClientAxios = axios.create({
     baseURL,
   });
@@ -93,7 +95,6 @@ export const useApiClient = (baseURL: string): TApi => {
       // it means the token has expired and we need to refresh it
       if (error.code !== "ERR_NETWORK" && error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
-        const { instance } = useMsal();
         const activeAccount = instance.getActiveAccount();
 
         try {
@@ -104,8 +105,9 @@ export const useApiClient = (baseURL: string): TApi => {
 
           const tokenRequest = {
             account: activeAccount,
-            scopes: [],
+            scopes: [...managerAPIRequest.scopes]
           };
+
           const requestResponse = await instance.acquireTokenSilent(tokenRequest);
           authSlice.setAccessToken(requestResponse.accessToken);
 

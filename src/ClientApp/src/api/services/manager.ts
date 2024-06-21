@@ -22,8 +22,8 @@ import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useApiClient } from "@/api/useApiClient";
 import queryClient from "@/api/query-client";
+import { API_BASE_URL_MANAGER } from "shared/config";
 
-const API_BASE_URL = "http://localhost:7000/api";
 
 /*
 A query function / queryFn can be literally any function that returns a promise.
@@ -39,40 +39,56 @@ The promise that is returned should either resolve the data or throw an error.
 /***** Queries *****/
 
 export const useGetCollectionsQuery = () => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useQuery({
     queryKey: ["collection-groups"],
     queryFn: async () => {
-      const response = await apiClient.get<TApiResponse<TGetCollectionGroups>>("/manager/groups/collection-groups");
+      const response = await apiClient.get<TApiResponse<TGetCollectionGroups>>("/collections/by-groups");
       return response.data.data
     }
   });
 }
 
+/**
+* Calls the API with the useQuery hook providing access query.isError, query.error.message, 
+* query.isLoading, query.isFetching, and query.data to get the state of our request
+* and also subscribing to the query key
+* @param id collection group id
+* @returns returns the collection group
+*/
 export const useGetGroupByIdQuery = (id: number) => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useQuery({
     queryKey: ["group", id],
     queryFn: async () => {
-      const response = await apiClient.get<TApiResponse<TGroupInfo>>(`/manager/groups/${id}`);
+      const response = await apiClient.get<TApiResponse<TGroupInfo>>(`/collectiongroups/${id}`);
       return response.data.data
     },
   });
 }
 
+/**
+* Calls the API with queryClient.fetchQuery, this is an imperative way to fetch data. 
+* It will either resolve with the data or throw with the error. 
+* Imperative data fetching means you write code to explicitly request and handle data based on your query. And in the case of
+* useQuery hook difference, it will try to fetch immediately data without having access to fetch state like query.isLoading, query.isFetching, etc
+* https://tanstack.com/query/latest/docs/reference/QueryClient/#queryclientfetchquery
+* @param id collection group id
+* @returns returns the collection group
+*/
 export const useGetGroupByIdFetchQuery = async (id: number) => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return await queryClient.fetchQuery({
     queryKey: ["group", id],
     queryFn: async () => {
-      const response = await apiClient.get<TApiResponse<TGroupInfo>>(`/manager/groups/${id}`);
+      const response = await apiClient.get<TApiResponse<TGroupInfo>>(`/collectiongroups/${id}`);
       return response.data.data
     }
   });
 }
 
 export const useGetCollectionByIdQueryFetchQuery = async (id: number) => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return await queryClient.fetchQuery({
     queryKey: ["collection", id],
     queryFn: async () => {
@@ -83,7 +99,7 @@ export const useGetCollectionByIdQueryFetchQuery = async (id: number) => {
 }
 
 export const useGetAllBookmarksQuery = ({ page, pageLimit, filterType, debounceSearchValue }: TGetBookmarksParams) => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useQuery({
     queryKey: ["all-bookmarks", { currentPage: page, debounceSearchValue }],
     queryFn: async () => {
@@ -106,7 +122,7 @@ export const useGetAllBookmarksQuery = ({ page, pageLimit, filterType, debounceS
 }
 
 export const useGetBookmarksByCollectionQuery = ({ page, pageLimit, filterType, debounceSearchValue }: TGetBookmarksParams, collectionId: string) => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useQuery({
     queryKey: ["collection-bookmarks", { currentPage: page, debounceSearchValue }],
     queryFn: async () => {
@@ -129,7 +145,7 @@ export const useGetBookmarksByCollectionQuery = ({ page, pageLimit, filterType, 
 }
 
 export const useGetCollectionsAllIconsQuery = () => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useQuery({
     queryKey: ["collections-all-icons"],
     queryFn: async () => {
@@ -149,7 +165,7 @@ type TuseAddURLMutationVariables = {
 }
 
 export const useAddURLMutation = () => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async ({ collectionId, payload }: TuseAddURLMutationVariables) => {
       const response = await apiClient.post<TApiResponse>(`/manager/collections/${collectionId}`, payload);
@@ -159,7 +175,7 @@ export const useAddURLMutation = () => {
 }
 
 export const useAddGroupMutation = () => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async (payload: TGroupAddPayload) => {
       const response = await apiClient.post<TApiResponse>(`/manager/groups`, payload);
@@ -174,7 +190,7 @@ type TuseUpdateGroupMutationVariables = {
 }
 
 export const useUpdateGroupMutation = () => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async ({ groupId, payload }: TuseUpdateGroupMutationVariables) => {
       const response = await apiClient.patch<TApiResponse>(`/manager/groups/${groupId}`, payload);
@@ -184,7 +200,7 @@ export const useUpdateGroupMutation = () => {
 }
 
 export const useDeleteGroupMutation = () => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async (payload: TDeleteGroupPayload) => {
       const response = await apiClient.delete<TApiResponse>(`/manager/groups/${payload.groupId}`);
@@ -199,7 +215,7 @@ type TuseUpdateBookmarkMutationVariables = {
 }
 
 export const useUpdateBookmarkMutation = () => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async ({ bookmarkId, payload }: TuseUpdateBookmarkMutationVariables) => {
       const response = await apiClient.patch<TApiResponse>(`/manager/bookmarks/${bookmarkId}`, payload);
@@ -209,7 +225,7 @@ export const useUpdateBookmarkMutation = () => {
 }
 
 export const useDeleteBookmarkMutation = () => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async (payload: TBookmarkDeletePayload) => {
       const response = await apiClient.delete<TApiResponse>('/manager/bookmarks', payload);
@@ -224,7 +240,7 @@ type TuseUpdateCollectionMutationVariables = {
 }
 
 export const useUpdateCollectionMutation = () => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async ({ collectionId, payload }: TuseUpdateCollectionMutationVariables) => {
       const response = await apiClient.patch<TApiResponse>(`/manager/collections/${collectionId}`,
@@ -241,7 +257,7 @@ type TuseUpdateCollectionIconMutationVariables = {
 }
 
 export const useUpdateCollectionIconMutation = () => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async ({ collectionId, payload }: TuseUpdateCollectionIconMutationVariables) => {
       const response = await apiClient.patch<TApiResponse>(`/manager/collections/${collectionId}/icon`,
@@ -258,7 +274,7 @@ type TuseAddCollectionMutationVariables = {
 }
 
 export const useAddCollectionMutation = () => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async ({ params, payload }: TuseAddCollectionMutationVariables) => {
       const response = await apiClient.post<TApiResponse>('/manager/collections',
@@ -274,7 +290,7 @@ export const useAddCollectionMutation = () => {
 }
 
 export const useDeleteCollectionMutation = () => {
-  const apiClient = useApiClient(API_BASE_URL);
+  const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async (payload: TDeleteCollectionPayload) => {
       const response = await apiClient.delete<TApiResponse>(`/manager/collections/${payload.collectionId}`);

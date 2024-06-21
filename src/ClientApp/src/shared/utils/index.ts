@@ -49,8 +49,10 @@ export const renderNodesState = (
 
   // From final arrays of ids return the array of objects 
   // with each id having its state object
-  return getIds(initialNodes).map((id) => ({
+  const state = getIds(initialNodes).map((id) => ({
     nodeId: id,
     isOpen: false,
   }));
+
+  return state;
 }
