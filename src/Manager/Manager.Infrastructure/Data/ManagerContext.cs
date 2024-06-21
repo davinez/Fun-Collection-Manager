@@ -7,7 +7,7 @@ namespace Manager.Infrastructure.Data;
 
 public class ManagerContext : DbContext, IManagerContext
 {
-    public DbSet<Bookmark> Bookmarkss { get; set; }
+    public DbSet<Bookmark> Bookmarks { get; set; }
     public DbSet<Collection> Collections { get; set; }
     public DbSet<CollectionGroup> CollectionGroups { get; set; }
     public DbSet<Invoice> Invoices { get; set; }

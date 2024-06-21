@@ -4,7 +4,7 @@ using Manager.Application.Common.Interfaces;
 using Manager.Domain.Entities;
 using MediatR;
 
-namespace Manager.Application.CollectionsGroups.Commands.CreateCollectionGroup;
+namespace Manager.Application.CollectionGroups.Commands.CreateCollectionGroup;
 
 public record CreateCollectionGroupCommand : IRequest<int>
 {

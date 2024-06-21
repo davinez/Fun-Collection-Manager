@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Collections\Commands\" />
     <Folder Include="Collections\EventHandlers\" />
     <Folder Include="Common\Models\Requests\Accounts\" />
   </ItemGroup>

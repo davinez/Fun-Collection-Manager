@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Manager.Application.CollectionsGroups.Queries.GetCollectionGroups;
+namespace Manager.Application.Collections.Queries.GetCollectionGroups;
 
 public class CollectionGroupsDto
 {

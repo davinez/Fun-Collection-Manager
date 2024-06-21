@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Manager.Application.CollectionsGroups.Commands.CreateCollectionGroup;
+namespace Manager.Application.CollectionGroups.Commands.CreateCollectionGroup;
 
 public class CreateCollectionGroupCommandValidator : AbstractValidator<CreateCollectionGroupCommand>
 {
@@ -8,6 +8,7 @@ public class CreateCollectionGroupCommandValidator : AbstractValidator<CreateCol
     {
         RuleFor(v => v.Name)
             .MaximumLength(100)
-            .NotEmpty();
+            .NotEmpty()
+            .WithMessage("Name is required."); 
     }
 }

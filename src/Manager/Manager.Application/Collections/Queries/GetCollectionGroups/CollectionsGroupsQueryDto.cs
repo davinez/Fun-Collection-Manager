@@ -1,4 +1,4 @@
-﻿namespace Manager.Application.CollectionsGroups.Queries.GetCollectionGroups;
+﻿namespace Manager.Application.Collections.Queries.GetCollectionGroups;
 
 public class CollectionsGroupsQueryDto
 {

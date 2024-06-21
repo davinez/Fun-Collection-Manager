@@ -1,31 +1,5 @@
 
 
---------- User Account
-
-select * from manager.plan p 
-
-
-select * from manager.user_account ua 
-
-
-BEGIN transaction;
-
-
-select * from manager.user_account ua; 
-
-
-delete from manager.user_account ua where ua.id = 1;
-
---commit TRANSACTION;
-
-
-select * from manager.user_account ua; 
-
-
-rollback TRANSACTION;
-
-
-
 
 --------- Group Collections 
 
