@@ -3,6 +3,7 @@ using System;
 using Manager.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Manager.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ManagerContext))]
-    partial class ManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20240614004749_NullableParentNodeCollection")]
+    partial class NullableParentNodeCollection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -454,10 +457,8 @@ namespace Manager.Infrastructure.Data.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("given_name");
 
-                    b.Property<string>("IdentityProviderId")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
+                    b.Property<Guid>("IdentityProviderId")
+                        .HasColumnType("uuid")
                         .HasColumnName("identity_provider_id");
 
                     b.Property<DateTimeOffset?>("LastModified")

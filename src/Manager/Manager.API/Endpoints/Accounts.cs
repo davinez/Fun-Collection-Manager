@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
 using Manager.Application.Accounts.Commands.CreateUserAccount;
@@ -16,17 +17,20 @@ public class Accounts : EndpointGroupBase
     public override void Map(WebApplication app)
     {
         app.MapGroup(this)
-            .AllowAnonymous()
+            .RequireAuthorization()
             .MapPost(CreateUserAccount)
             .MapGet(GetUserAccountByIdP);
     }
 
+    /// <summary>
+    /// Route GET /accounts
+    /// </summary>
     public async Task<ApiResponse<UserAccountDto>> GetUserAccountByIdP(
        [FromServices] ISender sender,
-       [AsParameters] GetUserAccountByIdPQuery query
+       [FromQuery(Name = "identity_provider_id")] string identityProviderId
        )
     {
-        var data = await sender.Send(query);
+        var data = await sender.Send(new GetUserAccountByIdPQuery() { IdentityProviderId = identityProviderId });
 
         return new ApiResponse<UserAccountDto>
         {
@@ -34,6 +38,9 @@ public class Accounts : EndpointGroupBase
         };
     }
 
+    /// <summary>
+    /// Route POST /accounts
+    /// </summary>
     public async Task<IResult> CreateUserAccount(
         [FromServices] ISender sender,
         [FromBody] CreateUserAccountCommand command

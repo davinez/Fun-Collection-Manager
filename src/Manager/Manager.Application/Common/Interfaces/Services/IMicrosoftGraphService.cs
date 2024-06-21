@@ -6,6 +6,6 @@ namespace Manager.Application.Common.Interfaces.Services;
 
 public interface IMicrosoftGraphService
 {
-    public Task<bool> AssignRoleToUser(Guid userId);
-    public Task<User> GetUserById(Guid userId);  
+    public Task<bool> AssignRoleToUser(string userHomeAccountId);
+    public Task<User> GetUserById(string userHomeAccountId);  
 }

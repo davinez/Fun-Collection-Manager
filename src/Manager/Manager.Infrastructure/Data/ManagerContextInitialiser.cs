@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Manager.Domain.Constants;
-using Manager.Domain.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,9 +38,9 @@ public class ApplicationDbContextInitialiser
         try
         {
             if ((await _context.Database.GetPendingMigrationsAsync()).Any())
-            {         
+            {
                 await _context.Database.MigrateAsync();
-            }       
+            }
         }
         catch (Exception ex)
         {
@@ -139,9 +136,9 @@ public class ApplicationDbContextInitialiser
         {
             _context.Plans.Add(new()
             {
-               PlanName = "Basic",
-               CurrentPrice = 0.0m,
-               IsActive = true,
+                PlanName = "Basic",
+                CurrentPrice = 0.0m,
+                IsActive = true,
             });
         }
 

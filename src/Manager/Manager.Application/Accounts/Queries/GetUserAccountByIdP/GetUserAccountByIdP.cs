@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Manager.Application.Common.Interfaces;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Manager.Application.Accounts.Queries.GetUserAccountByIdP;
 
 public record GetUserAccountByIdPQuery : IRequest<UserAccountDto?>
 {
-    [FromQuery(Name = "identity_provider_id")]
-    public Guid IdentityProviderId { get; init; }
+    public required string IdentityProviderId { get; init; }
 }
 
 public class GetUserAccountByIdPQueryHandler : IRequestHandler<GetUserAccountByIdPQuery, UserAccountDto?>

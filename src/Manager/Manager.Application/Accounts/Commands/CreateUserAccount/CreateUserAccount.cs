@@ -11,7 +11,7 @@ using Microsoft.Graph.Models;
 namespace Manager.Application.Accounts.Commands.CreateUserAccount;
 public record CreateUserAccountCommand : IRequest<Unit>
 {
-    public Guid IdentityProviderId { get; init; }
+    public required string IdentityProviderId { get; init; }
     public CreateSubscription CreateSubscription { get; init; } = new CreateSubscription(); 
 }
 
@@ -77,6 +77,7 @@ public class CreateUserAccountCommandHandler : IRequestHandler<CreateUserAccount
         await _context.SaveChangesAsync(cancellationToken);
 
         // TODO: Add default / empty collection group
+
 
 
        return Unit.Value;

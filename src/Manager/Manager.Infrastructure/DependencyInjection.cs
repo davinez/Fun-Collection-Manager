@@ -9,8 +9,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Manager.Infrastructure;
 
 public static class DependencyInjection
 {
@@ -29,6 +30,8 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IManagerContext>(provider => provider.GetRequiredService<ManagerContext>());
+
+        services.AddScoped<IManagerReadDbConnection, ManagerReadDbConnection>();
 
         services.AddScoped<ApplicationDbContextInitialiser>();
 

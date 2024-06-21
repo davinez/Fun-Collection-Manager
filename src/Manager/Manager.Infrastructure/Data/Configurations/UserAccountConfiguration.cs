@@ -11,8 +11,9 @@ public class UserAccountConfiguration : IEntityTypeConfiguration<UserAccount>
         builder.ToTable("user_account");
 
         builder.Property(p => p.IdentityProviderId)
-              .HasColumnName("identity_provider_id")
-              .IsRequired();
+               .HasColumnName("identity_provider_id")
+               .HasMaxLength(255)
+               .IsRequired();
 
         builder.Property(p => p.UserName)
                .HasColumnName("username")

@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using NSwag;
 using NSwag.Generation.Processors.Security;
 
@@ -83,10 +85,10 @@ public static partial class OpenApiExtensions
         services.AddEndpointsApiExplorer();
         services.AddOpenApiDocument((configure, sp) =>
         {
-            configure.Title = "CleanArchitecture API";
+            configure.Title = "Fucoma Manager API";
 
             // Add JWT
-            configure.AddSecurity("JWT", Enumerable.Empty<string>(), new OpenApiSecurityScheme
+            configure.AddSecurity("bearer", new NSwag.OpenApiSecurityScheme
             {
                 Type = OpenApiSecuritySchemeType.ApiKey,
                 Name = "Authorization",
@@ -94,7 +96,7 @@ public static partial class OpenApiExtensions
                 Description = "Type into the textbox: Bearer {your JWT token}."
             });
 
-            configure.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
+            configure.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("bearer"));
 
         });
 

@@ -1,9 +1,12 @@
-﻿using Manager.API.Infrastructure.Extensions;
+﻿using Manager.API;
+using Manager.API.Infrastructure.Extensions;
+using Manager.Application;
+using Manager.Infrastructure;
 using Manager.Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +22,8 @@ if (app.Environment.IsDevelopment())
 {
     await app.InitialiseDatabaseAsync();
     app.UseDefaultOpenApi();
+
+    IdentityModelEventSource.ShowPII = true;
 }
 else
 {
@@ -31,6 +36,8 @@ app.UseHealthChecks("/health");
 app.UseHttpsRedirection();
 
 app.UseCors("fucoma_policy");
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",

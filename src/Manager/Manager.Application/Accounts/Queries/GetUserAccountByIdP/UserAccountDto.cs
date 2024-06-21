@@ -18,6 +18,6 @@ public class UserAccountDto
     }
 
     public int Id { get; set; }
-    public Guid IdentityProviderId { get; set; }
+    public string? IdentityProviderId { get; set; }
     public DateTimeOffset CreatedDate { get; set; }
 }

@@ -42,8 +42,10 @@ public class MicrosoftGraphService : IMicrosoftGraphService
         _configuration = configuration;
     }
 
-    public async Task<bool> AssignRoleToUser(Guid userId)
+    public async Task<bool> AssignRoleToUser(string userHomeAccountId)
     {
+        string userUniqueId = userHomeAccountId.Remove(userHomeAccountId.IndexOf("."));
+
         string servicePrincipalId = _configuration["EntraID:ManagerClientApp:ServicePrincipalId"] ?? throw new ManagerException("Empty config section in ManagerClientApp:ServicePrincipalId");
         string clientAppId = _configuration["EntraID:ManagerClientApp:ClientAppId"] ?? throw new ManagerException("Empty config section in ManagerClientApp:ClientAppId");
 
@@ -54,7 +56,7 @@ public class MicrosoftGraphService : IMicrosoftGraphService
             .FirstOrDefault(r => string.Compare(r.Value, Roles.GeneralLevel1, StringComparison.OrdinalIgnoreCase) == 0) ?? throw new ManagerException($"Error in get app role of clientApp with ID {clientAppId}")
             ).Id ?? throw new ManagerException($"Error in get app role ID of clientApp with ID {clientAppId}");
 
-        var userRoles = await _graphServiceClient.Users[userId.ToString()].AppRoleAssignments.GetAsync((requestConfiguration) =>
+        var userRoles = await _graphServiceClient.Users[userUniqueId].AppRoleAssignments.GetAsync((requestConfiguration) =>
         {
             requestConfiguration.QueryParameters.Count = true;
             requestConfiguration.Headers.Add("ConsistencyLevel", "eventual");
@@ -70,25 +72,27 @@ public class MicrosoftGraphService : IMicrosoftGraphService
 
         var requestBody = new AppRoleAssignment
         {
-            PrincipalId = userId,
+            PrincipalId = Guid.Parse(userUniqueId),
             ResourceId = Guid.Parse(servicePrincipalId),
             AppRoleId = defaultRoleAppId,
         };
 
         // To initialize your graphClient, see https://learn.microsoft.com/en-us/graph/sdks/create-client?from=snippets&tabs=csharp
-        AppRoleAssignment? result = await _graphServiceClient.Users[userId.ToString()].AppRoleAssignments.PostAsync(requestBody);
+        AppRoleAssignment? result = await _graphServiceClient.Users[userUniqueId].AppRoleAssignments.PostAsync(requestBody);
 
         // TODO: Check different way of validate success
         return result != null;
     }
 
-    public async Task<User> GetUserById(Guid userId)
+    public async Task<User> GetUserById(string userHomeAccountId)
     {
-        return await _graphServiceClient.Users[userId.ToString()]
+        string userUniqueId = userHomeAccountId.Remove(userHomeAccountId.IndexOf("."));
+
+        return await _graphServiceClient.Users[userUniqueId]
             .GetAsync((requestConfiguration) =>
             {
                 requestConfiguration.QueryParameters.Select = ["city", "country", "displayName", "givenName"];
-            }) ?? throw new ManagerException($"Error in get Entra User with ID {userId}");
+            }) ?? throw new ManagerException($"Error in get Entra User Home Account with ID {userHomeAccountId}");
 
     }
 }

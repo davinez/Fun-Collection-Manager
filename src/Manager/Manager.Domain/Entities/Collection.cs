@@ -9,7 +9,7 @@ public class Collection : BaseAuditableEntity
 
     public string? Icon { get; set; }
 
-    public int ParentNodeId { get; set; } // foreign key property
+    public int? ParentNodeId { get; set; } // foreign key property
 
     public int CollectionGroupId { get; set; }
 
