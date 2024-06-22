@@ -14,8 +14,7 @@ public class Collection : BaseAuditableEntity
     public int CollectionGroupId { get; set; }
 
     public CollectionGroup CollectionGroup { get; set; } = null!;
-    public Collection ParentNode { get; set; } = null!; // reference navigation to principal
-    public Collection ChildNode { get; set; } = null!; // reference navigation to dependent
-
+    public Collection ParentNode { get; set; } = null!; // reference navigation to principal  
+    public List<Collection> ChildCollections { get; set; } = new List<Collection>();
     public List<Bookmark> Bookmarks { get; } = [];
 }

@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
-using System.Reflection;
-using System;
+﻿using System;
 using System.Linq;
+using System.Reflection;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 
 namespace Manager.API.Infrastructure.Extensions;
 
@@ -11,7 +11,9 @@ public static class WebApplicationExtensions
 {
     public static RouteGroupBuilder MapGroup(this WebApplication app, EndpointGroupBase group)
     {
-        var groupName = group.GetType().Name.ToLower();
+        string? customGroupName = group.GetType().GetCustomAttributes<RouteGroupNameAttribute>(false)
+                                                 .FirstOrDefault()?.Name;
+        var groupName = customGroupName ?? group.GetType().Name; // Fallback class name
 
         return app
             .MapGroup($"/api/{groupName}")

@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Manager.Application.CollectionsGroups.Queries.GetCollectionGroups;
 using Manager.Application.Common.Helpers.Tree;
 using Manager.Application.Common.Interfaces;
 using MediatR;

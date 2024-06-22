@@ -30,11 +30,11 @@ public class CollectionConfiguration : IEntityTypeConfiguration<Collection>
         builder.HasOne(p => p.CollectionGroup)  // One to Many
                .WithMany(p => p.Collections)
                .HasForeignKey(p => p.CollectionGroupId)
-        .IsRequired();
+               .IsRequired();
 
         builder.HasOne(e => e.ParentNode)
-               .WithOne(e => e.ChildNode)
-               .HasForeignKey<Collection>(e => e.ParentNodeId)
+               .WithMany(e => e.ChildCollections)
+               .HasForeignKey(e => e.ParentNodeId)
                .OnDelete(DeleteBehavior.Cascade) // TODO: Check correct delete of parent and child nodes
                .IsRequired(false);
 

@@ -30,8 +30,8 @@ public class GetCollectionGroupByIdQueryHandler : IRequestHandler<GetCollectionG
                         {
                             Id = g.Id,
                             Name = g.Name,
-                            HasCollections = g.Collections.Any()
-                        })  
+                            HasCollections = g.Collections.Count != 0
+            })  
             .AsNoTracking()
             .FirstAsync(cancellationToken);
 

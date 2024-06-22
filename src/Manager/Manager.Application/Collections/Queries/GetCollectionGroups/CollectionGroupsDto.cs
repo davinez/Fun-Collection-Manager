@@ -7,5 +7,5 @@ public class CollectionGroupsDto
 {
     public int AllBookmarksCounter { get; set; }
     public int TrashCounter { get; set; }
-    public IReadOnlyCollection<CollectionGroupDto> Groups { get; set; } = Array.Empty<CollectionGroupDto>();
+    public IEnumerable<CollectionGroupDto> Groups { get; set; } = Array.Empty<CollectionGroupDto>();
 }

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Manager.API.Endpoints;
 
+[RouteGroupName("collection-groups")]
 public class CollectionGroups : EndpointGroupBase
 {
     public override void Map(WebApplication app)

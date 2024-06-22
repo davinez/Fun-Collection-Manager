@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
-using Manager.Application.CollectionGroups.Commands.CreateCollectionGroup;
+using Manager.Application.Collections.Queries.GetCollectionById;
 using Manager.Application.Collections.Queries.GetCollectionGroups;
 using Manager.Application.Common.Models;
 using MediatR;
@@ -16,7 +16,8 @@ public class Collections : EndpointGroupBase
     {
         app.MapGroup(this)
             .RequireAuthorization("All")
-            .MapGet(GetCollectionGroups, "by-groups");
+            .MapGet(GetCollectionGroups,"by-groups")
+            .MapGet(GetCollectionById, "{id}");
     }
 
     public async Task<ApiResponse<CollectionGroupsDto>> GetCollectionGroups(
@@ -29,6 +30,16 @@ public class Collections : EndpointGroupBase
         var data = await sender.Send(new GetCollectionGroupsQuery());
 
         return new ApiResponse<CollectionGroupsDto>
+        {
+            Data = data
+        };
+    }
+
+    public async Task<ApiResponse<CollectionDto>> GetCollectionById([FromServices] ISender sender, int id)
+    {
+        var data = await sender.Send(new GetCollectionByIdQuery() { Id = id });
+
+        return new ApiResponse<CollectionDto>
         {
             Data = data
         };

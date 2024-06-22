@@ -65,6 +65,34 @@ VALUES
 
 
 
+begin;
+
+
+select * 
+from manager.collection c 
+where c.parent_node_id = 3;
+
+
+INSERT INTO manager.collection
+(name, icon, parent_node_id, collection_group_id, created)
+VALUES('Coleccion C2 N1', '/assets/icons/bookmark.svg', 3, 1, NOW());
+
+
+select * 
+from manager.collection c 
+where c.parent_node_id = 3;
+
+-- commit;
+
+
+rollback;
+
+
+SELECT pg_catalog.setval(pg_get_serial_sequence('manager.collection', 'id'), (SELECT MAX(id) FROM manager.collection c)+1);
+
+SELECT pg_catalog.setval(pg_get_serial_sequence('manager.collection_group', 'id'), (SELECT MAX(id) FROM manager.collection_group cg)+1);
+
+
 
 
 --- Final Queries Collection Tree

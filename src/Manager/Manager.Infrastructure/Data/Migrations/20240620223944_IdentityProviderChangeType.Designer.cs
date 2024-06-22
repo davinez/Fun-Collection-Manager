@@ -3,6 +3,7 @@ using System;
 using Manager.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Manager.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ManagerContext))]
-    partial class ManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20240620223944_IdentityProviderChangeType")]
+    partial class IdentityProviderChangeType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,7 +119,8 @@ namespace Manager.Infrastructure.Data.Migrations
 
                     b.HasIndex("CollectionGroupId");
 
-                    b.HasIndex("ParentNodeId");
+                    b.HasIndex("ParentNodeId")
+                        .IsUnique();
 
                     b.ToTable("collection", "manager");
                 });
@@ -534,8 +538,8 @@ namespace Manager.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("Manager.Domain.Entities.Collection", "ParentNode")
-                        .WithMany("ChildCollections")
-                        .HasForeignKey("ParentNodeId")
+                        .WithOne("ChildNode")
+                        .HasForeignKey("Manager.Domain.Entities.Collection", "ParentNodeId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("CollectionGroup");
@@ -621,7 +625,8 @@ namespace Manager.Infrastructure.Data.Migrations
                 {
                     b.Navigation("Bookmarks");
 
-                    b.Navigation("ChildCollections");
+                    b.Navigation("ChildNode")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Manager.Domain.Entities.CollectionGroup", b =>
