@@ -5,8 +5,8 @@ import { bytesToMegaBytes } from "shared/utils";
 // Components Types //
 
 export type TDynamicCollapseState = {
-	nodeId: number;
-	isOpen: boolean;
+  nodeId: number;
+  isOpen: boolean;
 };
 
 
@@ -40,8 +40,8 @@ export type TGroupInfo = {
 export type TCollectionInfo = {
   id: number;
   name: string;
-  hasBookmarks:  boolean;
-  hasCollections:  boolean;
+  hasBookmarks: boolean;
+  hasCollections: boolean;
 }
 
 export type TGetAllBookmarks = {
@@ -167,9 +167,16 @@ export const collectionAddFormPayload = z.object({
   name: z
     .string()
     .trim()
-    .min(1, { message: "Collection is required" })
+    .min(1, { message: "name is required" }),
 });
+
 export type TCollectionAddFormPayload = z.infer<typeof collectionAddFormPayload>;
+
+export type TCollectionAddExtrasPayload = {
+  icon: string;
+  groupId: number;
+  parentCollectionId: number | undefined;
+}
 
 export const collectionUpdateFormPayload = z.object({
   name: z
@@ -202,10 +209,5 @@ export type TGetBookmarksParams = {
   pageLimit: number;
   filterType: string;
   debounceSearchValue: string;
-}
-
-export type TAddCollectionMutationParams = {
-  groupId?: number;
-  parentCollectionId?: number;
 }
 

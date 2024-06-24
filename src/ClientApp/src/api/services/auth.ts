@@ -19,7 +19,7 @@ import { API_BASE_URL_AUTH } from "shared/config";
 //   });
 // }
 
-export const useGetUserAccountByIdPFetchQuery = async (apiClient: TApi,identityProviderId: string, skipCache = false) => {
+export const getUserAccountByIdPFetchQuery = async (apiClient: TApi,identityProviderId: string, skipCache = false) => {
   if(skipCache) { 	queryClient.invalidateQueries({ queryKey: ["userAccount"] }); }
 
   return await queryClient.fetchQuery({

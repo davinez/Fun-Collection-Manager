@@ -99,6 +99,75 @@ const GroupsNavItems = ({
 	);
 };
 
+type TUpperSectionProps = {
+	handleOnClickLogOut: () => void;
+	userDisplayName: string | undefined;
+};
+
+const UpperSection = ({
+	handleOnClickLogOut,
+	userDisplayName,
+}: TUpperSectionProps): React.ReactElement => {
+	// Return handling
+	return (
+		<Flex w="100%" pl="3" py="2" alignItems="center">
+			<Menu>
+				<MenuButton
+					as={Button}
+					rounded="base"
+					variant="ghost"
+					iconSpacing="2px"
+					leftIcon={<Icon as={AiOutlineUser} />}
+					rightIcon={<Icon as={AiFillCaretDown} />}
+					color="brandPrimary.100"
+					_hover={{
+						bg: "brandPrimary.950",
+					}}
+					_active={{
+						bg: "brandPrimary.950",
+					}}
+					p="1"
+				>
+					<Text textStyle="primary" ml="2">
+						{userDisplayName}
+					</Text>
+				</MenuButton>
+				<MenuList
+					bg="brandPrimary.800"
+					color="brandPrimary.100"
+					border="1px solid"
+					borderColor="brandPrimary.900"
+					zIndex="sticky"
+				>
+					<MenuItem
+						bg="brandPrimary.800"
+						_hover={{
+							bg: "brandSecondary.800",
+						}}
+						h="100%"
+						icon={<Icon as={AiFillSetting} />}
+						textStyle="primary"
+					>
+						Settings
+					</MenuItem>
+					<MenuDivider />
+					<MenuItem
+						bg="brandPrimary.800"
+						_hover={{
+							bg: "brandSecondary.800",
+						}}
+						icon={<Icon as={AiOutlineLogout} />}
+						textStyle="primary"
+						onClick={handleOnClickLogOut}
+					>
+						Logout
+					</MenuItem>
+				</MenuList>
+			</Menu>
+		</Flex>
+	);
+};
+
 type TManagerSidebarProps = {};
 
 export const ManagerSidebar =
@@ -153,71 +222,42 @@ export const ManagerSidebar =
 
 		// Return handling
 
-		if (isPendingGetCollectionGroups) return <LoadingBox />;
+		if (isPendingGetCollectionGroups) {
+			return (
+				<>
+					<GroupModal isOpen={isOpenGroupModal} onClose={onCloseGroupModal} />
+					<UpperSection
+						handleOnClickLogOut={handleOnClickLogOut}
+						userDisplayName={authSlice.userDisplayName}
+					/>
+					<LoadingBox />
+				</>
+			);
+		}
 
-		if (isErrorGetCollectionGroups) return <ErrorBox />;
+		if (isErrorGetCollectionGroups) {
+			return (
+				<>
+					<GroupModal isOpen={isOpenGroupModal} onClose={onCloseGroupModal} />
+					<UpperSection
+						handleOnClickLogOut={handleOnClickLogOut}
+						userDisplayName={authSlice.userDisplayName}
+					/>
+					<ErrorBox />
+				</>
+			);
+		}
 
 		return (
 			<>
-				{getCollectionGroupsResponse && (
-					<>
-						<GroupModal isOpen={isOpenGroupModal} onClose={onCloseGroupModal} />
-						<Flex w="100%" pl="3" py="2" alignItems="center">
-							<Menu>
-								<MenuButton
-									as={Button}
-									rounded="base"
-									variant="ghost"
-									iconSpacing="2px"
-									leftIcon={<Icon as={AiOutlineUser} />}
-									rightIcon={<Icon as={AiFillCaretDown} />}
-									color="brandPrimary.100"
-									_hover={{
-										bg: "brandPrimary.950",
-									}}
-									_active={{
-										bg: "brandPrimary.950",
-									}}
-									p="1"
-								>
-									<Text textStyle="primary" ml="2">
-										{authSlice.userDisplayName}
-									</Text>
-								</MenuButton>
-								<MenuList
-									bg="brandPrimary.800"
-									color="brandPrimary.100"
-									border="1px solid"
-									borderColor="brandPrimary.900"
-									zIndex="sticky"
-								>
-									<MenuItem
-										bg="brandPrimary.800"
-										_hover={{
-											bg: "brandSecondary.800",
-										}}
-										h="100%"
-										icon={<Icon as={AiFillSetting} />}
-										textStyle="primary"
-									>
-										Settings
-									</MenuItem>
-									<MenuDivider />
-									<MenuItem
-										bg="brandPrimary.800"
-										_hover={{
-											bg: "brandSecondary.800",
-										}}
-										icon={<Icon as={AiOutlineLogout} />}
-										textStyle="primary"
-										onClick={handleOnClickLogOut}
-									>
-										Logout
-									</MenuItem>
-								</MenuList>
-							</Menu>
-						</Flex>
-						<Flex direction="column" as="nav" aria-label="Main Navigation">
+				<GroupModal isOpen={isOpenGroupModal} onClose={onCloseGroupModal} />
+				<UpperSection
+					handleOnClickLogOut={handleOnClickLogOut}
+					userDisplayName={authSlice.userDisplayName}
+				/>
+				<Flex direction="column" as="nav" aria-label="Main Navigation">
+					{getCollectionGroupsResponse && (
+						<>
 							<GeneralNavItem
 								py={2}
 								px={3}
@@ -236,9 +276,9 @@ export const ManagerSidebar =
 								data={getCollectionGroupsResponse}
 								onOpenGroupModal={onOpenGroupModal}
 							/>
-						</Flex>
-					</>
-				)}
+						</>
+					)}
+				</Flex>
 			</>
 		);
 	};

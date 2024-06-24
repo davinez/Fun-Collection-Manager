@@ -328,7 +328,8 @@ export const GroupNavItem = ({
 									bg: "brandPrimary.950",
 								}}
 								pl={collection.childCollections.length > 0 ? 0 : 3}
-								collection={collection}
+								groupId={group.id}
+								collection={collection}			
 								nodePadding={3}
 								nodesState={nodesData.nodesState}
 								setNodesState={nodesData.setNodesState}

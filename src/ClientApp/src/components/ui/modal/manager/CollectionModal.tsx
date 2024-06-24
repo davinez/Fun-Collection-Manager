@@ -23,7 +23,7 @@ type TCollectionModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
 	modalAction: CollectionModalActionEnum;
-	executeDeleteMutation?: () => void;
+	handleDeleteMutation?: () => void;
 	collectionId: number;
 	collectionIcon: string;
 };
@@ -32,7 +32,7 @@ export const CollectionModal = ({
 	isOpen,
 	onClose,
 	modalAction,
-	executeDeleteMutation,
+	handleDeleteMutation,
 	collectionId,
 	collectionIcon
 }: TCollectionModalProps) => {
@@ -84,7 +84,7 @@ export const CollectionModal = ({
 								}}
 								fontSize={textStylesTheme.textStyles.primary.fontSize}
 								mr={3}
-								onClick={executeDeleteMutation}
+								onClick={handleDeleteMutation}
 							>
 								Delete
 							</Button>

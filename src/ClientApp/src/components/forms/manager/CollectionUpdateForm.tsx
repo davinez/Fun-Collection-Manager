@@ -15,7 +15,7 @@ import { InputField } from "components/forms";
 // Assets
 
 // Hooks
-import { useUpdateCollectionMutation } from "@/api/services/manager";
+import { usePatchCollectionMutation } from "@/api/services/manager";
 import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
 import { defaultHandlerApiError } from "@/api/useApiClient";
 // Types
@@ -51,7 +51,7 @@ export const CollectionUpdateForm = ({
 		reset,
 		formState: { errors, isValid },
 	} = methods;
-	const updateCollectionMutation = useUpdateCollectionMutation();
+	const patchCollectionMutation = usePatchCollectionMutation();
 	const toast = useToast();
 	const refForm = useRef<HTMLFormElement>(null);
 	const handleOnInputRefChange = useCallback((node: HTMLInputElement) => {
@@ -76,7 +76,7 @@ export const CollectionUpdateForm = ({
 	const onSubmit: SubmitHandler<TCollectionUpdateFormPayload> = (
 		data
 	): void => {
-		updateCollectionMutation.mutate(
+		patchCollectionMutation.mutate(
 			{
 				collectionId: collection.id,
 				payload: data,
@@ -136,9 +136,9 @@ export const CollectionUpdateForm = ({
 							bg: "brandPrimary.800",
 						}}
 						type="submit"
-						isDisabled={!isValid || updateCollectionMutation.isPending}
+						isDisabled={!isValid || patchCollectionMutation.isPending}
 					>
-						{updateCollectionMutation.isPending ? (
+						{patchCollectionMutation.isPending ? (
 							<Spinner h="100%" w="100%" boxSize="5" color="brandPrimary.100" />
 						) : (
 							<Icon

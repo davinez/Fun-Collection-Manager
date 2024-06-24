@@ -16,11 +16,11 @@ import type {
   TDeleteCollectionPayload,
   TCollectionUpdateIconFormPayload,
   TGetBookmarksParams,
-  TAddCollectionMutationParams
+  TCollectionAddExtrasPayload
 } from "@/shared/types/api/manager.types";
 import type { TApiResponse } from "@/shared/types/api/api-responses.types";
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { useApiClient } from "@/api/useApiClient";
+import { useApiClient, type TApi } from "@/api/useApiClient";
 import queryClient from "@/api/query-client";
 import { API_BASE_URL_MANAGER } from "shared/config";
 
@@ -61,7 +61,7 @@ export const useGetGroupByIdQuery = (id: number) => {
   return useQuery({
     queryKey: ["group", id],
     queryFn: async () => {
-      const response = await apiClient.get<TApiResponse<TGroupInfo>>(`/collectiongroups/${id}`);
+      const response = await apiClient.get<TApiResponse<TGroupInfo>>(`/collection-groups/${id}`);
       return response.data.data
     },
   });
@@ -81,18 +81,20 @@ export const useGetGroupByIdFetchQuery = async (id: number) => {
   return await queryClient.fetchQuery({
     queryKey: ["group", id],
     queryFn: async () => {
-      const response = await apiClient.get<TApiResponse<TGroupInfo>>(`/collectiongroups/${id}`);
+      const response = await apiClient.get<TApiResponse<TGroupInfo>>(`/collection-groups/${id}`);
       return response.data.data
     }
   });
 }
 
-export const useGetCollectionByIdQueryFetchQuery = async (id: number) => {
-  const apiClient = useApiClient(API_BASE_URL_MANAGER);
+/**
+* Without "use" prefix to not being mark as hook, a hook can only be call inside function component, not a handle function for example
+*/
+export const getCollectionByIdQueryFetchQuery = async (apiClient: TApi, id: number) => {
   return await queryClient.fetchQuery({
     queryKey: ["collection", id],
     queryFn: async () => {
-      const response = await apiClient.get<TApiResponse<TCollectionInfo>>(`/manager/collections/${id}`);
+      const response = await apiClient.get<TApiResponse<TCollectionInfo>>(`/collections/${id}`);
       return response.data.data
     }
   });
@@ -234,16 +236,16 @@ export const useDeleteBookmarkMutation = () => {
   });
 }
 
-type TuseUpdateCollectionMutationVariables = {
+type TusePatchCollectionMutationVariables = {
   collectionId: number;
   payload: TCollectionUpdateFormPayload;
 }
 
-export const useUpdateCollectionMutation = () => {
+export const usePatchCollectionMutation = () => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
-    mutationFn: async ({ collectionId, payload }: TuseUpdateCollectionMutationVariables) => {
-      const response = await apiClient.patch<TApiResponse>(`/manager/collections/${collectionId}`,
+    mutationFn: async ({ collectionId, payload }: TusePatchCollectionMutationVariables) => {
+      const response = await apiClient.patch<TApiResponse>(`/collections/${collectionId}`,
         payload
       );
       return response.data;
@@ -260,7 +262,7 @@ export const useUpdateCollectionIconMutation = () => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async ({ collectionId, payload }: TuseUpdateCollectionIconMutationVariables) => {
-      const response = await apiClient.patch<TApiResponse>(`/manager/collections/${collectionId}/icon`,
+      const response = await apiClient.patch<TApiResponse>(`/collections/${collectionId}/icon`,
         payload
       );
       return response.data;
@@ -268,22 +270,11 @@ export const useUpdateCollectionIconMutation = () => {
   });
 }
 
-type TuseAddCollectionMutationVariables = {
-  params: TAddCollectionMutationParams;
-  payload: TCollectionAddFormPayload;
-}
-
 export const useAddCollectionMutation = () => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
-    mutationFn: async ({ params, payload }: TuseAddCollectionMutationVariables) => {
-      const response = await apiClient.post<TApiResponse>('/manager/collections',
-        payload,
-        { // Conditionally add object properties
-          ...(params.groupId) && { group_id: params.groupId },
-          ...(params.parentCollectionId) && { parent_collection_id: params.parentCollectionId }
-        }
-      );
+    mutationFn: async (payload: TCollectionAddFormPayload & TCollectionAddExtrasPayload) => {
+      const response = await apiClient.post<TApiResponse>('/collections', payload);
       return response.data;
     },
   });
@@ -293,7 +284,7 @@ export const useDeleteCollectionMutation = () => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async (payload: TDeleteCollectionPayload) => {
-      const response = await apiClient.delete<TApiResponse>(`/manager/collections/${payload.collectionId}`);
+      const response = await apiClient.delete<TApiResponse>(`/collections/${payload.collectionId}`);
       return response.data;
     },
   });

@@ -25,7 +25,7 @@ import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/useApiClient";
 import {
 	useCreateUserAccountMutation,
-	useGetUserAccountByIdPFetchQuery,
+	getUserAccountByIdPFetchQuery,
 } from "@/api/services/auth";
 import { useMsal } from "@azure/msal-react";
 import { InteractionStatus } from "@azure/msal-browser";
@@ -77,7 +77,7 @@ export default function HomeNavbar(): React.ReactElement {
 
 			authSlice.setAccessToken(managerAPIToken.accessToken);
 
-			const userAccount = await useGetUserAccountByIdPFetchQuery(
+			const userAccount = await getUserAccountByIdPFetchQuery(
 				apiClient,
 				loginResponse.account.homeAccountId,
 				true
