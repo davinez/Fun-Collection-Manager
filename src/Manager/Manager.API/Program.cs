@@ -23,7 +23,7 @@ if (app.Environment.IsDevelopment())
     await app.InitialiseDatabaseAsync();
     app.UseDefaultOpenApi();
 
-    IdentityModelEventSource.ShowPII = true;
+    IdentityModelEventSource.ShowPII = false;
 }
 else
 {

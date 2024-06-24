@@ -7,6 +7,7 @@ public class GetCollectionGroupByIdQueryValidator : AbstractValidator<GetCollect
     public GetCollectionGroupByIdQueryValidator()
     {
         RuleFor(v => v.Id)
-            .NotEmpty().WithMessage("Id is required.");
+            .NotEmpty()
+            .WithMessage("Id is required.");
     }
 }
