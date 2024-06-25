@@ -3,10 +3,13 @@ using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
 using Manager.Application.CollectionGroups.Commands.CreateCollectionGroup;
 using Manager.Application.CollectionGroups.Queries.GetCollectionGroupById;
+using Manager.Application.Common.Exceptions;
 using Manager.Application.Common.Models;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web;
 
 namespace Manager.API.Endpoints;
 
@@ -31,15 +34,15 @@ public class CollectionGroups : EndpointGroupBase
         };
     }
 
-    public async Task<int> CreateCollectionGroup(
-    // [FromHeader(Name = "x-requestid")] Guid requestId,
-    // [FromRoute] int groupId, /car/{id}/model
-    // [AsParameters] UserSearchQuery query https://github.com/dotnet/aspnetcore/issues/42438
-    [FromServices] ISender sender,
-    [FromBody] CreateCollectionGroupCommand command
-    )
+    public async Task<IResult> CreateCollectionGroup(
+        [FromServices] ISender sender,
+        [FromServices] IHttpContextAccessor contextAccessor,
+        [FromBody] CreateCollectionGroupCommand command
+        )
     {
-        return await sender.Send(command);
+        await sender.Send(command);
+
+        return Results.NoContent();
     }
 
 }

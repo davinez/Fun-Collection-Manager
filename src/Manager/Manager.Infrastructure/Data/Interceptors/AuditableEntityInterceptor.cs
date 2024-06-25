@@ -45,6 +45,8 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.Created = utcNow;
+
+                    return;
                 }
 
                 entry.Entity.LastModified = utcNow;

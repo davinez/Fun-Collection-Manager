@@ -51,8 +51,8 @@ public class CustomExceptionHandler : IExceptionHandler
 
         var errors = exception.Errors.Select(e => new ApiError()
         {
-            Domain = exception.Source,
-            Message = exception.Message,
+            Domain = e.Key,
+            Message = string.Join("|", e.Value)
         }).ToList();
 
         await httpContext.Response.WriteAsJsonAsync(new ApiErrorResponse()

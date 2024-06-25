@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
+using Manager.API.Services;
+using Manager.Application.Common.Interfaces.Services;
 using Manager.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
@@ -109,6 +111,8 @@ public static class DependencyInjection
                              context.User.HasClaim(ClaimTypes.Role, "Administrator") ||
                              context.User.HasClaim(ClaimTypes.Role, "General.Level1")));
         });
+
+        services.AddScoped<IUser, CurrentUser>();
 
         return services;
     }

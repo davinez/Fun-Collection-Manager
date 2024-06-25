@@ -6,7 +6,7 @@ namespace Manager.Domain.Entities;
 
 public class UserAccount : BaseAuditableEntity
 {
-    public string? IdentityProviderId { get; set; }
+    public required string IdentityProviderId { get; set; }
     public string? UserName { get; set; }
     public string? DisplayName { get; set; }
     public string? GivenName { get; set; }

@@ -54,8 +54,7 @@ For example, to add a new migration from the root folder:
  *Note, we can use flag --force but it will not be sync or know about the state of the database
 
 ``` Bash
-dotnet ef migrations remove --project src\Manager\Manager.Infrastructure  --startup-project src\Manager\Manager.API
---connection "Server=127.0.0.1;Port=5432;Database=ManagerDB;User Id=xxxx;Password=xxxx"
+dotnet ef migrations remove --project src\Manager\Manager.Infrastructure --startup-project src\Manager\Manager.API --force"
  ```
 
 ``` PM

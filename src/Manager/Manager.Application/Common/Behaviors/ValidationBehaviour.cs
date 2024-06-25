@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
+using ValidationException = Manager.Application.Common.Exceptions.ValidationException;
 
 namespace Manager.Application.Common.Behaviors;
 

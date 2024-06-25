@@ -6,9 +6,9 @@ public class CreateCollectionGroupCommandValidator : AbstractValidator<CreateCol
 {
     public CreateCollectionGroupCommandValidator()
     {
-        RuleFor(v => v.Name)
+        RuleFor(v => v.GroupName)
             .MaximumLength(100)
             .NotEmpty()
-            .WithMessage("Name is required."); 
+            .WithMessage("GroupName is required."); 
     }
 }

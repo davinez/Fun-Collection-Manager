@@ -25,6 +25,9 @@ public class Accounts : EndpointGroupBase
     /// Route GET /accounts
     /// </summary>
     public async Task<ApiResponse<UserAccountDto>> GetUserAccountByIdP(
+       // [FromHeader(Name = "x-requestid")] Guid requestId,
+       // [FromRoute] int groupId, /car/{id}/model
+       // [AsParameters] UserSearchQuery query https://github.com/dotnet/aspnetcore/issues/42438
        [FromServices] ISender sender,
        [FromQuery(Name = "identity_provider_id")] string identityProviderId
        )

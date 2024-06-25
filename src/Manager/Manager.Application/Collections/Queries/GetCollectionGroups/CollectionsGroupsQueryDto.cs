@@ -6,7 +6,7 @@ public class CollectionsGroupsQueryDto
     public string? CollectionName { get; set; }
     public string? CollectionIcon { get; set; }
     public int ParentNodeId { get; set; }
-    public int CollectionGroupId { get; set; }
-    public string? GroupName { get; set; }
+    public int GroupId { get; set; }
+    public required string GroupName { get; set; }
     public int BookmarksCounter { get; set; }
 }

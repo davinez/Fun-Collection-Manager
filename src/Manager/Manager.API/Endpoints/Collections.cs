@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
 using Manager.Application.Collections.Commands.CreateCollection;
@@ -28,12 +27,7 @@ public class Collections : EndpointGroupBase
             .MapDelete(DeleteCollection, "{id}");
     }
 
-    public async Task<ApiResponse<CollectionGroupsDto>> GetCollectionGroups(
-        // [FromHeader(Name = "x-requestid")] Guid requestId,
-        // [FromRoute] int groupId, /car/{id}/model
-        // [AsParameters] UserSearchQuery query https://github.com/dotnet/aspnetcore/issues/42438
-        [FromServices] ISender sender
-        )
+    public async Task<ApiResponse<CollectionGroupsDto>> GetCollectionGroups([FromServices] ISender sender)
     {
         var data = await sender.Send(new GetCollectionGroupsQuery());
 
@@ -56,6 +50,7 @@ public class Collections : EndpointGroupBase
     public async Task<IResult> CreateCollection([FromServices] ISender sender, [FromBody] CreateCollectionCommand command)
     {
         await sender.Send(command);
+
         return Results.NoContent();
     }
 
@@ -70,7 +65,7 @@ public class Collections : EndpointGroupBase
 
     public async Task<IResult> DeleteCollection([FromServices] ISender sender, int id)
     {
-        await sender.Send(new DeleteCollectionCommand() { CollectionId = id});
+        await sender.Send(new DeleteCollectionCommand() { CollectionId = id });
 
         return Results.NoContent();
     }

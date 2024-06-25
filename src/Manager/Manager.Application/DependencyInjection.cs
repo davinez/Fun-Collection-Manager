@@ -1,10 +1,9 @@
-﻿using FluentValidation;
-using System.Reflection;
+﻿using System.Reflection;
+using FluentValidation;
+using Manager.Application.Common.Behaviors;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MediatR;
-using Manager.Application.Common.Behaviors;
-using Manager.Application.Common.Interfaces.Services;
 
 namespace Manager.Application;
 
