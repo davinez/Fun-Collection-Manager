@@ -308,18 +308,21 @@ export const GroupNavItem = ({
 					</Menu>
 				)}
 			</Flex>
-			{group.collections.length > 0 && ( // Rendering collections
-				<Collapse in={isOpen} animateOpacity>
-					{
-						// Show form if click on create collection
-						isShowingInput && (
-							<CollectionAddForm
-								groupId={group.id}
-								setIsShowingInput={setIsShowingInput}
-							/>
-						)
-					}
-					{group.collections.map((collection) => {
+
+			{/* Rendering collections */}
+			<Collapse in={isOpen} animateOpacity>
+				{
+					// Show form if click on create collection
+					isShowingInput && (
+						<CollectionAddForm
+							groupId={group.id}
+							setIsShowingInput={setIsShowingInput}
+						/>
+					)
+				}
+				{group.collections &&
+					group.collections.length > 0 &&
+					group.collections.map((collection) => {
 						return (
 							<RecursiveNavItem
 								key={`CollectionNavItem_${collection.id}`}
@@ -329,7 +332,7 @@ export const GroupNavItem = ({
 								}}
 								pl={collection.childCollections.length > 0 ? 0 : 3}
 								groupId={group.id}
-								collection={collection}			
+								collection={collection}
 								nodePadding={3}
 								nodesState={nodesData.nodesState}
 								setNodesState={nodesData.setNodesState}
@@ -338,8 +341,7 @@ export const GroupNavItem = ({
 							</RecursiveNavItem>
 						);
 					})}
-				</Collapse>
-			)}
+			</Collapse>
 		</>
 	);
 };

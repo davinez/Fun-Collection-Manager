@@ -180,7 +180,7 @@ export const useAddGroupMutation = () => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async (payload: TGroupAddPayload) => {
-      const response = await apiClient.post<TApiResponse>(`/manager/groups`, payload);
+      const response = await apiClient.post<TApiResponse>("/collection-groups", payload);
       return response.data;
     },
   });

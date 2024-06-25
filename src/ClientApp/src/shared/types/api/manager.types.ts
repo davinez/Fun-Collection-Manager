@@ -20,7 +20,7 @@ export type TGetCollectionGroups = {
 export type TCollectionGroup = {
   id: number;
   name: string;
-  collections: TCollection[];
+  collections: TCollection[] | undefined;
 }
 
 export type TCollection = {

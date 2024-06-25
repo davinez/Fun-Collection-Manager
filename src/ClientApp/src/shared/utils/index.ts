@@ -32,10 +32,9 @@ export const getUrlHostname = (value: string) => {
 export const renderNodesState = (
   groups: TCollectionGroup[]
 ): TDynamicCollapseState[] => {
-  // Concat in one array the collections from all groups
-  const initialNodes = groups.flatMap((group) => {
-    return group.collections;
-  });
+  const initialNodes: TCollection[] = groups.flatMap((group) => {
+   return group.collections ? (group.collections as TCollection[]) : []
+});
 
   // Get all ids from root to nested collections
   const getIds = (nodes: TCollection[]): number[] =>
