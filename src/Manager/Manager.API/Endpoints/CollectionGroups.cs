@@ -2,14 +2,14 @@
 using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
 using Manager.Application.CollectionGroups.Commands.CreateCollectionGroup;
+using Manager.Application.CollectionGroups.Commands.DeleteCollectionGroup;
+using Manager.Application.CollectionGroups.Commands.UpdateCollectionGroup;
 using Manager.Application.CollectionGroups.Queries.GetCollectionGroupById;
-using Manager.Application.Common.Exceptions;
 using Manager.Application.Common.Models;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Web;
 
 namespace Manager.API.Endpoints;
 
@@ -21,7 +21,9 @@ public class CollectionGroups : EndpointGroupBase
         app.MapGroup(this)
             .RequireAuthorization("All")
             .MapGet(GetCollectionGroupById, "{id}")
-            .MapPost(CreateCollectionGroup);
+            .MapPost(CreateCollectionGroup)
+            .MapPatch(PatchCollectionGroup, "{id}")
+            .MapDelete(DeleteCollectionGroup, "{id}");
     }
 
     public async Task<ApiResponse<CollectionGroupDto>> GetCollectionGroupById([FromServices] ISender sender, int id)
@@ -41,6 +43,22 @@ public class CollectionGroups : EndpointGroupBase
         )
     {
         await sender.Send(command);
+
+        return Results.NoContent();
+    }
+
+    public async Task<IResult> PatchCollectionGroup([FromServices] ISender sender, int id, [FromBody] PatchCollectionGroupCommand command)
+    {
+        command.GroupId = id;
+
+        await sender.Send(command);
+
+        return Results.NoContent();
+    }
+
+    public async Task<IResult> DeleteCollectionGroup([FromServices] ISender sender, int id)
+    {
+        await sender.Send(new DeleteCollectionGroupCommand() { GroupId = id });
 
         return Results.NoContent();
     }

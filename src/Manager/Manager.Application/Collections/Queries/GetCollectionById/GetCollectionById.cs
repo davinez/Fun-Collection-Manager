@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Manager.Application.Common.Interfaces;
+using Manager.Application.Common.Interfaces.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,17 +15,19 @@ public record GetCollectionByIdQuery : IRequest<CollectionDto>
 
 public class GetCollectionByIdQueryHandler : IRequestHandler<GetCollectionByIdQuery, CollectionDto>
 {
+    private readonly IUser _user;
     private readonly IManagerContext _context;
 
-    public GetCollectionByIdQueryHandler(IManagerContext context)
+    public GetCollectionByIdQueryHandler(IUser user, IManagerContext context)
     {
+        _user = user;
         _context = context;
     }
 
     public async Task<CollectionDto> Handle(GetCollectionByIdQuery request, CancellationToken cancellationToken)
     {
         CollectionDto searchedCollection = await _context.Collections
-            .Where(c => c.Id == request.Id)
+            .Where(c => c.Id == request.Id && c.CollectionGroup.UserAccount.IdentityProviderId == _user.HomeAccountId)
             // Subquery
             .Select(c => new CollectionDto()
             {

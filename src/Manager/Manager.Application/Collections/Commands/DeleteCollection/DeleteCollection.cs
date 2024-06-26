@@ -1,36 +1,42 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Manager.Application.Common.Interfaces;
+using Manager.Application.Common.Interfaces.Services;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Manager.Application.Collections.Commands.DeleteCollection;
 
-public record DeleteCollectionCommand : IRequest<Unit>
+public record DeleteCollectionCommand : IRequest
 {
     public int CollectionId { get; init; }
 }
 
-public class DeleteCollectionCommandHandler : IRequestHandler<DeleteCollectionCommand, Unit>
+public class DeleteCollectionCommandHandler : IRequestHandler<DeleteCollectionCommand>
 {
+    private readonly IUser _user;
     private readonly IManagerContext _context;
 
-    public DeleteCollectionCommandHandler(IManagerContext context)
+    public DeleteCollectionCommandHandler(IUser user, IManagerContext context)
     {
+        _user = user;
         _context = context;
     }
 
-    public async Task<Unit> Handle(DeleteCollectionCommand request, CancellationToken cancellationToken)
+    public async Task Handle(DeleteCollectionCommand request, CancellationToken cancellationToken)
     {
-        var collection = await _context.Collections.FindAsync(request.CollectionId, cancellationToken);
+        var collection = await _context.Collections
+            .Where(c => c.Id == request.CollectionId && 
+                        c.CollectionGroup.UserAccount.IdentityProviderId == _user.HomeAccountId)        
+            .FirstOrDefaultAsync(cancellationToken);
 
         Guard.Against.NotFound(request.CollectionId, collection);
 
         _context.Collections.Remove(collection);
 
         await _context.SaveChangesAsync(cancellationToken);
-
-        return Unit.Value;
     }
 }
 

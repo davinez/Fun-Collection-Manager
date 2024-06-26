@@ -169,3 +169,66 @@ SELECT pg_catalog.setval(pg_get_serial_sequence('manager.collection_group', 'id'
 -- Further optimization??
 
 
+	WITH RECURSIVE tree (
+        collection_id, 
+        collection_name, 
+        collection_icon, 
+        parent_node_id, 
+        group_id, 
+        group_name
+        ) AS
+        (
+          SELECT 
+          c.id as collection_id, 
+          c.name as collection_name, 
+          c.icon as collection_icon, 
+          c.parent_node_id, 
+          cg.id as group_id,
+          cg.name as group_name
+            FROM manager.collection_group cg   
+            LEFT JOIN manager.collection c ON c.collection_group_id = cg.id
+            WHERE c.parent_node_id IS NULL -- the tree node
+            AND cg.user_account_id = 4
+          UNION ALL
+          SELECT 
+          c2.id as collection_id, 
+          c2.name as collection_name, 
+          c2.icon as collection_icon, 
+          c2.parent_node_id, 
+          cg.id as group_id, 
+          cg.name as group_name
+            FROM manager.collection_group cg
+            INNER JOIN tree t ON cg.id = t.group_id
+            JOIN manager.collection c2 ON t.collection_id = c2.parent_node_id
+        ), bookmarks_info (
+        collection_id,
+        bookmarks_counter
+        ) 
+        AS (
+
+        SELECT 
+        t.collection_id,
+        COUNT(b.id) as bookmarks_counter
+        FROM manager.bookmark b
+        LEFT JOIN tree t ON t.collection_id = b.collection_id
+        GROUP BY t.collection_id
+
+        )
+        SELECT 
+        t.collection_id as "CollectionId",
+        t.collection_name as "CollectionName",
+        t.collection_icon as "CollectionIcon",
+        t.parent_node_id as "ParentNodeId",
+        t.group_id as "GroupId",
+        t.group_name as "GroupName",
+        CASE
+          WHEN b.bookmarks_counter > 0 THEN bookmarks_counter
+          ELSE 0
+        END 
+          AS "BookmarksCounter"
+        FROM tree t
+        LEFT JOIN bookmarks_info b ON b.collection_id = t.collection_id;
+		--ORDER BY t.collection_id; 
+
+
+      
