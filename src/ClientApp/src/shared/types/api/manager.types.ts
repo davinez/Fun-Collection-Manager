@@ -69,14 +69,13 @@ type TBookmarkDetail = {
   createdAt: string;
 }
 
-export type TGetCollectionsAllIcons = {
-  items: IconsGroupCollections[]
+export type TGetAllIcons = {
+  groups: IconsGroups[]
 }
 
-type IconsGroupCollections = {
+type IconsGroups = {
   title: string;
   icons: {
-    name: string;
     url: string;
   }[];
 }
@@ -146,7 +145,6 @@ export const bookmarkUpdateFormPayload = z.object({
     .min(2, { message: "Description is required" }),
   websiteURL: z
     .string()
-    .min(11, { message: "URL address is required" })
     .url({ message: "URL address format is required" })
 });
 export type TBookmarkUpdatePayload = z.infer<typeof bookmarkUpdateFormPayload>;
@@ -187,6 +185,8 @@ export const collectionUpdateFormPayload = z.object({
 export type TCollectionUpdateFormPayload = z.infer<typeof collectionUpdateFormPayload>;
 
 export const collectionUpdateIconFormPayload = z.object({
+  isDefaultIcon: z
+    .boolean({ message: "isDefaultIcon is required" }),
   iconURL: z
     .string()
     .trim()

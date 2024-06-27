@@ -12,7 +12,7 @@ import type {
   TCollectionInfo,
   TGetAllBookmarks,
   TGetBookmarksByCollection,
-  TGetCollectionsAllIcons,
+  TGetAllIcons,
   TDeleteCollectionPayload,
   TCollectionUpdateIconFormPayload,
   TGetBookmarksParams,
@@ -87,8 +87,15 @@ export const useGetGroupByIdFetchQuery = async (id: number) => {
   });
 }
 
+
 /**
-* Without "use" prefix to not being mark as hook, a hook can only be call inside function component, not a handle function for example
+* Calls the API with queryClient.fetchQuery, this is an imperative way to fetch data. 
+* It will either resolve with the data or throw with the error. 
+* Imperative data fetching means you write code to explicitly request and handle data based on your query. And in the case of
+* useQuery hook difference, it will try to fetch immediately data without having access to fetch state like query.isLoading, query.isFetching, etc
+* https://tanstack.com/query/latest/docs/reference/QueryClient/#queryclientfetchquery
+* @param id collection id
+* @returns returns the collection 
 */
 export const getCollectionByIdQueryFetchQuery = async (apiClient: TApi, id: number) => {
   return await queryClient.fetchQuery({
@@ -146,12 +153,12 @@ export const useGetBookmarksByCollectionQuery = ({ page, pageLimit, filterType, 
   });
 }
 
-export const useGetCollectionsAllIconsQuery = () => {
+export const useGetAllIconsQuery = () => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useQuery({
-    queryKey: ["collections-all-icons"],
+    queryKey: ["all-icons"],
     queryFn: async () => {
-      const response = await apiClient.get<TApiResponse<TGetCollectionsAllIcons>>("/manager/collections/icons");
+      const response = await apiClient.get<TApiResponse<TGetAllIcons>>("/icons");
       return response.data.data
     }
   });
@@ -195,7 +202,7 @@ export const useUpdateGroupMutation = () => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async ({ groupId, payload }: TuseUpdateGroupMutationVariables) => {
-      const response = await apiClient.patch<TApiResponse>(`/manager/groups/${groupId}`, payload);
+      const response = await apiClient.patch<TApiResponse>(`/collection-groups/${groupId}`, payload);
       return response.data;
     },
   });
@@ -205,7 +212,7 @@ export const useDeleteGroupMutation = () => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async (payload: TDeleteGroupPayload) => {
-      const response = await apiClient.delete<TApiResponse>(`/manager/groups/${payload.groupId}`);
+      const response = await apiClient.delete<TApiResponse>(`/collection-groups/${payload.groupId}`);
       return response.data;
     },
   });

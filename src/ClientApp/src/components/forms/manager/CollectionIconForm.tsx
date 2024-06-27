@@ -22,7 +22,7 @@ import {
 // General
 import {
 	useUpdateCollectionIconMutation,
-	useGetCollectionsAllIconsQuery,
+	useGetAllIconsQuery,
 } from "@/api/services/manager";
 import { defaultHandlerApiError } from "@/api/useApiClient";
 import queryClient from "@/api/query-client";
@@ -38,7 +38,7 @@ type TCollectionIconFormProps = {
 export const CollectionIconForm = ({
 	collectionId,
 	collectionIcon,
-	onClose
+	onClose,
 }: TCollectionIconFormProps) => {
 	// Hooks
 	const {
@@ -46,7 +46,7 @@ export const CollectionIconForm = ({
 		isError: isErrorGetAllIcons,
 		error: errorGetAllIcons,
 		data: getGetAllIconsResponse,
-	} = useGetCollectionsAllIconsQuery();
+	} = useGetAllIconsQuery();
 	const updateCollectionCoverMutation = useUpdateCollectionIconMutation();
 	const toast = useToast();
 
@@ -77,6 +77,7 @@ export const CollectionIconForm = ({
 			});
 		} else {
 			const payload: TCollectionUpdateIconFormPayload = {
+				isDefaultIcon: true,
 				iconURL: DEFAULT_ICON,
 			};
 
@@ -121,6 +122,7 @@ export const CollectionIconForm = ({
 							isClosable: true,
 						});
 						defaultHandlerApiError(error);
+						onClose();
 					},
 				}
 			);
@@ -129,6 +131,7 @@ export const CollectionIconForm = ({
 
 	const handleOnClickSelectedIcon = (url: string) => {
 		const payload: TCollectionUpdateIconFormPayload = {
+			isDefaultIcon: false,
 			iconURL: url,
 		};
 
@@ -161,6 +164,7 @@ export const CollectionIconForm = ({
 						duration: 5000,
 						isClosable: true,
 					});
+					onClose();
 				},
 				onError: (error, variables, context) => {
 					toast({
@@ -171,6 +175,7 @@ export const CollectionIconForm = ({
 						isClosable: true,
 					});
 					defaultHandlerApiError(error);
+					onClose();
 				},
 			}
 		);
@@ -215,13 +220,13 @@ export const CollectionIconForm = ({
 				</Flex>
 			</Flex>
 
-			{getGetAllIconsResponse.items.map((item, index) => {
+			{getGetAllIconsResponse.groups.map((group, index) => {
 				return (
 					<Stack key={`GroupIcons_${index}`} aria-label="icons-group-container">
-						<Text>{item.title}</Text>
+						<Text mb={4}>{group.title}</Text>
 						<Box
 							aria-label="icons-container"
-							mb={3}
+							mb={4}
 							display="grid"
 							gridAutoRows="auto" /* make all rows the same height */
 							gridTemplateColumns="repeat(8, 1fr)"
@@ -229,12 +234,13 @@ export const CollectionIconForm = ({
 							justifyItems="center"
 							alignItems="center"
 						>
-							{item.icons.map((icon) => {
+							{group.icons.map((icon, index) => {
 								return (
 									<Box w="100%">
 										<Image
-											key={`Icon_${icon.name}`}
+											key={`Icon_${group.title + index}`}
 											borderRadius="2px"
+											boxSize="8"
 											color="brandPrimary.150"
 											objectFit="contain"
 											src={icon.url}
