@@ -1,34 +1,39 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Manager.Application.Collections.Queries.GetCollectionById;
+using Manager.Application.Common.Interfaces.Services;
 using Manager.Application.Icons.Dto;
 using MediatR;
 
 namespace Manager.Application.Icons.Queries;
 
-public class GetAllIconsQuery : IRequest<IEnumerable<IconDto>>;
+public class GetAllIconsQuery : IRequest<AllIconsDto>;
 
-
-public class GetAllIconsQueryHandler : IRequestHandler<GetAllIconsQuery, IEnumerable<IconDto>>
+public class GetAllIconsQueryHandler : IRequestHandler<GetAllIconsQuery, AllIconsDto>
 {
+    private readonly IS3StorageService _s3StorageService;
 
-    public GetAllIconsQueryHandler()
+    public GetAllIconsQueryHandler(IS3StorageService s3StorageService)
     {
-
+        _s3StorageService = s3StorageService;
     }
 
-    public async Task<IEnumerable<IconDto>> Handle(GetAllIconsQuery request, CancellationToken cancellationToken)
+    public async Task<AllIconsDto> Handle(GetAllIconsQuery request, CancellationToken cancellationToken)
     {
-        
+        IEnumerable<IconDto> allIcons = await _s3StorageService.GetAllIcons(cancellationToken);
 
-        var icons = new List<IconDto>
-                        {
-                            new() { Name = "Home" },
-                            new() { Name = "Settings" },
-                            // Add more icons here
-                        };
+        var response = new AllIconsDto()
+        {
+            Groups =
+            [
+               new IconGroupDto()
+               {
+                   Title = "Standard Icon Collection",
+                   Icons = allIcons
+               }
+            ]
+        };
 
-        return icons;
+        return response;
     }
 }

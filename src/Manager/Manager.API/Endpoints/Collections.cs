@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
+using Manager.Application.Collections.Commands.ChangeIcon;
 using Manager.Application.Collections.Commands.CreateCollection;
 using Manager.Application.Collections.Commands.DeleteCollection;
 using Manager.Application.Collections.Commands.UpdateCollection;
@@ -24,6 +25,7 @@ public class Collections : EndpointGroupBase
             .MapGet(GetCollectionById, "{id}")
             .MapPost(CreateCollection)
             .MapPatch(PatchCollection, "{id}")
+            .MapPatch(ChangeIcon, "{id}/icon")
             .MapDelete(DeleteCollection, "{id}");
     }
 
@@ -55,6 +57,15 @@ public class Collections : EndpointGroupBase
     }
 
     public async Task<IResult> PatchCollection([FromServices] ISender sender, int id, [FromBody] PatchCollectionCommand command)
+    {
+        command.CollectionId = id;
+
+        await sender.Send(command);
+
+        return Results.NoContent();
+    }
+
+    public async Task<IResult> ChangeIcon([FromServices] ISender sender, int id, [FromBody] ChangeIconCommand command)
     {
         command.CollectionId = id;
 

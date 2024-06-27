@@ -13,7 +13,7 @@ public static class WebApplicationExtensions
     {
         string? customGroupName = group.GetType().GetCustomAttributes<RouteGroupNameAttribute>(false)
                                                  .FirstOrDefault()?.Name;
-        var groupName = customGroupName ?? group.GetType().Name; // Fallback class name
+        var groupName = customGroupName ?? group.GetType().Name.ToLower(); // Fallback class name
 
         return app
             .MapGroup($"/api/{groupName}")

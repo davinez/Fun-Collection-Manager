@@ -20,11 +20,11 @@ public class Icons : EndpointGroupBase
             .MapGet(GetAllIcons);
     }
 
-    public async Task<ApiResponse<IEnumerable<IconDto>>> GetAllIcons([FromServices] ISender sender)
+    public async Task<ApiResponse<AllIconsDto>> GetAllIcons([FromServices] ISender sender)
     {
         var data = await sender.Send(new GetAllIconsQuery());
 
-        return new ApiResponse<IEnumerable<IconDto>>
+        return new ApiResponse<AllIconsDto>
         {
             Data = data
         };

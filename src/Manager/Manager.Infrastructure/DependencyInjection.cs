@@ -36,6 +36,7 @@ public static class DependencyInjection
         services.AddScoped<ApplicationDbContextInitialiser>();
 
         services.AddScoped<IMicrosoftGraphService, MicrosoftGraphService>();
+        services.AddScoped<IS3StorageService, S3StorageService>();
 
         // TODO: Is nessecary?
         services.AddAuthentication()

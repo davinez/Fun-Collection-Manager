@@ -23,7 +23,7 @@ public class S3StorageService : IS3StorageService
 
         AmazonS3Config config = new()
         {
-            ServiceURL = "https://nyc3.digitaloceanspaces.com"
+            ServiceURL = configuration["S3Storage:R2Url"]
         };
 
         _s3Client = new AmazonS3Client(accessKey, secretKey, config);
@@ -34,23 +34,19 @@ public class S3StorageService : IS3StorageService
     public async Task<IEnumerable<IconDto>> GetAllIcons(CancellationToken cancellationToken)
     {
         string bucketName = _configuration["S3Storage:IconsBucket"] ?? throw new ManagerException($"Empty config section in {nameof(S3StorageService)} icons bucket");
+        string domainURL = _configuration["S3Storage:DomainUrl"] ?? throw new ManagerException($"Empty config section in {nameof(S3StorageService)} domain url");
 
-        var listObjectsRequest = new ListObjectsRequest
+        var listObjectsRequest = new ListObjectsV2Request
         {
             BucketName = bucketName
         };
 
-        ListObjectsResponse responseClient = await _s3Client.ListObjectsAsync(listObjectsRequest, cancellationToken) ?? throw new ManagerException($"Null response in ListObjects of {nameof(S3StorageService)} for get all icons");
+        ListObjectsV2Response responseClient = await _s3Client.ListObjectsV2Async(listObjectsRequest, cancellationToken) ?? throw new ManagerException($"Null response in ListObjects of {nameof(S3StorageService)} for get all icons");
 
-        var response = responseClient.S3Objects.Select(s3Object => new IconDto() { Name = s3Object.Key });
-
-        //foreach (var s3Object in response.S3Objects)
-        //{
-        //    if (s3Object.Key.ToLower().EndsWith(".png"))
-        //    {
-        //        Console.WriteLine($"Object key: {s3Object.Key}");
-        //    }
-        //}
+        var response = responseClient.S3Objects.Select(s3Object => new IconDto() 
+        { 
+            URL = domainURL + "/" + s3Object.Key 
+        });
 
         return response;
     }
