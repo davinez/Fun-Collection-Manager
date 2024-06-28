@@ -169,9 +169,9 @@ SELECT pg_catalog.setval(pg_get_serial_sequence('manager.collection_group', 'id'
 -- Further optimization??
 
 
+select * from manager.collection_group cg where cg."name" = 'Prueba 1 Grupo'
 
-
-       
+select * from manager.collection c where c."name" = 'PPPP'
        
        
 

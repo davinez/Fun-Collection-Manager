@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Manager.Application.Collections.Commands.CreateCollection;
 
-public record CreateCollectionCommand : IRequest<Unit>
+public record CreateCollectionCommand : IRequest
 {
     public required string Name { get; init; }
     public required string Icon { get; init; }
@@ -19,7 +19,7 @@ public record CreateCollectionCommand : IRequest<Unit>
 
 }
 
-public class CreateCollectionCommandHandler : IRequestHandler<CreateCollectionCommand, Unit>
+public class CreateCollectionCommandHandler : IRequestHandler<CreateCollectionCommand>
 {
     private readonly IUser _user;
     private readonly IManagerContext _context;
@@ -30,7 +30,7 @@ public class CreateCollectionCommandHandler : IRequestHandler<CreateCollectionCo
         _context = context;
     }
 
-    public async Task<Unit> Handle(CreateCollectionCommand request, CancellationToken cancellationToken)
+    public async Task Handle(CreateCollectionCommand request, CancellationToken cancellationToken)
     {
         // Prevent Id manipulation
         var group = await _context.CollectionGroups
@@ -53,6 +53,5 @@ public class CreateCollectionCommandHandler : IRequestHandler<CreateCollectionCo
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return Unit.Value;
     }
 }

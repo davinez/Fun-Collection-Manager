@@ -11,6 +11,14 @@ public class ChangeIconCommandValidator : AbstractValidator<ChangeIconCommand>
             .NotEmpty()
             .WithMessage("CollectionId is required.");
 
+        RuleFor(v => v.IsDefaultIcon)
+            .NotEmpty()
+            .WithMessage("IsDefaultIcon is required.");
+
+        RuleFor(v => v.IconURL)
+            .NotEmpty()
+            .WithMessage("IconURL is required.");
+
         RuleFor(v => new { v.IsDefaultIcon, v.IconURL })
             .Must(x => ValidURLFormat(x.IsDefaultIcon, x.IconURL))
             .WithMessage("Invalid IconURL");
@@ -19,9 +27,6 @@ public class ChangeIconCommandValidator : AbstractValidator<ChangeIconCommand>
 
     public static bool ValidURLFormat(bool isDefaultIcon, string iconUrl)
     {
-        if (string.IsNullOrWhiteSpace(iconUrl))
-            return false;
-
         if (!isDefaultIcon)
         {
             bool result = Uri.TryCreate(iconUrl, UriKind.Absolute, out var uriResult) &&

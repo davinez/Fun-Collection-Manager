@@ -22,7 +22,6 @@
   <ItemGroup>
     <Folder Include="Accounts\EventHandlers\" />
     <Folder Include="Bookmarks\EventHandlers\" />
-    <Folder Include="Bookmarks\Commands\" />
     <Folder Include="Bookmarks\Queries\" />
     <Folder Include="CollectionGroups\EventHandlers\" />
     <Folder Include="Collections\EventHandlers\" />
