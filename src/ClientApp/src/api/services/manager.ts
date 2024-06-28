@@ -1,6 +1,7 @@
 import type {
   TGetCollectionGroups,
   TAddURLPayload,
+  TAddURLExtrasPayload,
   TGroupUpdatePayload,
   TGroupAddPayload,
   TDeleteGroupPayload,
@@ -73,31 +74,10 @@ export const useGetGroupByIdQuery = (id: number) => {
 * Imperative data fetching means you write code to explicitly request and handle data based on your query. And in the case of
 * useQuery hook difference, it will try to fetch immediately data without having access to fetch state like query.isLoading, query.isFetching, etc
 * https://tanstack.com/query/latest/docs/reference/QueryClient/#queryclientfetchquery
-* @param id collection group id
-* @returns returns the collection group
-*/
-export const useGetGroupByIdFetchQuery = async (id: number) => {
-  const apiClient = useApiClient(API_BASE_URL_MANAGER);
-  return await queryClient.fetchQuery({
-    queryKey: ["group", id],
-    queryFn: async () => {
-      const response = await apiClient.get<TApiResponse<TGroupInfo>>(`/collection-groups/${id}`);
-      return response.data.data
-    }
-  });
-}
-
-
-/**
-* Calls the API with queryClient.fetchQuery, this is an imperative way to fetch data. 
-* It will either resolve with the data or throw with the error. 
-* Imperative data fetching means you write code to explicitly request and handle data based on your query. And in the case of
-* useQuery hook difference, it will try to fetch immediately data without having access to fetch state like query.isLoading, query.isFetching, etc
-* https://tanstack.com/query/latest/docs/reference/QueryClient/#queryclientfetchquery
 * @param id collection id
 * @returns returns the collection 
 */
-export const getCollectionByIdQueryFetchQuery = async (apiClient: TApi, id: number) => {
+export const getCollectionByIdFetchQuery = async (apiClient: TApi, id: number) => {
   return await queryClient.fetchQuery({
     queryKey: ["collection", id],
     queryFn: async () => {
@@ -130,7 +110,7 @@ export const useGetAllBookmarksQuery = ({ page, pageLimit, filterType, debounceS
   });
 }
 
-export const useGetBookmarksByCollectionQuery = ({ page, pageLimit, filterType, debounceSearchValue }: TGetBookmarksParams, collectionId: string) => {
+export const useGetBookmarksByCollectionQuery = ({ page, pageLimit, filterType, debounceSearchValue }: TGetBookmarksParams, collectionId: string | undefined) => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useQuery({
     queryKey: ["collection-bookmarks", { currentPage: page, debounceSearchValue }],
@@ -149,7 +129,9 @@ export const useGetBookmarksByCollectionQuery = ({ page, pageLimit, filterType, 
           }
       );
       return response.data.data
-    }
+    },
+    // https://tanstack.com/query/latest/docs/framework/react/guides/disabling-queries#lazy-queries
+    enabled: !!collectionId
   });
 }
 
@@ -165,19 +147,11 @@ export const useGetAllIconsQuery = () => {
 }
 
 /***** Mutations *****/
-
-
-// MutationFunction takes only one parameter called variables.
-type TuseAddURLMutationVariables = {
-  collectionId: number;
-  payload: TAddURLPayload;
-}
-
 export const useAddURLMutation = () => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
-    mutationFn: async ({ collectionId, payload }: TuseAddURLMutationVariables) => {
-      const response = await apiClient.post<TApiResponse>(`/manager/collections/${collectionId}`, payload);
+    mutationFn: async (payload:  TAddURLPayload & TAddURLExtrasPayload) => {
+      const response = await apiClient.post<TApiResponse>("/bookmarks", payload);
       return response.data;
     },
   });
@@ -193,6 +167,7 @@ export const useAddGroupMutation = () => {
   });
 }
 
+// MutationFunction takes only one parameter called variables.
 type TuseUpdateGroupMutationVariables = {
   groupId: number;
   payload: TGroupUpdatePayload;

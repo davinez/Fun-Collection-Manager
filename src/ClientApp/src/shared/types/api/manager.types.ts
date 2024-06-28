@@ -114,6 +114,10 @@ export const addURLFormPayload = z.object({
 });
 export type TAddURLPayload = z.infer<typeof addURLFormPayload>;
 
+export type TAddURLExtrasPayload = {
+  collectionId: number;
+}
+
 export const bookmarkUpdateFormPayload = z.object({
   cover: z
     .custom<FileList>()

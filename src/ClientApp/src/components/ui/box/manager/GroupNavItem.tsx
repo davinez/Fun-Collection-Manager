@@ -32,7 +32,6 @@ import {
 import { FormActionEnum } from "@/shared/types/global.types";
 // General
 import {
-	useGetGroupByIdFetchQuery,
 	useDeleteGroupMutation,
 } from "@/api/services/manager";
 import { useState } from "react";
@@ -129,10 +128,8 @@ export const GroupNavItem = ({
 				return;
 			}
 
-			const groupData = await useGetGroupByIdFetchQuery(id);
-
 			// Validate that group it is not empty
-			if (groupData.hasCollections) {
+			if (group.collections && group.collections.length > 0) {
 				// Show warning of none-empty group
 				managerSlice.setGroupModalFormAction(FormActionEnum.Delete);
 				onOpenGroupModal();

@@ -1,5 +1,5 @@
 // Design
-import { Button, Stack, useToast, Box } from "@chakra-ui/react";
+import { Button, Stack, useToast, Box, Text } from "@chakra-ui/react";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
 import { InputField } from "components/forms";
@@ -12,13 +12,15 @@ import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
 import {
 	addURLFormPayload,
 	type TAddURLPayload,
+	TAddURLExtrasPayload,
 } from "@/shared/types/api/manager.types";
 // General
 import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
 import { defaultHandlerApiError } from "@/api/useApiClient";
-import { Location, useLocation } from "react-router-dom";
+import { Location, useLocation, useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { isNumber } from "shared/utils";
 
 type TURLAddFormProps = {};
 
@@ -33,7 +35,9 @@ export const URLAddForm = ({}: TURLAddFormProps) => {
 		reset,
 		formState: { errors, isValid },
 	} = methods;
+	const { collectionId } = useParams();
 	const mutationAddURL = useAddURLMutation();
+
 	const toast = useToast();
 	const location: Location = useLocation();
 
@@ -47,31 +51,43 @@ export const URLAddForm = ({}: TURLAddFormProps) => {
 	const onSubmit: SubmitHandler<TAddURLPayload> = (
 		data: TAddURLPayload
 	): void => {
-		mutationAddURL.mutate(
-			{ collectionId: 125, payload: data },
-			{
-				onSuccess: (data, variables, context) => {
-					queryClient.invalidateQueries({ queryKey: ["current-collection"] });
-					toast({
-						title: "URL Added.",
-						status: "success",
-						duration: 5000,
-						isClosable: true,
-					});
-					reset();
-				},
-				onError: (error, variables, context) => {
-					toast({
-						title: "Error",
-						description: "Error in adding URL",
-						status: "error",
-						duration: 5000,
-						isClosable: true,
-					});
-					defaultHandlerApiError(error);
-				},
-			}
-		);
+		if (!collectionId || !isNumber(collectionId)) {
+			toast({
+				title: "Invalid selected collection",
+				status: "success",
+				duration: 5000,
+				isClosable: true,
+			});
+			return;
+		}
+
+		const payload: TAddURLPayload & TAddURLExtrasPayload = {
+			newURL: data.newURL,
+			collectionId: parseInt(collectionId),
+		};
+
+		mutationAddURL.mutate(payload, {
+			onSuccess: (data, variables, context) => {
+				queryClient.invalidateQueries({ queryKey: ["current-collection"] });
+				toast({
+					title: "URL Added.",
+					status: "success",
+					duration: 5000,
+					isClosable: true,
+				});
+				reset();
+			},
+			onError: (error, variables, context) => {
+				toast({
+					title: "Error",
+					description: "Error in adding URL",
+					status: "error",
+					duration: 5000,
+					isClosable: true,
+				});
+				defaultHandlerApiError(error);
+			},
+		});
 	};
 
 	return (
@@ -99,12 +115,19 @@ export const URLAddForm = ({}: TURLAddFormProps) => {
 							bg: "brandPrimary.100",
 						}}
 						fontSize={textStylesTheme.textStyles.primary.fontSize}
-						isDisabled={!isValid}
+						isDisabled={!collectionId || !isNumber(collectionId) || !isValid}
 						type="submit"
 					>
 						Save
 					</Button>
 				</Box>
+				{!isNumber(collectionId) && (
+					<Box w="100%" textAlign="center">
+						<Text fontSize={textStylesTheme.textStyles.primary.fontSize}>
+							Please, select a collection to add a bookmark
+						</Text>
+					</Box>
+				)}
 			</Stack>
 		</FormProvider>
 	);
