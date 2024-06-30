@@ -9,15 +9,18 @@ using Manager.Application.Common.Models;
 using Manager.Domain.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Manager.API.Infrastructure;
 
 public class CustomExceptionHandler : IExceptionHandler
 {
+    private readonly ILogger<CustomExceptionHandler> _logger;
     private readonly Dictionary<Type, Func<HttpContext, Exception, Task>> _exceptionHandlers;
 
-    public CustomExceptionHandler()
+    public CustomExceptionHandler(ILogger<CustomExceptionHandler> logger)
     {
+        _logger = logger;
         // Register known exception types and handlers.
         _exceptionHandlers = new()
             {
@@ -40,7 +43,10 @@ public class CustomExceptionHandler : IExceptionHandler
             return true;
         }
 
-        return false;
+        // Unhandled / Not specified exception
+        await UnhandledException(httpContext, exception);
+
+        return await ValueTask.FromResult(true);
     }
 
     private async Task HandleValidationException(HttpContext httpContext, Exception ex)
@@ -190,6 +196,37 @@ public class CustomExceptionHandler : IExceptionHandler
                         Domain = exception.Source,
                         Reason = "https://tools.ietf.org/html/rfc7231#section-6.5.8",
                         Message = exception.Message,
+                    }
+                ]
+            }
+
+        });
+    }
+
+    private async Task UnhandledException(HttpContext httpContext, Exception ex)
+    {
+        var exceptionMessage = ex.Message;
+
+        _logger.LogError(
+               "Error Message: {exceptionMessage}, Time of occurrence {time}",
+               exceptionMessage, DateTime.UtcNow);
+
+        httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+        await httpContext.Response.WriteAsJsonAsync(new ApiErrorResponse()
+        {
+            ApiVersion = "1.0",
+            Error = new ApiTopLevelError()
+            {
+                Code = StatusCodes.Status500InternalServerError,
+                Message = "UnhandledException",
+                Errors =
+                [
+                    new()
+                    {
+                        Domain = ex.Source,
+                        Reason = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.6.1",
+                        Message = "Unexpected error occurred",
                     }
                 ]
             }

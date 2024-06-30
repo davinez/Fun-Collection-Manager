@@ -1,10 +1,13 @@
 ﻿using Manager.API;
 using Manager.API.Infrastructure.Extensions;
 using Manager.Application;
+using Manager.Application.Common.Interfaces.Services;
 using Manager.Infrastructure;
 using Manager.Infrastructure.Data;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 
@@ -46,8 +49,9 @@ app.MapControllerRoute(
 app.UseExceptionHandler(options => { });
 
 app.Map("/", () => Results.Redirect("/api"));
-
 app.MapEndpoints();
+
+await app.Services.GetRequiredService<IPlaywrightService>().InitializePlaywrightAsync();
 
 app.Run();
 

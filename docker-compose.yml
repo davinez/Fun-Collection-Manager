@@ -9,6 +9,7 @@ services:
       dockerfile: src/Manager/Manager.API/Dockerfile
       args:
          Config_Mode: Debug
+         BUILD_ENVIRONMENT: Development
     ports:
       - "8081:8081"
     environment:

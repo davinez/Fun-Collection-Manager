@@ -32,4 +32,8 @@
     <ProjectReference Include="..\Manager.Infrastructure\Manager.Infrastructure.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <PlaywrightPlatform>winx;linux</PlaywrightPlatform>
+  </PropertyGroup>
+
 </Project>

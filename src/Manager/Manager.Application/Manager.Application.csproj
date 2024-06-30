@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.Graph" />
     <PackageReference Include="Microsoft.Graph.Core" />
+    <PackageReference Include="Microsoft.Playwright" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,5 +29,9 @@
     <Folder Include="Common\Models\Requests\Accounts\" />
     <Folder Include="Icons\Commands\" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <PlaywrightPlatform>winx;linux</PlaywrightPlatform>
+  </PropertyGroup>
 
 </Project>

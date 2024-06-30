@@ -73,7 +73,7 @@ public partial class Testing
 
         var managerContext = scope.ServiceProvider.GetRequiredService<ManagerContext>();
 
-        var user = new UserAccount { UserName = userName };
+        var user = new UserAccount { UserName = userName, IdentityProviderId = "444" };
 
         var result = await managerContext.AddAsync(user);
 

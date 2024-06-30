@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
@@ -6,10 +7,11 @@ using Manager.Application.Common.Interfaces;
 using Manager.Application.Common.Interfaces.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Playwright;
 
 namespace Manager.Application.Bookmarks.Commands.CreateBookmark;
 
-public record CreateBookmarkCommand : IRequest
+public record CreateBookmarkCommand : MediatR.IRequest
 {
     public int CollectionId { get; set; }
     public required string NewURL { get; set; }
@@ -38,8 +40,22 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
 
         // Add logic
 
-      
+        using var playwright = await Playwright.CreateAsync();
+        var browser = await playwright.Chromium.LaunchAsync();
+        IPage page = await browser.NewPageAsync();
 
-       // await _context.SaveChangesAsync(cancellationToken);
+        await page.GotoAsync("https://es.wikipedia.org/wiki/Wiki");
+
+        // Capture the full page screenshot
+        var screenshotBuffer = await page.ScreenshotAsync();
+
+        // Encode the buffer to base64 string
+        var base64String = Convert.ToBase64String(screenshotBuffer);
+
+     //   Console.WriteLine(base64String);
+
+        await browser.CloseAsync();
+
+        // await _context.SaveChangesAsync(cancellationToken);
     }
 }
