@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
+using Manager.Application.Common.Exceptions;
 using Manager.Application.Common.Interfaces;
 using Manager.Application.Common.Interfaces.Services;
 using MediatR;
@@ -21,11 +23,15 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
 {
     private readonly IUser _user;
     private readonly IManagerContext _context;
+    private readonly IS3StorageService _storageService;
+    private readonly IPlaywrightService _playwrightService;
 
-    public CreateBookmarkCommandHandler(IUser user, IManagerContext context)
+    public CreateBookmarkCommandHandler(IUser user, IManagerContext context, IS3StorageService storageService, IPlaywrightService playwrightService)
     {
         _user = user;
         _context = context;
+        _storageService = storageService;
+        _playwrightService = playwrightService;
     }
 
     public async Task Handle(CreateBookmarkCommand request, CancellationToken cancellationToken)
@@ -38,23 +44,48 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
 
         Guard.Against.NotFound(request.CollectionId, collection);
 
-        // Add logic
+        if (_playwrightService.PlaywrightContext == null ||
+            _playwrightService.Browser == null)
+        {
+            throw new ManagerException($"PlaywrightService null property instances in {nameof(CreateBookmarkCommand)}");
+        }
 
-        using var playwright = await Playwright.CreateAsync();
-        var browser = await playwright.Chromium.LaunchAsync();
-        IPage page = await browser.NewPageAsync();
+        // Create a new incognito browser context.
+        await using var bookmarkContext = await _playwrightService.Browser.NewContextAsync();
 
-        await page.GotoAsync("https://es.wikipedia.org/wiki/Wiki");
+        IPage page = await bookmarkContext.NewPageAsync();
+        IResponse? gotoResponse = await page.GotoAsync(request.NewURL);
 
-        // Capture the full page screenshot
-        var screenshotBuffer = await page.ScreenshotAsync();
+        // Handle Go to Page response
+        if(gotoResponse == null || !gotoResponse.Ok)
+        {
+            throw new ManagerException($"Failure in page load specified NewURL in {nameof(CreateBookmarkCommand)}");
+        }
 
-        // Encode the buffer to base64 string
-        var base64String = Convert.ToBase64String(screenshotBuffer);
+        // Cover
+        var screenshotBuffer = await page.ScreenshotAsync(new ()
+        {
+            Type = ScreenshotType.Png
+        });
 
-     //   Console.WriteLine(base64String);
+        // TODO: Optimize image size
 
-        await browser.CloseAsync();
+        // Title
+        string title = (await page
+            .Locator("title")
+            .AllTextContentsAsync())[0] ?? "N/A Title";
+
+        // Description
+        var metaDescription = (await page
+            .Locator("meta[name=\"description\"]")
+            .AllTextContentsAsync())[0] ?? "N/A Description";
+
+        // WebsiteUrl
+
+      // Encode the buffer to base64 string
+      var base64String = Convert.ToBase64String(screenshotBuffer);
+
+        await bookmarkContext.CloseAsync();
 
         // await _context.SaveChangesAsync(cancellationToken);
     }

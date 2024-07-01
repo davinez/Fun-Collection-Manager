@@ -18,6 +18,9 @@ services:
      - manager.db
     networks:
       - fucoma-app-network
+    ipc: host  # Grant host IPC access
+    security_opt:
+      - seccomp=extras/dockerconfig/seccomp_profile.json  # Mount the security profile
   
   manager.db:
     container_name: manager-db

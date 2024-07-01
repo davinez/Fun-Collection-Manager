@@ -9,8 +9,8 @@ public class PlaywrightService : IPlaywrightService
 {
     private readonly IConfiguration _configuration;
 
-    public IPlaywright? _playwrightContext { get; private set; }
-    public IBrowser? _browser { get; private set; }
+    public IPlaywright? PlaywrightContext { get; private set; }
+    public IBrowser? Browser { get; private set; } 
 
     public PlaywrightService(IConfiguration configuration)
     {
@@ -19,8 +19,8 @@ public class PlaywrightService : IPlaywrightService
 
     public async Task InitializePlaywrightAsync()
     {
-        _playwrightContext = await Playwright.CreateAsync();
-        _browser = await _playwrightContext.Chromium.LaunchAsync();
+        PlaywrightContext = await Playwright.CreateAsync();
+        Browser = await PlaywrightContext.Chromium.LaunchAsync(new() { Headless = true, ChromiumSandbox = true });
     }
 
 }

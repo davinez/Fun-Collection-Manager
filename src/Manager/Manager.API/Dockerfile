@@ -40,11 +40,11 @@ COPY /src/Manager/Manager.API/appsettings.${BUILD_ENVIRONMENT}.json .
 #RUN chmod +x .playwright/node/linux-x64/node
 RUN rm -rf src/*
 
-RUN adduser --disabled-password --gecos '' demo
+RUN adduser --disabled-password --gecos '' playwrightuser
 # Chown all the files to the app user.
-RUN chown -R demo /app
+RUN chown -R playwrightuser /app
 
-USER demo
+USER playwrightuser
 
 ENTRYPOINT ["dotnet", "Manager.API.dll"]
 
