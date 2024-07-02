@@ -20,7 +20,7 @@ public class GetAllIconsQueryHandler : IRequestHandler<GetAllIconsQuery, AllIcon
 
     public async Task<AllIconsDto> Handle(GetAllIconsQuery request, CancellationToken cancellationToken)
     {
-        IEnumerable<IconDto> allIcons = await _s3StorageService.GetAllIcons(cancellationToken);
+        IEnumerable<IconDto> allIcons = await _s3StorageService.GetAllIconsAsync(cancellationToken);
 
         var response = new AllIconsDto()
         {

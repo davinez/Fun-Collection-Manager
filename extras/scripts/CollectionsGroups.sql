@@ -174,4 +174,25 @@ select * from manager.collection_group cg where cg."name" = 'Prueba 1 Grupo'
 select * from manager.collection c where c."name" = 'PPPP'
        
        
+select * from manager.bookmark b 
+
+
+--- DELETE Boomarks
+begin;
+
+
+select * from manager.bookmark b;
+
+
+DELETE FROM manager.bookmark
+WHERE collection_id=1;
+
+select * from manager.bookmark b;
+
+-- commit;
+
+
+rollback;
+
+
 

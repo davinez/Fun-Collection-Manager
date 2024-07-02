@@ -18,6 +18,9 @@
     <PackageReference Include="Microsoft.Graph" />
     <PackageReference Include="Microsoft.Graph.Core" />
     <PackageReference Include="Microsoft.Playwright" />
+    <PackageReference Include="SkiaSharp" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" />
+    <PackageReference Include="Nanoid" />
   </ItemGroup>
 
   <ItemGroup>
