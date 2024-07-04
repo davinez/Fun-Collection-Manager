@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using Amazon.S3;
 using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
 using Manager.API.Services;
@@ -11,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Graph.Models.ExternalConnectors;
 using Microsoft.Identity.Web;
 
 namespace Manager.API;
@@ -115,6 +113,7 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IUser, CurrentUser>();
+        services.AddHttpClient();
 
         return services;
     }

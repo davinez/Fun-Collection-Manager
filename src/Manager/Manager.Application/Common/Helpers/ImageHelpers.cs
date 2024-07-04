@@ -6,24 +6,26 @@ namespace Manager.Application.Common.Helpers;
 
 public static class ImageHelpers
 {
-    public static (Stream FileContent, int Height, int Width) Resize(byte[] fileContents,
-    int maxWidth, int maxHeight,
-    SKFilterQuality quality = SKFilterQuality.High)
+    public static Stream Resize(byte[] fileContents,
+    int maxWidth, int maxHeight)
     {
-        using MemoryStream ms = new MemoryStream(fileContents);
-        using SKBitmap sourceBitmap = SKBitmap.Decode(ms);
+        SKFilterMode filter = SKFilterMode.Linear;
+        SKSamplingOptions options = new(filter);
+
+        using SKBitmap sourceBitmap = SKBitmap.Decode(fileContents);
 
         int height = Math.Min(maxHeight, sourceBitmap.Height);
         int width = Math.Min(maxWidth, sourceBitmap.Width);
 
-        using SKBitmap scaledBitmap = sourceBitmap.Resize(new SKImageInfo(width, height), quality);
+        using SKBitmap scaledBitmap = sourceBitmap.Resize(new SKImageInfo(width, height), options);
 
         using SKImage scaledImage = SKImage.FromBitmap(scaledBitmap);
 
-        // Return PNG
-        // Compress the image with the specified quality level (e.g., 70)
-        using SKData data = scaledImage.Encode(SKEncodedImageFormat.Webp, 100);
+        using SKData encodedImage = scaledImage.Encode(SKEncodedImageFormat.Webp, 90);
 
-        return (data.AsStream(), height, width);
+        var stream = new MemoryStream();
+        encodedImage.SaveTo(stream);
+        stream.Seek(0, SeekOrigin.Begin);
+        return stream;
     }
 }

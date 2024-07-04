@@ -9,5 +9,5 @@ namespace Manager.Application.Common.Interfaces.Services;
 public interface IS3StorageService
 {
     public Task<IEnumerable<IconDto>> GetAllIconsAsync(CancellationToken cancellationToken);
-    public Task UploadImageAsync(string bucketName, string objectKey, Stream imageBytes);
+    public Task UploadImageAsync(string bucketName, string objectKey, string contentType, Stream imageBytes);
 }

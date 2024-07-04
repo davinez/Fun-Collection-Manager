@@ -13,7 +13,9 @@ public class CreateBookmarkCommandValidator : AbstractValidator<CreateBookmarkCo
 
         RuleFor(v => v.NewURL)
             .NotEmpty()
-            .WithMessage("NewURL is required.");
+            .WithMessage("NewURL is required.")
+            .MaximumLength(255)
+            .WithMessage("NewURL is too large");
 
         RuleFor(x => x.NewURL)
               .Must(ValidURLFormat)

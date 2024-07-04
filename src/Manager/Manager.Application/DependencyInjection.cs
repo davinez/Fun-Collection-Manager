@@ -26,6 +26,8 @@ public static class DependencyInjection
 
         services.AddSingleton<IPlaywrightService, PlaywrightService>();
 
+        services.AddHttpClient();
+
         return services;
     }
 

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
@@ -29,14 +31,22 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
     private readonly IManagerContext _context;
     private readonly IS3StorageService _storageService;
     private readonly IPlaywrightService _playwrightService;
+    private readonly IHttpClientFactory _httpClientFactory;
 
-    public CreateBookmarkCommandHandler(IConfiguration configuration, IUser user, IManagerContext context, IS3StorageService storageService, IPlaywrightService playwrightService)
+    public CreateBookmarkCommandHandler(
+        IConfiguration configuration,
+        IUser user,
+        IManagerContext context,
+        IS3StorageService storageService,
+        IPlaywrightService playwrightService,
+        IHttpClientFactory httpClientFactory)
     {
         _configuration = configuration;
         _user = user;
         _context = context;
         _storageService = storageService;
         _playwrightService = playwrightService;
+        _httpClientFactory = httpClientFactory;
     }
 
     public async Task Handle(CreateBookmarkCommand request, CancellationToken cancellationToken)
@@ -57,11 +67,12 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
 
         // Create a new incognito browser context.
         await using var bookmarkContext = await _playwrightService.Browser.NewContextAsync();
-        // 12 seconds
-        bookmarkContext.SetDefaultTimeout(12000);
+        bookmarkContext.SetDefaultTimeout(0);
 
         IPage page = await bookmarkContext.NewPageAsync();
         IResponse? gotoResponse = await page.GotoAsync(request.NewURL);
+
+        // TODO: Cloudfare protection
 
         // Handle Go to Page response
         if (gotoResponse == null || !gotoResponse.Ok)
@@ -70,42 +81,43 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
         }
 
         // Cover
-        var screenshotBuffer = await page.ScreenshotAsync(new()
-        {
-            Type = ScreenshotType.Png
-        });
+        byte[] pageCover = await GetCoverAsync(page);
 
         // Keeping size ratio of 16:9
-        var (newFileContent, newHeight, newWidth) = ImageHelpers.Resize(screenshotBuffer, 254, 141);
+        using Stream newFileContent = ImageHelpers.Resize(pageCover, 635, 357);
 
         // Title
         string pageTitle = await GetPageTitleAsync(page);
+        if (pageTitle.Length > 100)
+            pageTitle = $"{pageTitle.Substring(0, 97)}...";
 
         // Description
         string? pageDescription = await GetPageDescriptionAsync(page);
+        if (pageDescription.Length > 255)
+            pageDescription = $"{pageDescription.Substring(0, 252)}...";
 
         await bookmarkContext.CloseAsync();
 
-        /*
-         
-        var base64StringOld = Convert.ToBase64String(screenshotBuffer);
-        stream.CopyTo(memoryStream);
-        byte[] bytes = newFileContent.ToArray();
-        return Convert.ToBase64String(bytes);
-
-        */
+        // Test
+        //using (var memoryStream = new MemoryStream())
+        //{
+        //    newFileContent.CopyTo(memoryStream);
+        //    byte[] newfile = memoryStream.ToArray();
+        //    string newfileBase64 = Convert.ToBase64String(newfile);
+        //}
+        //newFileContent.Seek(0, SeekOrigin.Begin);
 
         // Generate SQL Query with only the 2 specified columns
         int userId = (await _context.UserAccounts
             .AsNoTracking()
-            .Select(c => new { c.Id, c.IdentityProviderId})
+            .Select(c => new { c.Id, c.IdentityProviderId })
             .FirstAsync(u => u.IdentityProviderId == _user.HomeAccountId, cancellationToken: cancellationToken))
             .Id;
 
-        string bucketName = _configuration["S3Storage:BookmarksCoversBucket"] ?? throw new ManagerException($"Empty config section in {nameof(CreateBookmark)} bookmarks bucket");
-        string objectKey = $"{userId}/{collection.Id}/{Nanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 12)}";
+        string bucketName = _configuration["S3Storage:BucketBookmarksCovers"] ?? throw new ManagerException($"Empty config section in {nameof(CreateBookmark)} bookmarks bucket");
+        string objectKey = $"{userId}/{collection.Id}/{Nanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 10)}";
 
-        await _storageService.UploadImageAsync(bucketName, objectKey, newFileContent);
+        await _storageService.UploadImageAsync(bucketName, objectKey, "image/webp", newFileContent);
 
         var newBookmark = new Bookmark()
         {
@@ -121,69 +133,133 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
         await _context.SaveChangesAsync(cancellationToken);
     }
 
+    private async Task<byte[]> GetCoverAsync(IPage page)
+    {
+        ILocator locator1 = page.Locator("meta[property=\"og:image\"]");
+
+        string imageURL = await RetrieveAttributeValueAsync(locator1, string.Empty, "content");
+
+        if (!string.IsNullOrWhiteSpace(imageURL) &&
+            Uri.TryCreate(imageURL, UriKind.Absolute, out var uriResult) &&
+                    (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps))
+        {
+
+            HttpClient client = _httpClientFactory.CreateClient();
+            HttpResponseMessage? imageResponse = await client.GetAsync(uriResult);
+
+            if (imageResponse != null && imageResponse.IsSuccessStatusCode)
+            {
+                return await imageResponse.Content.ReadAsByteArrayAsync();
+
+                // Test
+                //var s = await imageResponse.Content.ReadAsByteArrayAsync();
+                //string newfileBase64 = Convert.ToBase64String(s);
+                //return s;
+            }
+
+        }
+
+        byte[] screenshot = await page.ScreenshotAsync(new()
+        {
+            Type = ScreenshotType.Png
+        });
+
+        return screenshot;
+    }
+
     private static async Task<string> GetPageTitleAsync(IPage page)
     {
-        string? title;
+        ILocator locator1 = page.Locator("title");
+        ILocator locator2 = page.Locator("meta[property=\"og:title\"]");
 
-        try
-        {
-            // Try title element 
-            ILocator? titleLoc1 = page.Locator("title");
-            title = titleLoc1 != null ? await titleLoc1.TextContentAsync() : "";
+        string title = await RetrieveTextContentValueAsync(locator1, string.Empty);
 
-            // Fallback to og:title if title element is missing
-            if (string.IsNullOrWhiteSpace(title))
-            {
-                ILocator? titleLoc2 = page.Locator("meta[property=\"og:title\"]");
-                title = titleLoc2 != null ? await titleLoc2.GetAttributeAsync("content") : "";
-            }
+        if (string.IsNullOrWhiteSpace(title))
+            title = await RetrieveAttributeValueAsync(locator2, "N/A Title", "content");
 
-            if (!string.IsNullOrWhiteSpace(title))
-            {
-                return title;
-            }
-
-        }
-        catch (TimeoutException)
-        {
-            // Default title if both attempts fail
-            return "N/A title";
-        }
-
-        // Default title if both attempts fail
-        return "N/A title";
+        return title;
     }
 
     private static async Task<string> GetPageDescriptionAsync(IPage page)
     {
-        string? description;
+        ILocator locator1 = page.Locator("meta[name=\"description\"]");
+        ILocator locator2 = page.Locator("meta[property=\"og:description\"]");
 
+        string description = await RetrieveAttributeValueAsync(locator1, string.Empty, "content");
+
+        if (string.IsNullOrWhiteSpace(description))
+            description = await RetrieveAttributeValueAsync(locator2, "N/A Description", "content");
+
+        return description;
+    }
+
+    private static async Task<string> RetrieveTextContentValueAsync(
+        ILocator locator,
+        string defaultValue,
+        WaitForSelectorState state = WaitForSelectorState.Attached,
+        int timeOut = 0)
+    {
         try
         {
-            // Try description element 
-            ILocator? descriptionLoc1 = page.Locator("meta[name=\"description\"]");
-            description = descriptionLoc1 != null ? await descriptionLoc1.GetAttributeAsync("content") : "";
+            int locatorsCount = await locator.CountAsync();
 
-            // Fallback to og:description if title element is missing
-            if (string.IsNullOrWhiteSpace(description))
+            if (locatorsCount > 1)
             {
-                ILocator? descriptionLoc2 = page.Locator("meta[property=\"og:description\"]");
-                description = descriptionLoc2 != null ? await descriptionLoc2.GetAttributeAsync("content") : "";
+                locator = locator.First;
+                await locator.WaitForAsync(new() { State = state, Timeout = timeOut });
+            }
+            else if (locatorsCount == 1)
+            {
+                await locator.WaitForAsync(new() { State = state, Timeout = timeOut });
+            }
+            else
+            {
+                return defaultValue;
             }
 
-            if (!string.IsNullOrWhiteSpace(description))
-            {
-                return description;
-            }
+            string? value = await locator.TextContentAsync(new() { Timeout = timeOut });
+
+            return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
         }
-        catch (TimeoutException)
+        catch (Exception)
         {
-
-            // Default title if both attempts fail
-            return "N/A Description";
+            return defaultValue;
         }
-
-        // Default title if both attempts fail
-        return "N/A Description";
     }
+
+    private static async Task<string> RetrieveAttributeValueAsync(
+        ILocator locator,
+        string defaultValue,
+        string attributeName,
+        WaitForSelectorState state = WaitForSelectorState.Attached,
+        int timeOut = 0)
+    {
+        try
+        {
+            int locatorsCount = await locator.CountAsync();
+
+            if (locatorsCount > 1)
+            {
+                locator = locator.First;
+                await locator.WaitForAsync(new() { State = state, Timeout = timeOut });
+            }
+            else if (locatorsCount == 1)
+            {
+                await locator.WaitForAsync(new() { State = state, Timeout = timeOut });
+            }
+            else
+            {
+                return defaultValue;
+            }
+
+            string? value = await locator.GetAttributeAsync(attributeName, new() { Timeout = timeOut });
+
+            return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
+        }
+        catch (Exception)
+        {
+            return defaultValue;
+        }
+    }
+
 }
