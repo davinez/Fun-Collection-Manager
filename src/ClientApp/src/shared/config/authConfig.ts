@@ -8,8 +8,8 @@ import { LogLevel, Configuration, PopupRequest } from '@azure/msal-browser';
 // store Azure AD settings and export them as constants
 export const msalConfig: Configuration = {
     auth: {
-        clientId:  import.meta.env.VITE_ENTRA_CLIENTID, // This is the ONLY mandatory field that you need to supply.
-        authority: import.meta.env.VITE_ENTRA_AUTHORITY,  
+        clientId: import.meta.env.VITE_ENTRA_CLIENTID, // This is the ONLY mandatory field that you need to supply.
+        authority: import.meta.env.VITE_ENTRA_AUTHORITY,
         // https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/initialization.md#redirecturi-considerations
         redirectUri: window.location.origin + '/blank.html', // Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
         postLogoutRedirectUri: window.location.origin + '/blank.html', // Indicates the page to navigate after logout.
@@ -53,22 +53,28 @@ export const msalConfig: Configuration = {
  * https://docs.microsoft.com/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest: PopupRequest = {
-    scopes: ["email", "openid", "profile", "User.Read"],
+    scopes: ["email", "openid", "profile"],
     // Prevents Single sign-on
-  //  prompt: "select_account" // https://learn.microsoft.com/en-us/entra/identity-platform/msal-js-prompt-behavior
+    //  prompt: "select_account" // https://learn.microsoft.com/en-us/entra/identity-platform/msal-js-prompt-behavior
 };
 
 /**
- * Add here the endpoints and scopes when obtaining an access token for protected web APIs. For more information, see:
- * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/resources-and-scopes.md
+We can request multiple scopes for the same resource (e.g. User.Read, User.Write and Calendar.Read for MS Graph API).
+In case you erroneously pass multiple resources in your token request, the token you will receive will only be issued for the first resource.
+
+// you will only receive a token for MS GRAPH API's "User.Read" scope here
+const myToken = await msalInstance.acquireTokenSilent({
+     scopes: [ "User.Read", "api://<myCustomApiClientId>/My.Scope" ]
+});
+
+Access Token requests in MSAL.js are meant to be per-resource-per-scope(s). 
+
  */
-export const protectedResources = {
-    armTenants: {
-        scopes: ['https://management.azure.com/user_impersonation'],
-    },
-    armBlobStorage: {
-        scopes: ['https://storage.azure.com/user_impersonation'],
-    },
+export const managerAPIRequest = {
+    scopes: [
+        `api://${import.meta.env.VITE_ENTRA_CLIENTID_MANAGER}/Manager.Read`,
+        `api://${import.meta.env.VITE_ENTRA_CLIENTID_MANAGER}/Manager.Write`
+    ]
 };
 
 /**

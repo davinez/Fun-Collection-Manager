@@ -32,7 +32,6 @@ import {
 import { FormActionEnum } from "@/shared/types/global.types";
 // General
 import {
-	useGetGroupByIdFetchQuery,
 	useDeleteGroupMutation,
 } from "@/api/services/manager";
 import { useState } from "react";
@@ -129,10 +128,8 @@ export const GroupNavItem = ({
 				return;
 			}
 
-			const groupData = await useGetGroupByIdFetchQuery(id);
-
 			// Validate that group it is not empty
-			if (groupData.hasCollections) {
+			if (group.collections && group.collections.length > 0) {
 				// Show warning of none-empty group
 				managerSlice.setGroupModalFormAction(FormActionEnum.Delete);
 				onOpenGroupModal();
@@ -308,18 +305,21 @@ export const GroupNavItem = ({
 					</Menu>
 				)}
 			</Flex>
-			{group.collections.length > 0 && ( // Rendering collections
-				<Collapse in={isOpen} animateOpacity>
-					{
-						// Show form if click on create collection
-						isShowingInput && (
-							<CollectionAddForm
-								groupId={group.id}
-								setIsShowingInput={setIsShowingInput}
-							/>
-						)
-					}
-					{group.collections.map((collection) => {
+
+			{/* Rendering collections */}
+			<Collapse in={isOpen} animateOpacity>
+				{
+					// Show form if click on create collection
+					isShowingInput && (
+						<CollectionAddForm
+							groupId={group.id}
+							setIsShowingInput={setIsShowingInput}
+						/>
+					)
+				}
+				{group.collections &&
+					group.collections.length > 0 &&
+					group.collections.map((collection) => {
 						return (
 							<RecursiveNavItem
 								key={`CollectionNavItem_${collection.id}`}
@@ -328,6 +328,7 @@ export const GroupNavItem = ({
 									bg: "brandPrimary.950",
 								}}
 								pl={collection.childCollections.length > 0 ? 0 : 3}
+								groupId={group.id}
 								collection={collection}
 								nodePadding={3}
 								nodesState={nodesData.nodesState}
@@ -337,8 +338,7 @@ export const GroupNavItem = ({
 							</RecursiveNavItem>
 						);
 					})}
-				</Collapse>
-			)}
+			</Collapse>
 		</>
 	);
 };

@@ -1,7 +1,7 @@
 import type { TStateSlice } from "shared/types/store/store.types";
 import type {
   AccountIdentifiers,
-  TLoginResponse
+  TLoginCIAMResponse
 } from "@/shared/types/api/auth.types";
 
 export type TAuthSliceDefinition = {
@@ -9,7 +9,7 @@ export type TAuthSliceDefinition = {
   accountIdentifiers: AccountIdentifiers;
   userDisplayName: string | undefined;
   userEmail: string | undefined;
-  userScopes: string[] | undefined;
+  userRoles: string[] | undefined;
   accessToken: string | undefined;
 };
 
@@ -17,7 +17,7 @@ export type TAuthSliceActions = {
   setHasHydrated: (value: boolean) => void;
   setAccessToken: (token: string) => void;
   logout: () => void;
-  setLoginUser: (payload: TLoginResponse) => void;
+  setLoginUser: (payload: TLoginCIAMResponse) => void;
 };
 
 export type TAuthSlice = TAuthSliceDefinition & TAuthSliceActions;
@@ -31,7 +31,7 @@ const initialAuthSliceState: TAuthSliceDefinition = {
   },
   userDisplayName: undefined,
   userEmail: undefined,
-  userScopes: undefined,
+  userRoles: undefined,
   accessToken: undefined,
 };
 
@@ -54,21 +54,21 @@ export const AuthSlice: TStateSlice<TAuthSlice> = (set) => ({
         username: undefined
       }
       state.authSlice.userEmail = undefined;
-      state.authSlice.userScopes = undefined;
+      state.authSlice.userRoles = undefined;
       state.authSlice.accessToken = undefined;
     }),
-  setLoginUser: (payload: TLoginResponse): void =>
+  setLoginUser: (payload): void =>
     set((state) => {
       state.authSlice = {
         ...state.authSlice,
         accountIdentifiers: {
           localAccountId: payload.localAccountId,
           homeAccountId: payload.homeAccountId,
-          username: payload.username
+          username: undefined
         },
         userDisplayName: payload.userDisplayName,
         userEmail: payload.userEmail,
-        userScopes: payload.userScopes,
+        userRoles: payload.userRoles,
         accessToken: payload.accessToken
       };
     }),

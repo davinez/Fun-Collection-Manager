@@ -4,6 +4,12 @@ import type {
   TDynamicCollapseState
 } from "@/shared/types/api/manager.types";
 
+export const isNumber = (value?: string | number): boolean => {
+  return ((value != null) &&
+    (value !== '') &&
+    !isNaN(Number(value.toString())));
+}
+
 export const bytesToMegaBytes = (sizeInBytes: number) => {
   return sizeInBytes / (1024 * 1024);
 }
@@ -32,9 +38,8 @@ export const getUrlHostname = (value: string) => {
 export const renderNodesState = (
   groups: TCollectionGroup[]
 ): TDynamicCollapseState[] => {
-  // Concat in one array the collections from all groups
-  const initialNodes = groups.flatMap((group) => {
-    return group.collections;
+  const initialNodes: TCollection[] = groups.flatMap((group) => {
+    return group.collections ? (group.collections as TCollection[]) : []
   });
 
   // Get all ids from root to nested collections
@@ -49,8 +54,10 @@ export const renderNodesState = (
 
   // From final arrays of ids return the array of objects 
   // with each id having its state object
-  return getIds(initialNodes).map((id) => ({
+  const state = getIds(initialNodes).map((id) => ({
     nodeId: id,
     isOpen: false,
   }));
+
+  return state;
 }

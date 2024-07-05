@@ -42,7 +42,7 @@ export const App = createBrowserRouter(
 				<Route path="manager" element={<ManagerLayout />}>
 					<Route index path="dashboard" element={<DashboardPage />} />
 					<Route path="all" caseSensitive element={<AllBookmarksPage />} />
-					<Route path=":id" caseSensitive element={<CollectionPage />} />
+					<Route path=":collectionId" caseSensitive element={<CollectionPage />} />
 				</Route>
 				{/* <Route path="/settings" element={<SettingsPage />} /> */}
 				{/*	<Route path="/profile" element={<ProfilePage />} /> */}

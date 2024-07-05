@@ -22,15 +22,17 @@ import { defaultHandlerApiError } from "@/api/useApiClient";
 import {
 	collectionAddFormPayload,
 	type TCollectionAddFormPayload,
+	type TCollectionAddExtrasPayload
 } from "@/shared/types/api/manager.types";
 // General
 import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
 import { useCallback, useRef } from "react";
+import { DEFAULT_ICON } from "shared/config";
 
 type TCollectionAddFormProps = {
 	setIsShowingInput: React.Dispatch<React.SetStateAction<boolean>>;
-	groupId?: number;
+	groupId: number;
 	parentCollectionId?: number;
 };
 
@@ -74,50 +76,47 @@ export const CollectionAddForm = ({
 	};
 
 	const onSubmit: SubmitHandler<TCollectionAddFormPayload> = (data): void => {
-		addCollectionMutation.mutate(
-			{
-				params: {
-					// Conditionally add object properties
-					...(groupId && { groupId }),
-					...(parentCollectionId && { parentCollectionId }),
-				},
-				payload: data,
+		const payload: TCollectionAddFormPayload & TCollectionAddExtrasPayload = {
+			name: data.name,
+			icon: DEFAULT_ICON,
+			groupId,
+			parentCollectionId: parentCollectionId,
+		};
+
+		addCollectionMutation.mutate(payload, {
+			onSuccess: (data, variables, context) => {
+				setIsShowingInput(false);
+				queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
+				toast({
+					title: "Collection Added.",
+					status: "success",
+					duration: 5000,
+					isClosable: true,
+				});
+				reset();
 			},
-			{
-				onSuccess: (data, variables, context) => {
-					setIsShowingInput(false);
-					queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
-					toast({
-						title: "Collection Added.",
-						status: "success",
-						duration: 5000,
-						isClosable: true,
-					});
-					reset();
-				},
-				onError: (error, variables, context) => {
-					setIsShowingInput(false);
-					toast({
-						title: "Error",
-						description: "Error in adding Collection",
-						status: "error",
-						duration: 5000,
-						isClosable: true,
-					});
-					defaultHandlerApiError(error);
-				},
-			}
-		);
+			onError: (error, variables, context) => {
+				setIsShowingInput(false);
+				toast({
+					title: "Error",
+					description: "Error in adding Collection",
+					status: "error",
+					duration: 5000,
+					isClosable: true,
+				});
+				defaultHandlerApiError(error);
+			},
+		});
 	};
 
 	return (
 		<FormProvider {...methods}>
-			<Stack 
-			tabIndex={-1} // Make it focusable to catch it with relatedTarger
-			w="100%"
-			as="form"
-			onSubmit={methods.handleSubmit(onSubmit)}
-			ref={refForm}
+			<Stack
+				tabIndex={-1} // Make it focusable to catch it with relatedTarger
+				w="100%"
+				as="form"
+				onSubmit={methods.handleSubmit(onSubmit)}
+				ref={refForm}
 			>
 				<Flex
 					w="100%"

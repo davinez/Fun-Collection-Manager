@@ -13,6 +13,7 @@ import {
 	MenuDivider,
 	useToast,
 	useDisclosure,
+	useBoolean,
 	type FlexProps,
 } from "@chakra-ui/react";
 import {
@@ -37,11 +38,7 @@ import {
 } from "@/shared/types/api/manager.types";
 import { CollectionModalActionEnum } from "@/shared/types/global.types";
 // General
-import {
-	useGetCollectionByIdQueryClientAsync,
-	useDeleteCollectionMutation,
-} from "@/api/services/manager";
-import { useStore } from "@/store/UseStore";
+import { useDeleteCollectionMutation } from "@/api/services/manager";
 import { useState } from "react";
 import queryClient from "@/api/query-client";
 import { defaultHandlerApiError } from "@/api/useApiClient";
@@ -50,6 +47,7 @@ import { useNavigate } from "react-router-dom";
 // All bookmarks and group NavItem in sidebar
 
 type TRecursiveNavItemProps = {
+	groupId: number;
 	collection: TCollection;
 	nodePadding: number;
 	nodesState: TDynamicCollapseState[];
@@ -58,6 +56,7 @@ type TRecursiveNavItemProps = {
 };
 
 export const RecursiveNavItem = ({
+	groupId,
 	collection,
 	nodePadding,
 	nodesState,
@@ -65,10 +64,20 @@ export const RecursiveNavItem = ({
 	children,
 	...rest
 }: TRecursiveNavItemProps & FlexProps): React.ReactElement => {
-	const { managerSlice } = useStore();
+	const GetNodeInStateStatus = () => {
+		const searchResult = nodesState.find(
+			(node) => node.nodeId === collection.id
+		);
+		if (searchResult) {
+			return searchResult.isOpen;
+		}
+		return false;
+	};
+
 	const [isHovering, setIsHovering] = useState(false);
 	const [isShowingInput, setIsShowingInput] = useState(false);
 	const [isSelfEditable, setIsSelfEditable] = useState(false);
+	//const [isNavItemOpen, setIsNavItemOpen] = useState(GetNodeInStateStatus());
 	const [modalAction, setModalAction] = useState(
 		CollectionModalActionEnum.Icon
 	);
@@ -78,6 +87,7 @@ export const RecursiveNavItem = ({
 		onOpen: onOpenCollectionModal,
 		onClose: onCloseCollectionModal,
 	} = useDisclosure();
+	const [isNavItemOpen, setIsNavItemOpen] = useBoolean(GetNodeInStateStatus());
 	const deleteCollectionMutation = useDeleteCollectionMutation();
 	const navigate = useNavigate();
 
@@ -100,16 +110,17 @@ export const RecursiveNavItem = ({
 				} else return node;
 			})
 		);
+		setIsNavItemOpen.toggle();
 	};
 
 	const handleOnClickNavItem = (event: React.SyntheticEvent<EventTarget>) => {
 		// Only open collection page if the clicked element it is the div and not an inside element
 		if (
 			(event.target instanceof HTMLDivElement &&
-			(event.target as HTMLDivElement).getAttribute("aria-label") ===
-				"navitem-main-container") ||
-				event.target instanceof HTMLImageElement ||
-				event.target instanceof HTMLParagraphElement
+				(event.target as HTMLDivElement).getAttribute("aria-label") ===
+					"navitem-main-container") ||
+			event.target instanceof HTMLImageElement ||
+			event.target instanceof HTMLParagraphElement
 		) {
 			// Navigate to collection page
 			if (isShowingInput) {
@@ -149,7 +160,7 @@ export const RecursiveNavItem = ({
 		onOpenCollectionModal();
 	};
 
-	const executeDeleteMutation = () => {
+	const handleDeleteMutation = () => {
 		const payload: TDeleteCollectionPayload = {
 			collectionId: collection.id,
 		};
@@ -194,16 +205,15 @@ export const RecursiveNavItem = ({
 
 	const handleOnClickRemoveCollection = async () => {
 		try {
-			const collectionData = await useGetCollectionByIdQueryClientAsync(
-				collection.id
-			);
-
 			// If collection has data then show warning
-			if (collectionData.hasCollections || collectionData.hasBookmarks) {
+			if (
+				collection.bookmarksCounter > 0 ||
+				collection.childCollections.length > 0
+			) {
 				setModalAction(CollectionModalActionEnum.Delete);
 				onOpenCollectionModal();
 			} else {
-				executeDeleteMutation();
+				handleDeleteMutation();
 			}
 		} catch (error) {
 			toast({
@@ -223,7 +233,7 @@ export const RecursiveNavItem = ({
 				isOpen={isOpenCollectionModal}
 				onClose={onCloseCollectionModal}
 				modalAction={modalAction}
-				executeDeleteMutation={executeDeleteMutation}
+				handleDeleteMutation={handleDeleteMutation}
 				collectionId={collection.id}
 				collectionIcon={collection.icon}
 			/>
@@ -261,12 +271,7 @@ export const RecursiveNavItem = ({
 								mx="0px"
 								boxSize="3"
 								color="brandPrimary.150"
-								as={
-									nodesState.find((node) => node.nodeId === collection.id)
-										?.isOpen
-										? AiFillCaretDown
-										: AiFillCaretRight
-								}
+								as={isNavItemOpen ? AiFillCaretDown : AiFillCaretRight}
 								onClick={handleOnClickCollapseCollection}
 							/>
 						)}
@@ -391,6 +396,7 @@ export const RecursiveNavItem = ({
 				// Show form if click on create collection
 				isShowingInput && (
 					<CollectionAddForm
+						groupId={groupId}
 						parentCollectionId={collection.id}
 						setIsShowingInput={setIsShowingInput}
 						pl={nodePadding}
@@ -398,13 +404,7 @@ export const RecursiveNavItem = ({
 				)
 			}
 			{collection.childCollections.length > 0 && ( // Rendering child collections
-				<Collapse
-					in={
-						nodesState.find((node) => node.nodeId === collection.id)
-							?.isOpen as boolean
-					}
-					animateOpacity
-				>
+				<Collapse in={isNavItemOpen} animateOpacity>
 					{collection.childCollections.map((item) => {
 						return (
 							<RecursiveNavItem
@@ -413,6 +413,7 @@ export const RecursiveNavItem = ({
 								_hover={{
 									bg: "brandPrimary.950",
 								}}
+								groupId={groupId}
 								collection={item}
 								pl={
 									item.childCollections.length > 0

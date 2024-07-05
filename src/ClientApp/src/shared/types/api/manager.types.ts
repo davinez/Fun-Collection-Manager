@@ -5,13 +5,12 @@ import { bytesToMegaBytes } from "shared/utils";
 // Components Types //
 
 export type TDynamicCollapseState = {
-	nodeId: number;
-	isOpen: boolean;
+  nodeId: number;
+  isOpen: boolean;
 };
 
 
 // API/Service Types //
-
 
 export type TGetCollectionGroups = {
   allBookmarksCounter: number;
@@ -21,7 +20,7 @@ export type TGetCollectionGroups = {
 export type TCollectionGroup = {
   id: number;
   name: string;
-  collections: TCollection[];
+  collections: TCollection[] | undefined;
 }
 
 export type TCollection = {
@@ -41,8 +40,8 @@ export type TGroupInfo = {
 export type TCollectionInfo = {
   id: number;
   name: string;
-  hasBookmarks:  boolean;
-  hasCollections:  boolean;
+  hasBookmarks: boolean;
+  hasCollections: boolean;
 }
 
 export type TGetAllBookmarks = {
@@ -70,14 +69,13 @@ type TBookmarkDetail = {
   createdAt: string;
 }
 
-export type TGetCollectionsAllIcons = {
-  items: IconsGroupCollections[]
+export type TGetAllIcons = {
+  groups: IconsGroups[]
 }
 
-type IconsGroupCollections = {
+type IconsGroups = {
   title: string;
   icons: {
-    name: string;
     url: string;
   }[];
 }
@@ -112,9 +110,14 @@ export const addURLFormPayload = z.object({
   newURL: z
     .string()
     .min(11, { message: "URL address is required" })
+    .max(255, { message: "URL address too large" })
     .url({ message: "URL address format is required" })
 });
 export type TAddURLPayload = z.infer<typeof addURLFormPayload>;
+
+export type TAddURLExtrasPayload = {
+  collectionId: number;
+}
 
 export const bookmarkUpdateFormPayload = z.object({
   cover: z
@@ -147,7 +150,6 @@ export const bookmarkUpdateFormPayload = z.object({
     .min(2, { message: "Description is required" }),
   websiteURL: z
     .string()
-    .min(11, { message: "URL address is required" })
     .url({ message: "URL address format is required" })
 });
 export type TBookmarkUpdatePayload = z.infer<typeof bookmarkUpdateFormPayload>;
@@ -168,9 +170,16 @@ export const collectionAddFormPayload = z.object({
   name: z
     .string()
     .trim()
-    .min(1, { message: "Collection is required" })
+    .min(1, { message: "name is required" }),
 });
+
 export type TCollectionAddFormPayload = z.infer<typeof collectionAddFormPayload>;
+
+export type TCollectionAddExtrasPayload = {
+  icon: string;
+  groupId: number;
+  parentCollectionId: number | undefined;
+}
 
 export const collectionUpdateFormPayload = z.object({
   name: z
@@ -181,6 +190,8 @@ export const collectionUpdateFormPayload = z.object({
 export type TCollectionUpdateFormPayload = z.infer<typeof collectionUpdateFormPayload>;
 
 export const collectionUpdateIconFormPayload = z.object({
+  isDefaultIcon: z
+    .boolean({ message: "isDefaultIcon is required" }),
   iconURL: z
     .string()
     .trim()
@@ -203,10 +214,5 @@ export type TGetBookmarksParams = {
   pageLimit: number;
   filterType: string;
   debounceSearchValue: string;
-}
-
-export type TAddCollectionMutationParams = {
-  groupId?: number;
-  parentCollectionId?: number;
 }
 

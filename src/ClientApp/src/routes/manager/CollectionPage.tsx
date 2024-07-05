@@ -22,6 +22,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/useApiClient";
+import { isNumber } from "shared/utils";
 
 type TMainContentProps = {
 	data: TGetBookmarksByCollection;
@@ -103,15 +104,18 @@ export const CollectionPage =
 		// Hooks
 
 		// Get the Collection Id param from the URL.
-		const { id } = useParams();
+		const { collectionId } = useParams();
 		const { managerSlice } = useStore();
-		// TODO: manage unexistant ud or id = 0
+
 		const {
 			isPending: isPendingGetBookmarks,
 			isError: isErrorGetBookmarks,
 			error: errorGetBookmarks,
 			data: getBookmarksResponse,
-		} = useGetBookmarksByCollectionQuery(managerSlice.getBookmarkParams, id ? id : "0");
+		} = useGetBookmarksByCollectionQuery(
+			managerSlice.getBookmarkParams,
+			collectionId && isNumber(collectionId) ? collectionId : undefined
+		);
 		const toast = useToast();
 
 		useEffect(() => {
@@ -129,21 +133,21 @@ export const CollectionPage =
 
 		// Handlers
 
-	// Return handling
+		// Return handling
 
-	if (isPendingGetBookmarks)
-		return (
-			<Flex p={5} align="center" justify="space-between">
-				<LoadingBox />
-			</Flex>
-		);
+		if (isPendingGetBookmarks)
+			return (
+				<Flex p={5} align="center" justify="space-between">
+					<LoadingBox />
+				</Flex>
+			);
 
-	if (isErrorGetBookmarks)
-		return (
-			<Flex p={5} align="center" justify="space-between">
-				<ErrorBox />
-			</Flex>
-		);
+		if (isErrorGetBookmarks)
+			return (
+				<Flex p={5} align="center" justify="space-between">
+					<ErrorBox />
+				</Flex>
+			);
 
 		//TODO: if data.length === 0 and searchterm !== empty then render Not Found bookmarks Content - Message
 		return <MainContent data={getBookmarksResponse} />;

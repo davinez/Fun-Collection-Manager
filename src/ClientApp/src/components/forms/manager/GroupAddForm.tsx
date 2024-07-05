@@ -60,6 +60,7 @@ export const GroupAddForm = ({ onClose }: TGroupAddFormProps) => {
 					isClosable: true,
 				});
 				reset();
+				onClose();
 			},
 			onError: (error, variables, context) => {
 				toast({

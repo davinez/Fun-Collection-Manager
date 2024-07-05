@@ -21,5 +21,6 @@ export default defineConfig({
     setupFiles: ["./vitest.setup.ts"],
     css: true,
   },
+  envDir: "./env"
 });
 

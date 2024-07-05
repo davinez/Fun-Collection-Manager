@@ -28,8 +28,9 @@ export const useStore = create<TCombinedStore>()(
         // Include the keys you want to persist in here.
         authSlice: {          
           accountIdentifiers: state.authSlice.accountIdentifiers,
+          userDisplayName: state.authSlice.userDisplayName,
           userEmail: state.authSlice.userEmail,
-          userScopes: state.authSlice.userScopes,
+          userRoles: state.authSlice.userRoles,
           accessToken: state.authSlice.accessToken,
         },
       }),
