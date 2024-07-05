@@ -72,8 +72,6 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
         IPage page = await bookmarkContext.NewPageAsync();
         IResponse? gotoResponse = await page.GotoAsync(request.NewURL);
 
-        // TODO: Cloudfare protection
-
         // Handle Go to Page response
         if (gotoResponse == null || !gotoResponse.Ok)
         {

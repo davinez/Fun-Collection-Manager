@@ -13,8 +13,7 @@ public class BookmarkConfiguration : IEntityTypeConfiguration<Bookmark>
 
         builder.Property(p => p.Cover)
                .HasColumnName("cover")
-               .HasMaxLength(255)
-               .IsRequired();
+               .HasMaxLength(255);
 
         builder.Property(p => p.Title)
                .HasColumnName("title")
@@ -28,7 +27,7 @@ public class BookmarkConfiguration : IEntityTypeConfiguration<Bookmark>
 
         builder.Property(p => p.WebsiteUrl)
                .HasColumnName("website_url")
-               .HasMaxLength(255)
+               .HasMaxLength(2048)
                .IsRequired();
 
         // Foreign Keys
