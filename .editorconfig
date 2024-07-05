@@ -380,3 +380,8 @@ dotnet_naming_style.s_camelcase.word_separator =
 dotnet_naming_style.s_camelcase.capitalization = camel_case
 
 dotnet_style_namespace_match_folder = true:suggestion
+
+
+# Custom 
+
+dotnet_code_quality.CA1826.exclude_ordefault_methods = true

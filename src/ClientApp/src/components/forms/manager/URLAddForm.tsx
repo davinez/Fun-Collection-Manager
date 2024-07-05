@@ -115,7 +115,7 @@ export const URLAddForm = ({}: TURLAddFormProps) => {
 							bg: "brandPrimary.100",
 						}}
 						fontSize={textStylesTheme.textStyles.primary.fontSize}
-						isDisabled={!collectionId || !isNumber(collectionId) || !isValid}
+						isDisabled={!collectionId || !isNumber(collectionId) || !isValid || mutationAddURL.isPending}
 						type="submit"
 					>
 						Save
