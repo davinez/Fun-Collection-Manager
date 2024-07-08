@@ -1,40 +1,39 @@
-version: '3.8'
+version: '3.9'
 
 services:
 
-  manager.api:
-    container_name: manager-api
+  manager.support.api:
+    container_name: manager-support-api
     build:
-      context: .
-      dockerfile: src/Manager/Manager.API/Dockerfile
-      args:
-         Config_Mode: Debug
-         BUILD_ENVIRONMENT: Development
+      context: src/ManagerSupport
+      dockerfile: Dockerfile
     ports:
-      - "8081:8081"
+      - "8082:8082"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    depends_on:
-     - manager.db
+      - DB_TYPE=postgres
+      - PG_USER=postgres
+      - PG_PASSWORD=postgres
+      - PG_DB=postgres
+      - PG_PORT=5432
+      - PG_HOST=db
+    # depends_on:
+    #  - manager.db
     networks:
       - fucoma-app-network
-    ipc: host  # Grant host IPC access
-    security_opt:
-      - seccomp=extras/dockerconfig/seccomp_profile.json  # Mount the security profile
-  
-  manager.db:
-    container_name: manager-db
-    image: postgres
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: managerdev
-      POSTGRES_PASSWORD: managerpassdev
-      POSTGRES_DB: ManagerDB
-    volumes:
-      - ./data/manager.db:/var/lib/postgresql/data
-    networks:
-      - fucoma-app-network
+
+  # manager.db:
+  #   container_name: manager-db
+  #   image: postgres
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_USER: managerdev
+  #     POSTGRES_PASSWORD: managerpassdev
+  #     POSTGRES_DB: ManagerDB
+  #   volumes:
+  #     - ./data/manager.db:/var/lib/postgresql/data
+  #   networks:
+  #     - fucoma-app-network
 
 networks:
   fucoma-app-network:
