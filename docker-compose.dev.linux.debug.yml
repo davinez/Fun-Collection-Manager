@@ -1,0 +1,7 @@
+version: '3.9'
+
+services:
+
+  manager.support.api:
+    ports: 
+     - "9229:9229"
