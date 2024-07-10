@@ -287,3 +287,4 @@ src/**/app.yaml
 src/**/inf.yaml
 
 /src/Manager/Manager.API/appsettings.Development.json
+/.env-dev-manager
