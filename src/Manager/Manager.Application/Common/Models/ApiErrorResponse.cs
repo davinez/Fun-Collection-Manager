@@ -4,7 +4,7 @@ namespace Manager.Application.Common.Models;
 
 public class ApiErrorResponse
 {
-    public string? ApiVersion { get; set; }
+    public required string ApiVersion { get; set; }
     public ApiTopLevelError Error { get; set; } = new ApiTopLevelError();
 }
 

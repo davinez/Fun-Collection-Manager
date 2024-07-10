@@ -6,10 +6,11 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{18F30434-5426-44A2-BD8C-8785E3B31A50}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.env-dev-manager = .env-dev-manager
 		.gitignore = .gitignore
 		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
-		docker-compose.yml = docker-compose.yml
+		docker-compose.dev.windows.yml = docker-compose.dev.windows.yml
 		src\Manager\README.md = src\Manager\README.md
 	EndProjectSection
 EndProject

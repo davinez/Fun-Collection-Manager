@@ -8,12 +8,14 @@ services:
       context: .
       dockerfile: src/Manager/Manager.API/Dockerfile
       args:
-         Config_Mode: Debug
-         BUILD_ENVIRONMENT: Development
+         CONFIG_MODE: Debug
+         ENVIRONMENT: dev
     ports:
       - "8081:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+    env_file:
+      - .env-dev-manager
     depends_on:
      - manager.db
     networks:
