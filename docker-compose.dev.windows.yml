@@ -9,7 +9,6 @@ services:
       dockerfile: src/Manager/Manager.API/Dockerfile
       args:
          CONFIG_MODE: Debug
-         ENVIRONMENT: dev
     ports:
       - "8081:8081"
     environment:
@@ -19,7 +18,7 @@ services:
     depends_on:
      - manager.db
     networks:
-      - fucoma-app-network
+      - fucoma-app
     ipc: host  # Grant host IPC access
     security_opt:
       - seccomp=extras/dockerconfig/seccomp_profile.json  # Mount the security profile
@@ -36,8 +35,9 @@ services:
     volumes:
       - ./data/manager.db:/var/lib/postgresql/data
     networks:
-      - fucoma-app-network
+      - fucoma-app
 
 networks:
-  fucoma-app-network:
+  fucoma-app:
+    name: managernetwork
     driver: bridge

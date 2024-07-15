@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Manager.Application.Common.Interfaces.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -15,11 +12,14 @@ public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequ
     private readonly Stopwatch _timer;
     private readonly ILogger<TRequest> _logger;
 
-    public PerformanceBehaviour(ILogger<TRequest> logger)
+    private readonly IUser _user;
+
+    public PerformanceBehaviour(ILogger<TRequest> logger, IUser user)
     {
         _timer = new Stopwatch();
 
         _logger = logger;
+        _user = user;
     }
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
@@ -35,16 +35,10 @@ public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequ
         if (elapsedMilliseconds > 500)
         {
             var requestName = typeof(TRequest).Name;
-            var userId = "placeholder user id";
-            var userName = "placeholder user name";
+            var userIdentityProviderId = _user.HomeAccountId;
 
-            //if (!string.IsNullOrEmpty(userId))
-            //{
-            //    userName = await _identityService.GetUserNameAsync(userId);
-            //}
-
-            _logger.LogWarning("Manager Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@UserName} {@Request}",
-                requestName, elapsedMilliseconds, userId, userName, request);
+            _logger.LogWarning("Manager Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@Request}",
+                requestName, elapsedMilliseconds, userIdentityProviderId, request);
         }
 
         return response;

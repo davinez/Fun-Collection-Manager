@@ -1,7 +1,10 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
 using Manager.API.Services;
+using Manager.Application.Common.Exceptions;
 using Manager.Application.Common.Interfaces.Services;
 using Manager.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,6 +14,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 namespace Manager.API;
 
@@ -18,6 +27,37 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddAPIServices(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
+
+
+
+        string otelCollectorUrl = configuration["OpenTelemetry:OtelCollectorUrl"] ?? throw new ManagerException("OpenTelemetry:OtelCollectorUrl");
+
+        services.AddOpenTelemetry()
+      .WithTracing(tracing => tracing
+        //.AddSource("ManagerWebApi")
+        //.ConfigureResource(resource => resource
+          //  .AddService("ManagerWebApi"))
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddOtlpExporter(options =>
+        {
+            options.Endpoint = new Uri("http://localhost:4318/v1/traces");
+            options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
+        }))
+      .WithMetrics(metrics => metrics
+       // .AddMeter("ManagerWebApi")
+        //.ConfigureResource(resource => resource
+        //    .AddService("ManagerWebApi"))
+        .AddRuntimeInstrumentation()
+        .AddAspNetCoreInstrumentation()
+        .AddProcessInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddOtlpExporter(options =>
+        {
+            options.Endpoint = new Uri("http://localhost:4317");
+            options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+        }));
+
         bool isDevelop = environment.IsDevelopment();
 
         services.AddCors(options =>
