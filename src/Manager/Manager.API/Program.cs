@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using Manager.API;
 using Manager.API.Infrastructure.Extensions;
 using Manager.Application;
-using Manager.Application.Common.Interfaces.Services;
 using Manager.Infrastructure;
 using Manager.Infrastructure.Data;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,31 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddAPIServices(builder.Configuration, builder.Environment);
+builder.Logging.AddLoggingConfiguration(builder.Configuration, builder.Environment);
 
-var loggingResource = ResourceBuilder.CreateDefault().AddService(
-     serviceName: "ManagerWebApi",
-     serviceVersion: "1.0.0"
-     )
-    .AddAttributes(new Dictionary<string, object>
-    {
-        ["app"] = "managerwebApi",
-        ["runtime"] = "dotnet",
-        ["service.name"] = "ManagerWebApi"
-    });
-
-// Clear default logging providers used by WebApplication host.
-builder.Logging.ClearProviders();
-
-builder.Logging.AddOpenTelemetry(logging => {
-    // The rest of your setup code goes here
-    logging.AddOtlpExporter(options =>
-    {
-        options.Endpoint = new Uri("http://localhost:4317");
-        options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
-    });
-
-    logging.SetResourceBuilder(loggingResource);
-});
 
 var app = builder.Build();
 

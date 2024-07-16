@@ -13,9 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
-using OpenTelemetry;
-using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -25,36 +24,64 @@ namespace Manager.API;
 
 public static class DependencyInjection
 {
+    public static ILoggingBuilder AddLoggingConfiguration(this ILoggingBuilder logging, IConfiguration configuration, IWebHostEnvironment environment)
+    {
+        string otelCollectorUrl = configuration["OpenTelemetry:OtelCollectorUrl"] ?? throw new ManagerException("OpenTelemetry:OtelCollectorUrl");
+
+        var loggingResource = ResourceBuilder.CreateDefault().AddService(
+     serviceName: "ManagerWebApi",
+     serviceVersion: "1.0.0"
+     )
+    .AddAttributes(new Dictionary<string, object>
+    {
+        ["app"] = "managerwebApi",
+        ["runtime"] = "dotnet",
+    });
+
+        // Clear default logging providers used by WebApplication host.
+        // logging.ClearProviders();
+
+        logging.AddOpenTelemetry(logging =>
+        {
+            // The rest of your setup code goes here
+            logging.AddOtlpExporter(options =>
+            {
+                options.Endpoint = new Uri(otelCollectorUrl);
+                options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+            });
+
+            logging.SetResourceBuilder(loggingResource);
+        });
+
+        return logging;
+    }
+
     public static IServiceCollection AddAPIServices(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
-
-
-
         string otelCollectorUrl = configuration["OpenTelemetry:OtelCollectorUrl"] ?? throw new ManagerException("OpenTelemetry:OtelCollectorUrl");
 
         services.AddOpenTelemetry()
       .WithTracing(tracing => tracing
-        //.AddSource("ManagerWebApi")
-        //.ConfigureResource(resource => resource
-          //  .AddService("ManagerWebApi"))
+        .AddSource("ManagerWebApi")
+        .ConfigureResource(resource => resource
+          .AddService("ManagerWebApi"))
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
         .AddOtlpExporter(options =>
         {
-            options.Endpoint = new Uri("http://localhost:4318/v1/traces");
-            options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
+            options.Endpoint = new Uri(otelCollectorUrl);
+            options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
         }))
       .WithMetrics(metrics => metrics
-       // .AddMeter("ManagerWebApi")
-        //.ConfigureResource(resource => resource
-        //    .AddService("ManagerWebApi"))
+        .ConfigureResource(resource => resource
+            .AddService("ManagerWebApi"))
         .AddRuntimeInstrumentation()
         .AddAspNetCoreInstrumentation()
         .AddProcessInstrumentation()
         .AddHttpClientInstrumentation()
         .AddOtlpExporter(options =>
         {
-            options.Endpoint = new Uri("http://localhost:4317");
+            options.Endpoint = new Uri(otelCollectorUrl);
             options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
         }));
 
@@ -92,7 +119,7 @@ public static class DependencyInjection
 
         services.AddExceptionHandler<CustomExceptionHandler>();
 
-        services.AddRazorPages();
+        // services.AddRazorPages();
 
         // Customise default API behaviour
         services.Configure<ApiBehaviorOptions>(options =>
