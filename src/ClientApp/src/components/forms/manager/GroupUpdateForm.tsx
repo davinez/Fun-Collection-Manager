@@ -91,7 +91,8 @@ export const GroupUpdateForm = ({ onClose }: TGroupUpdateFormProps) => {
 					reset();
 					onClose();
 					// Reset selected group Id
-					managerSlice.setSelectedSidebarGroupId(0);
+					// If set to 0 it triggers another fetch through UseQuery but failed cause the 0 ID
+					// managerSlice.setSelectedSidebarGroupId(0);
 				},
 				onError: (error, variables, context) => {
 					toast({

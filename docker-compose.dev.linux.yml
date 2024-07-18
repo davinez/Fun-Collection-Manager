@@ -8,9 +8,10 @@ services:
       context: src/ManagerSupport
       dockerfile: Dockerfile
       args:
-         ENVIRONMENT: prod
+         ENVIRONMENT: dev
     ports:
       - "8082:8082"
+      - "9229:9229"
     environment:
       - DB_TYPE=postgres
       - PG_USER=postgres
