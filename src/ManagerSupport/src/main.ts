@@ -13,6 +13,7 @@ import { AllExceptionsFilter } from './shared/filters/all.filter';
 import { ConfigService } from '@nestjs/config';
 import { ManagerSupportException } from './shared/exceptions/manager.support.exception';
 import { CustomLoggerService } from './shared/logging/customlogger.service';
+import { LoggerService, Logger } from '@nestjs/common';
 
 async function bootstrap() {
   // Open Telemetry Trace, only works if runs before app create
@@ -25,8 +26,11 @@ async function bootstrap() {
     bufferLogs: true,
     logger: new CustomLoggerService()
   });
+  
+  // const logger = app.get(CustomLoggerService);
+  // app.useLogger(logger);
 
-  const configService = app.get(ConfigService);
+  //const configService = app.get(ConfigService);
 
   // Open Telemetry
   //const otelCollectorUrl = configService.get<string>('OPENTELEMETRY__OTELCOLLECTORURL');
@@ -45,6 +49,10 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
+
+  // resolve LogService
+  //const loggerService = await app.get(Logger);
+ // const logService = app.get<CustomLoggerService>(CustomLoggerService);
 
   app.useGlobalFilters(new AllExceptionsFilter());
 

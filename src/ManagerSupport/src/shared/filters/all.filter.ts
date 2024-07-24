@@ -4,14 +4,20 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
+  LoggerService,
+   Logger
 } from '@nestjs/common';
 import { ValidationException } from '../exceptions/validation.exception';
 import { ManagerSupportException } from '../exceptions/manager.support.exception';
 import { ApiErrorResponseDto } from '../dto/api-error-response.dto';
 import { Request, Response } from 'express';
+import { CustomLoggerService } from '../logging/customlogger.service';
+
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
+  private readonly logger = new Logger(AllExceptionsFilter.name);
+
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -32,6 +38,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
           errors: exception.errors
         }
       };
+
+      this.logger.error('ValidationException', { exception  });
     } else if (exception instanceof ManagerSupportException) {
       responseBody = {
         apiVersion: "1.0",
@@ -47,6 +55,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
           ]
         }
       };
+
+      this.logger.error('ManagerSupportException', { exception  });
     } else if (exception instanceof HttpException) {
       responseBody = {
         apiVersion: "1.0",
@@ -62,6 +72,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
           ]
         }
       };
+
+    this.logger.error('HttpException', { exception  });
     } else {
       responseBody = {
         apiVersion: "1.0",
@@ -77,6 +89,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
           ]
         }
       };
+
+      this.logger.error('Unhandled Exception', { exception });
     }
 
     response.status(httpStatus).json(responseBody);

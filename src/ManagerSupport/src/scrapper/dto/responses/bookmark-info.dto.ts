@@ -1,6 +1,5 @@
 export class BookmarkDataDto {
-  pageCover: string;
+  pageCover: Blob | undefined;
   pageTitle: string;
   pageDescription: string;
-
 }
