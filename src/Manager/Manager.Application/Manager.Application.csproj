@@ -30,8 +30,9 @@
     <Folder Include="Bookmarks\Queries\" />
     <Folder Include="CollectionGroups\EventHandlers\" />
     <Folder Include="Collections\EventHandlers\" />
-    <Folder Include="Common\Models\Requests\Accounts\" />
+    <Folder Include="Common\Dtos\Requests\Accounts\" />
     <Folder Include="Icons\Commands\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
   <PropertyGroup>

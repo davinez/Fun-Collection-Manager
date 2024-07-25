@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Manager.Application.CollectionGroups.Commands.UpdateCollectionGroup;
+namespace Manager.Application.CollectionGroups.Commands.PatchCollectionGroup;
 
 public class PatchCollectionGroupCommandValidator : AbstractValidator<PatchCollectionGroupCommand>
 {

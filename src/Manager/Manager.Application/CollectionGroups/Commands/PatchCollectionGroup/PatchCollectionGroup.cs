@@ -7,7 +7,7 @@ using Manager.Application.Common.Interfaces.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Manager.Application.CollectionGroups.Commands.UpdateCollectionGroup;
+namespace Manager.Application.CollectionGroups.Commands.PatchCollectionGroup;
 
 public record PatchCollectionGroupCommand : IRequest
 {

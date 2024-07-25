@@ -38,20 +38,11 @@ public static class DependencyInjection
         services.AddScoped<IMicrosoftGraphService, MicrosoftGraphService>();
         services.AddScoped<IS3StorageService, S3StorageService>();
 
+        services.AddHttpClient<IManagerSupportService, ManagerSupportService>();
+
         // TODO: Is nessecary?
         services.AddAuthentication()
                 .AddBearerToken(IdentityConstants.BearerScheme);
-
-        //services.AddAuthorizationBuilder();
-
-        //services
-        //    .AddIdentityCore<ApplicationUser>()
-        //    .AddRoles<IdentityRole>()
-        //    .AddEntityFrameworkStores<ApplicationDbContext>()
-        //    .AddApiEndpoints();
-
-        //services.AddAuthorization(options =>
-        //        options.AddPolicy(Policies.CanPurge, policy => policy.RequireRole(Roles.Administrator)));
 
         services.AddSingleton(TimeProvider.System);
 

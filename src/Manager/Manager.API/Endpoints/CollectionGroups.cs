@@ -3,7 +3,7 @@ using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
 using Manager.Application.CollectionGroups.Commands.CreateCollectionGroup;
 using Manager.Application.CollectionGroups.Commands.DeleteCollectionGroup;
-using Manager.Application.CollectionGroups.Commands.UpdateCollectionGroup;
+using Manager.Application.CollectionGroups.Commands.PatchCollectionGroup;
 using Manager.Application.CollectionGroups.Queries.GetCollectionGroupById;
 using Manager.Application.Common.Models;
 using MediatR;

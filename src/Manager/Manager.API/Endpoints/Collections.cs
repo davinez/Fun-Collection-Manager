@@ -4,7 +4,7 @@ using Manager.API.Infrastructure.Extensions;
 using Manager.Application.Collections.Commands.ChangeIcon;
 using Manager.Application.Collections.Commands.CreateCollection;
 using Manager.Application.Collections.Commands.DeleteCollection;
-using Manager.Application.Collections.Commands.UpdateCollection;
+using Manager.Application.Collections.Commands.PatchCollection;
 using Manager.Application.Collections.Queries.GetCollectionById;
 using Manager.Application.Collections.Queries.GetCollectionGroups;
 using Manager.Application.Common.Models;

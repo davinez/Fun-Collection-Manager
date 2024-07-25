@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using Manager.API;
+﻿using Manager.API;
 using Manager.API.Infrastructure.Extensions;
 using Manager.Application;
 using Manager.Infrastructure;
 using Manager.Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
-using OpenTelemetry.Logs;
-using OpenTelemetry.Resources;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,8 +49,6 @@ app.UseExceptionHandler(options => { });
 
 app.Map("/", () => Results.Redirect("/api"));
 app.MapEndpoints();
-
-//await app.Services.GetRequiredService<IPlaywrightService>().InitializePlaywrightAsync();
 
 app.Run();
 

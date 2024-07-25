@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
 using FluentValidation;
 using Manager.Application.Common.Behaviors;
-using Manager.Application.Common.Interfaces.Services;
-using Manager.Application.Services;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,10 +20,6 @@ public static class DependencyInjection
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
         });
-
-        services.AddSingleton<IPlaywrightService, PlaywrightService>();
-
-        services.AddHttpClient();
 
         return services;
     }

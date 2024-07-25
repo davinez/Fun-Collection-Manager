@@ -74,7 +74,7 @@ public static class DependencyInjection
         }))
       .WithMetrics(metrics => metrics
         .ConfigureResource(resource => resource
-            .AddService("ManagerWebApi"))
+            .AddService("ManagerWebApi"))      
         .AddRuntimeInstrumentation()
         .AddAspNetCoreInstrumentation()
         .AddProcessInstrumentation()
