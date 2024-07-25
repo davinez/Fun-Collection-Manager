@@ -1,15 +1,19 @@
 import { Logger, Injectable, Options } from '@nestjs/common';
 import { GetBookmarkDataDto } from './dto/requests/get-bookmark-data.dto';
-import { BookmarkDataDto } from './dto/responses/bookmark-info.dto';
+import { BookmarkDataDto } from './dto/responses/bookmark-data.dto';
 import { ManagerSupportException } from 'src/shared/exceptions/manager.support.exception';
 import { PlaywrightService } from './playwright.service';
 import type { Page, Locator } from 'playwright'
 import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom, map, of } from 'rxjs';
 import type { AxiosError, AxiosResponse } from 'axios';
+import { isValidHttpUrl } from 'src/shared/utils/string.utils';
 
 @Injectable()
 export class ScrapperService {
+  public defaultPageTitle = "N/A Title";
+  public defaultPageDescription = "N/A Description";
+
   constructor(
     private readonly playwrightService: PlaywrightService,
     private readonly httpService: HttpService
@@ -36,35 +40,45 @@ export class ScrapperService {
 
       return {
         pageCover: undefined,
-        pageTitle: "N/A Title",
-        pageDescription: "N/A Description"
+        pageTitle: this.defaultPageTitle,
+        pageDescription: this.defaultPageDescription
       };
     }
 
     // Cover
-    const pageCover = await this.getCoverAsync(page);
+    const pageCover: ArrayBuffer = await this.getCover(page);
+
+    // Title
+    const pageTitle: string = await this.getPageTitle(page);
+
+    // Description
+    const pageDescription: string = await this.getPageDescription(page);
+
+    // Test Image 
+    // const buffer = Buffer.from(pageCover);
+    // const base64String = buffer.toString('base64');
 
     return {
       pageCover: pageCover,
-      pageTitle: "dfsdfds",
-      pageDescription: "fddsfds"
+      pageTitle: pageTitle,
+      pageDescription: pageDescription
     };
   }
 
-  private async getCoverAsync(page: Page) {
+  private async getCover(page: Page) {
     const locator1 = page.locator("meta[property=\"og:image\"]");
 
-    const imageURL: string = await this.retrieveAttributeValueAsync(locator1, "", "content");
+    const imageURL: string = await this.retrieveAttributeValue(locator1, "", "content");
 
-    let coverImage: boolean | Blob = false;
+    let coverImage: boolean | ArrayBuffer = false;
 
     // Try to retrieve url cover, if fails then take screenshot
-    if (imageURL.length > 0 && this.isValidHttpUrl(imageURL)) {
+    if (imageURL.length > 0 && isValidHttpUrl(imageURL)) {
 
       const request = this.httpService
-        .get<Blob>(imageURL, { responseType: "blob" })
+        .get<ArrayBuffer>(imageURL, { responseType: "arraybuffer" })
         .pipe(
-          map((res: AxiosResponse<Blob>) => {
+          map((res: AxiosResponse<ArrayBuffer>) => {
             return res.data;
           }),
           catchError((error: AxiosError) => {
@@ -79,7 +93,8 @@ export class ScrapperService {
     // Take screenshot
     if (typeof coverImage === "boolean") {
       const bufferResponse = await page.screenshot({ type: "png" });
-      return new Blob([bufferResponse]);;
+
+      return bufferResponse.buffer.slice(bufferResponse.byteOffset, bufferResponse.byteOffset + bufferResponse.byteLength);
     }
     else {
       return coverImage;
@@ -87,7 +102,61 @@ export class ScrapperService {
 
   }
 
-  private async retrieveAttributeValueAsync(
+  private async getPageTitle(page: Page) {
+
+    const locator1 = page.locator("title");
+    const locator2 = page.locator("meta[property=\"og:title\"]");
+
+    let title: string = await this.retrieveTextContentValue(locator1, "");
+
+    if (title === "") // default value
+      title = await this.retrieveAttributeValue(locator2, this.defaultPageTitle, "content");
+
+    return title;
+  }
+
+  private async getPageDescription(page: Page) {
+
+    const locator1 = page.locator("meta[name=\"description\"]");
+    const locator2 = page.locator("meta[property=\"og:description\"]");
+
+    let description: string = await this.retrieveAttributeValue(locator1, "", "content");
+
+    if (description === "") // default value
+      description = await this.retrieveAttributeValue(locator2, this.defaultPageDescription, "content");
+
+    return description;
+  }
+
+  private async retrieveTextContentValue(
+    locator: Locator,
+    defaultValue: string,
+    stateValue: "attached" | "detached" | "visible" | "hidden" = "attached",
+    timeOutValue: number = 0) {
+    try {
+      const locatorsCount: number = await locator.count();
+
+      if (locatorsCount > 1) {
+        locator = locator.first();
+        await locator.waitFor({ state: stateValue, timeout: timeOutValue });
+      }
+      else if (locatorsCount == 1) {
+        await locator.waitFor({ state: stateValue, timeout: timeOutValue });
+      }
+      else {
+        return defaultValue;
+      }
+
+      const value: string | null = await locator.textContent({ timeout: timeOutValue });
+
+      return value && value.trim().length !== 0 ? value : defaultValue
+    }
+    catch (e) {
+      return defaultValue;
+    }
+  }
+
+  private async retrieveAttributeValue(
     locator: Locator,
     defaultValue: string,
     attributeName: string,
@@ -107,25 +176,13 @@ export class ScrapperService {
         return defaultValue;
       }
 
-      const value: string | null = await locator.getAttribute(attributeName, { timeout: timeOutValue });
+      const value: null | string = await locator.getAttribute(attributeName, { timeout: timeOutValue });
 
-      return value === null || value.trim().length === 0 ? defaultValue : value
+      return value && value.trim().length !== 0 ? value : defaultValue
     }
     catch (e) {
       return defaultValue;
     }
-  }
-
-  private isValidHttpUrl(string: string) {
-    let url;
-
-    try {
-      url = new URL(string);
-    } catch (_) {
-      return false;
-    }
-
-    return url.protocol === "http:" || url.protocol === "https:";
   }
 
 }

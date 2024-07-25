@@ -1,6 +1,6 @@
 ARG ENVIRONMENT=dev
 
-FROM node:20-slim AS base
+FROM mcr.microsoft.com/playwright:v1.45.1-jammy AS base
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
