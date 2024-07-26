@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Manager.Application.Common.Exceptions;
 using Manager.Application.Common.Models;
-using Manager.Domain.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;

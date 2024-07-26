@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
+using Manager.Application.Common.Dtos.Services.ManagerSupportService;
 using Manager.Application.Common.Exceptions;
 using Manager.Application.Common.Helpers;
 using Manager.Application.Common.Interfaces;
@@ -13,12 +13,11 @@ using Manager.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Playwright;
 using NanoidDotNet;
 
 namespace Manager.Application.Bookmarks.Commands.CreateBookmark;
 
-public record CreateBookmarkCommand : MediatR.IRequest
+public record CreateBookmarkCommand : IRequest
 {
     public int CollectionId { get; set; }
     public required string NewURL { get; set; }
@@ -56,45 +55,52 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
 
         Guard.Against.NotFound(request.CollectionId, collection);
 
+        // Deprecated to use _user.HomeAccountId instead of Id for S3 naming bucket and avoid multiple database calls
+        // Generate SQL Query with only the 2 specified columns
+        //int userId = (await _context.UserAccounts
+        //    .AsNoTracking()
+        //    .Select(c => new { c.Id, c.IdentityProviderId })
+        //    .FirstAsync(u => u.IdentityProviderId == _user.HomeAccountId, cancellationToken: cancellationToken))
+        //    .Id;
+
+        // Scrap url
+        BookmarkDataDto bookmarkData = await _supportservice.GetBookmarkData(request.NewURL);
 
         // Cover
-        byte[] pageCover = await GetCoverAsync(page);
+        string? objectKey = null;
+        string? pageCoverBase64 = bookmarkData.PageCover;
 
-        // Keeping size ratio of 16:9
-        using Stream newFileContent = ImageHelpers.Resize(pageCover, 635, 357);
+        if (!string.IsNullOrWhiteSpace(pageCoverBase64))
+        {
+            byte[] pageCover = Convert.FromBase64String(pageCoverBase64);
+
+            // Keeping size ratio of 16:9
+            using Stream newFileContent = ImageHelpers.Resize(pageCover, 635, 357);
+
+            // Test
+            //using (var memoryStream = new MemoryStream())
+            //{
+            //    newFileContent.CopyTo(memoryStream);
+            //    byte[] newfile = memoryStream.ToArray();
+            //    string newfileBase64 = Convert.ToBase64String(newfile);
+            //}
+            //newFileContent.Seek(0, SeekOrigin.Begin);
+
+            string bucketName = _configuration["S3Storage:BucketBookmarksCovers"] ?? throw new ManagerException($"Empty config section in {nameof(CreateBookmark)} bookmarks bucket");
+            objectKey = $"{_user.HomeAccountId}/{collection.Id}/{Nanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 8)}";
+
+            await _storageService.UploadImageAsync(bucketName, objectKey, "image/webp", newFileContent);
+        }
 
         // Title
-        string pageTitle = await GetPageTitleAsync(page);
+        string pageTitle = bookmarkData.PageTitle;
         if (pageTitle.Length > 100)
             pageTitle = $"{pageTitle.Substring(0, 97)}...";
 
         // Description
-        string? pageDescription = await GetPageDescriptionAsync(page);
+        string? pageDescription = bookmarkData.PageDescription;
         if (pageDescription.Length > 255)
             pageDescription = $"{pageDescription.Substring(0, 252)}...";
-
-        await bookmarkContext.CloseAsync();
-
-        // Test
-        //using (var memoryStream = new MemoryStream())
-        //{
-        //    newFileContent.CopyTo(memoryStream);
-        //    byte[] newfile = memoryStream.ToArray();
-        //    string newfileBase64 = Convert.ToBase64String(newfile);
-        //}
-        //newFileContent.Seek(0, SeekOrigin.Begin);
-
-        // Generate SQL Query with only the 2 specified columns
-        int userId = (await _context.UserAccounts
-            .AsNoTracking()
-            .Select(c => new { c.Id, c.IdentityProviderId })
-            .FirstAsync(u => u.IdentityProviderId == _user.HomeAccountId, cancellationToken: cancellationToken))
-            .Id;
-
-        string bucketName = _configuration["S3Storage:BucketBookmarksCovers"] ?? throw new ManagerException($"Empty config section in {nameof(CreateBookmark)} bookmarks bucket");
-        string objectKey = $"{userId}/{collection.Id}/{Nanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 10)}";
-
-        await _storageService.UploadImageAsync(bucketName, objectKey, "image/webp", newFileContent);
 
         var newBookmark = new Bookmark()
         {

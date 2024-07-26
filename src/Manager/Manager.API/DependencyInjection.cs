@@ -119,7 +119,7 @@ public static class DependencyInjection
 
         services.AddExceptionHandler<CustomExceptionHandler>();
 
-        // services.AddRazorPages();
+        services.AddControllers();
 
         // Customise default API behaviour
         services.Configure<ApiBehaviorOptions>(options =>
@@ -180,7 +180,6 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IUser, CurrentUser>();
-        services.AddHttpClient();
 
         return services;
     }

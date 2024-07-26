@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Manager.Domain.Exceptions;
+namespace Manager.Application.Common.Exceptions;
 
 public class RemoteServiceException : Exception
 {
