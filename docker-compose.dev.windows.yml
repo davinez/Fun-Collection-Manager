@@ -38,4 +38,5 @@ services:
 
 networks:
   fucoma-app-network:
-    driver: bridge
+    external: 
+      name: vpsnetwork

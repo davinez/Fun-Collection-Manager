@@ -12,7 +12,7 @@ export class CustomLoggerService implements LoggerService {
   constructor() {
     this.logger = WinstonModule.createLogger({
       transports: [new LokiTransport({
-        host: 'http://127.0.0.1:3100',
+        host: process.env.LOKI__COLLECTORURL as string,
         labels: { 'service_name': 'ManagerSupportWebApi' },
         json: true,
         format: winston.format.json(),

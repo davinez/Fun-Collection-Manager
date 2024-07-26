@@ -46,7 +46,7 @@ export class ScrapperService {
     }
 
     // Cover
-    const pageCover: ArrayBuffer = await this.getCover(page);
+    const pageCover: string = await this.getCover(page);
 
     // Title
     const pageTitle: string = await this.getPageTitle(page);
@@ -93,11 +93,12 @@ export class ScrapperService {
     // Take screenshot
     if (typeof coverImage === "boolean") {
       const bufferResponse = await page.screenshot({ type: "png" });
-
-      return bufferResponse.buffer.slice(bufferResponse.byteOffset, bufferResponse.byteOffset + bufferResponse.byteLength);
+      return bufferResponse.toString("base64");
     }
     else {
-      return coverImage;
+      // This step is only necessary if you don't already have a Buffer Object
+      const buffer = Buffer.from(coverImage);
+      return buffer.toString('base64');
     }
 
   }
