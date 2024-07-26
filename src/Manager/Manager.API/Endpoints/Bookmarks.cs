@@ -2,6 +2,8 @@
 using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
 using Manager.Application.Bookmarks.Commands.CreateBookmark;
+using Manager.Application.Bookmarks.Queries.GetAllBookmarksWithPagination;
+using Manager.Application.Common.Models;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -23,6 +25,19 @@ public class Bookmarks : EndpointGroupBase
         await sender.Send(command);
 
         return Results.NoContent();
+    }
+
+    public async Task<ApiResponse<GetAllBookmarksDto>> GetAllBookmarksWithPagination(
+        [FromServices] ISender sender,
+        [AsParameters] GetAllBookmarksWithPaginationQuery query
+        )
+    {
+        var data = await sender.Send(query);
+
+        return new ApiResponse<GetAllBookmarksDto>
+        {
+            Data = data
+        };
     }
 
 

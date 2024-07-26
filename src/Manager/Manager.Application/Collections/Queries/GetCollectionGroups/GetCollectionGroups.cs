@@ -8,7 +8,6 @@ using Manager.Application.Common.Interfaces.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Graph.Models;
 
 namespace Manager.Application.Collections.Queries.GetCollectionGroups;
 
@@ -33,8 +32,6 @@ public class GetCollectionGroupsQueryHandler : IRequestHandler<GetCollectionGrou
 
     public async Task<CollectionGroupsDto> Handle(GetCollectionGroupsQuery request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Manager Request: {Name} {@UserId} - {@Request}",
-          nameof(GetCollectionGroupsQuery), _user.HomeAccountId, request);
 
         var userAccount = await _context.UserAccounts
            .AsNoTracking()
