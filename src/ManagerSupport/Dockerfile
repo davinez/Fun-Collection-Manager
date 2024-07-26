@@ -39,6 +39,7 @@ USER nodeuser
 
 EXPOSE 8082
 
+# Start the server using the production build
 CMD [ "node", "dist/main.js" ]
 
 ##### END PROD #####

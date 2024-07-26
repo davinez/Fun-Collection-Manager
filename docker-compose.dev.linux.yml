@@ -8,38 +8,18 @@ services:
       context: src/ManagerSupport
       dockerfile: Dockerfile
       args:
-         ENVIRONMENT: dev
+         ENVIRONMENT: prod # prod or dev
     ports:
       - "8082:8082"
       - "9229:9229"
-    environment:
-      - DB_TYPE=postgres
-      - PG_USER=postgres
-      - PG_PASSWORD=postgres
-      - PG_DB=postgres
-      - PG_PORT=5432
-      - PG_HOST=db
-    # depends_on:
-    #  - manager.db
+    env_file:
+      - .env.dev.managersupport
     networks:
       - fucoma-app-network
 
-  # manager.db:
-  #   container_name: manager-db
-  #   image: postgres
-  #   ports:
-  #     - "5432:5432"
-  #   environment:
-  #     POSTGRES_USER: managerdev
-  #     POSTGRES_PASSWORD: managerpassdev
-  #     POSTGRES_DB: ManagerDB
-  #   volumes:
-  #     - ./data/manager.db:/var/lib/postgresql/data
-  #   networks:
-  #     - fucoma-app-network
-
 networks:
   fucoma-app-network:
-    external: 
-      name: vpsnetwork
+    name: vpsnetwork
+    external: true
+      
 
