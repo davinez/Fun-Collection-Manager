@@ -39,10 +39,8 @@ import { FilterBookmarksEnum } from "@/shared/types/global.types";
 // General
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
-import {
-	Location,
-	useLocation,
-} from "react-router-dom";
+import { Location, useLocation } from "react-router-dom";
+import { getEnumKeyByEnumValue } from "@/shared/utils";
 
 type TManagerNavbarProps = {};
 
@@ -84,11 +82,10 @@ export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 
 	const handleOnChangeBookmarkFilterOption = (value: string | string[]) => {
 		if (typeof value === "string") {
-			const enumValueExists =
-				Object.values(FilterBookmarksEnum).includes(value);
-			// Only if value of radio option exists in enum value
-			if (enumValueExists) {
-				managerSlice.setGetBookmarkParamsFilter(value);
+			const enumKey = getEnumKeyByEnumValue(FilterBookmarksEnum, value);
+			// Only if value of radio option exists in enum
+			if (enumKey) {
+				managerSlice.setGetBookmarkParamsFilter(FilterBookmarksEnum[enumKey]);
 				setFilterOptionRadio(
 					filterbookmarkOptions.find((option) => option.value === value)
 				);

@@ -14,7 +14,6 @@ export type TManagerSliceDefinition = {
   bookmarkModalFormAction: FormActionEnum;
   selectedSidebarGroupId: number;
   selectedSidebarCollection: number | undefined;
-  selectedSortValueCollectionFilter: string;
   selectedViewValueCollectionFilter: string;
   selectedShowInValueCollectionFilter: string[];
   selectedBookmarksCheckbox: number[];
@@ -28,7 +27,7 @@ export type TManagerSliceActions = {
   setBookmarkModalFormAction: (payload: FormActionEnum) => void;
   setSelectedSidebarGroupId: (payload: number) => void;
   setSelectedSidebarCollection: (payload: number) => void;
-  setSelectedSortValueCollectionFilter: (payload: string) => void;
+  setSelectedSortValueCollectionFilter: (payload: SortEnum) => void;
   setSelectedViewValueCollectionFilter: (payload: string) => void;
   setSelectedShowInValueCollectionFilter: (payload: string[]) => void;
   setSelectedBookmarksCheckbox: (payload: number | number[]) => void;
@@ -36,7 +35,7 @@ export type TManagerSliceActions = {
   resetGetBookmarkParams: () => void;
   setSelectAllBookmarks: (payload: boolean) => void;
   setShowHeadSelectOptions: (payload: boolean) => void;
-  setGetBookmarkParamsFilter: (payload: string) => void;
+  setGetBookmarkParamsFilter: (payload: FilterBookmarksEnum) => void;
   setGetBookmarkParamsSearchValue: (payload: string) => void;
   setGetBookmarkParamsPage: (payload: number) => void;
 };
@@ -48,7 +47,6 @@ const initialManagerSliceState: TManagerSliceDefinition = {
   bookmarkModalFormAction: FormActionEnum.Add,
   selectedSidebarGroupId: 0,
   selectedSidebarCollection: undefined,
-  selectedSortValueCollectionFilter: SortEnum.DateAsc,
   selectedViewValueCollectionFilter: ViewCollectionsEnum.Card,
   selectedShowInValueCollectionFilter: [ShowInBookmarkEnum.Cover, ShowInBookmarkEnum.Title, ShowInBookmarkEnum.BookmarkInfo],
   selectedBookmarksCheckbox: [],
@@ -58,7 +56,9 @@ const initialManagerSliceState: TManagerSliceDefinition = {
     page: 1,
     pageLimit: PAGE_ITEM_LIMIT,
     filterType: FilterBookmarksEnum.Info,
-    debounceSearchValue: ""
+    debounceSearchValue: "",
+    // Sort Filter
+    selectedSortValueCollectionFilter: SortEnum.DateAsc,
   }
 };
 
@@ -78,7 +78,7 @@ export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
     }),
   setSelectedSortValueCollectionFilter: (payload): void =>
     set((state) => {
-      state.managerSlice.selectedSortValueCollectionFilter = payload;
+      state.managerSlice.getBookmarkParams.selectedSortValueCollectionFilter = payload;
     }),
   setSelectedViewValueCollectionFilter: (payload): void =>
     set((state) => {
@@ -135,7 +135,8 @@ export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
         page: 1,
         pageLimit: PAGE_ITEM_LIMIT,
         filterType: FilterBookmarksEnum.Info,
-        debounceSearchValue: ""
+        debounceSearchValue: "",
+        selectedSortValueCollectionFilter: SortEnum.DateAsc,
       };
     }),
   //   updateWallet: (payload) =>

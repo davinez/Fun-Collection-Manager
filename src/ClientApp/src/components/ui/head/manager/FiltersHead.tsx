@@ -39,16 +39,14 @@ import {
 import { useState } from "react";
 import { useStore } from "@/store/UseStore";
 import { DEFAULT_ICON } from "shared/config";
+import { getEnumKeyByEnumValue } from "@/shared/utils";
 
 type TFiltersHeadProps = {
 	icon: string | React.ElementType; // Third party icon
 	headerName: string;
 };
 
-export const FiltersHead = ({
-	icon,
-	headerName,
-}: TFiltersHeadProps) => {
+export const FiltersHead = ({ icon, headerName }: TFiltersHeadProps) => {
 	const sortOptions = [
 		{
 			value: SortEnum.DateAsc,
@@ -123,7 +121,8 @@ export const FiltersHead = ({
 	const [sortValueRadio, setSortValueRadio] = useState(
 		sortOptions.find(
 			(option) =>
-				option.value === managerSlice.selectedSortValueCollectionFilter
+				option.value ===
+				managerSlice.getBookmarkParams.selectedSortValueCollectionFilter
 		)
 	);
 	const [viewValueRadio, setViewValueRadio] = useState(
@@ -135,10 +134,10 @@ export const FiltersHead = ({
 	// General Hooks
 
 	const handleOnChangeRadioSortOption = (nextValue: string) => {
-		const enumValueExists = Object.values(SortEnum).includes(nextValue);
-		// Only if value of radio option exists in enum value
-		if (enumValueExists) {
-			managerSlice.setSelectedSortValueCollectionFilter(nextValue);
+		const enumKey = getEnumKeyByEnumValue(SortEnum, nextValue);
+		// Only if value of radio option exists in enum
+		if (enumKey) {
+			managerSlice.setSelectedSortValueCollectionFilter(SortEnum[enumKey]);
 			setSortValueRadio(
 				sortOptions.find((option) => option.value === nextValue)
 			);
@@ -302,7 +301,7 @@ export const FiltersHead = ({
 						<PopoverBody>
 							<RadioGroup
 								onChange={handleOnChangeRadioSortOption}
-								defaultValue={managerSlice.selectedSortValueCollectionFilter.toString()}
+								defaultValue={managerSlice.getBookmarkParams.selectedSortValueCollectionFilter.toString()}
 							>
 								<Stack direction="column">
 									<Text textStyle="primary" color="brandPrimary.100" mb={1}>

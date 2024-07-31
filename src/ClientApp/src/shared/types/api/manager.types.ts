@@ -1,6 +1,7 @@
 import * as z from "zod";
 import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from "shared/config";
 import { bytesToMegaBytes } from "shared/utils";
+import { FilterBookmarksEnum, SortEnum } from "shared/types/global.types";
 
 // Components Types //
 
@@ -212,7 +213,8 @@ export type TDeleteCollectionPayload = z.infer<typeof deleteCollectionFormPayloa
 export type TGetBookmarksParams = {
   page: number;
   pageLimit: number;
-  filterType: string;
+  filterType: FilterBookmarksEnum;
   debounceSearchValue: string;
+  selectedSortValueCollectionFilter: SortEnum,
 }
 

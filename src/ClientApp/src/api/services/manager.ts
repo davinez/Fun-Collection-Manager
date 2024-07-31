@@ -87,20 +87,22 @@ export const getCollectionByIdFetchQuery = async (apiClient: TApi, id: number) =
   });
 }
 
-export const useGetAllBookmarksQuery = ({ page, pageLimit, filterType, debounceSearchValue }: TGetBookmarksParams) => {
+export const useGetAllBookmarksQuery = ({ page, pageLimit, filterType, debounceSearchValue, selectedSortValueCollectionFilter }: TGetBookmarksParams) => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useQuery({
-    queryKey: ["all-bookmarks", { currentPage: page, debounceSearchValue }],
+    queryKey: ["all-bookmarks", { currentPage: page, debounceSearchValue, currentSortValue: selectedSortValueCollectionFilter }],
     queryFn: async () => {
-      const response = await apiClient.get<TApiResponse<TGetAllBookmarks>>('/manager/collections/bookmarks',
+      const response = await apiClient.get<TApiResponse<TGetAllBookmarks>>('/bookmarks/all',
         debounceSearchValue.length !== 0 ?
           {
+            sort_type: selectedSortValueCollectionFilter,
             page: page,
             page_limit: pageLimit,
             filter_type: filterType,
             search_value: debounceSearchValue
           } :
           {
+            sort_type: selectedSortValueCollectionFilter,
             page: page,
             page_limit: pageLimit
           }
@@ -150,7 +152,7 @@ export const useGetAllIconsQuery = () => {
 export const useAddURLMutation = () => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
-    mutationFn: async (payload:  TAddURLPayload & TAddURLExtrasPayload) => {
+    mutationFn: async (payload: TAddURLPayload & TAddURLExtrasPayload) => {
       const response = await apiClient.post<TApiResponse>("/bookmarks", payload);
       return response.data;
     },
@@ -202,7 +204,7 @@ export const useUpdateBookmarkMutation = () => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async ({ bookmarkId, payload }: TuseUpdateBookmarkMutationVariables) => {
-      const response = await apiClient.patch<TApiResponse>(`/manager/bookmarks/${bookmarkId}`, payload);
+      const response = await apiClient.patch<TApiResponse>(`/bookmarks/${bookmarkId}`, payload);
       return response.data;
     },
   });
@@ -212,7 +214,7 @@ export const useDeleteBookmarkMutation = () => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async (payload: TBookmarkDeletePayload) => {
-      const response = await apiClient.delete<TApiResponse>('/manager/bookmarks', payload);
+      const response = await apiClient.delete<TApiResponse>('/bookmarks/list', payload);
       return response.data;
     },
   });

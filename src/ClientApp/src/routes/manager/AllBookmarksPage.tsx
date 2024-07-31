@@ -2,10 +2,7 @@
 import { useToast, useDisclosure, Box, Flex } from "@chakra-ui/react";
 import { AiFillCloud } from "react-icons/ai";
 // Components
-import {
-	FiltersHead,
-	SelectOptionsHead,
-} from "components/ui/head/manager";
+import { FiltersHead, SelectOptionsHead } from "components/ui/head/manager";
 import { LoadingBox, ErrorBox } from "@/components/ui/box";
 import { BookmarkCard } from "@/components/ui/card/manager";
 import { BookmarkModal } from "@/components/ui/modal/manager";
@@ -14,7 +11,6 @@ import { MainPagination } from "@/components/ui/pagination/manager";
 
 // Hooks
 import { useGetAllBookmarksQuery } from "@/api/services/manager";
-import useBookmarkSort from "@/hooks/manager/useBookmarkSort";
 // Types
 import type {
 	TBookmark,
@@ -38,13 +34,8 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 		onOpen: onOpenBookmarkModal,
 		onClose: onCloseBookmarkModal,
 	} = useDisclosure();
-	const [sortedData] = useBookmarkSort(data.bookmarks);
 
 	// Handlers
-
-	if (!sortedData) {
-		return <LoadingBox />;
-	}
 
 	return (
 		<>
@@ -80,7 +71,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 				justifyItems="center"
 				alignItems="center"
 			>
-				{sortedData.map((bookmark) => {
+				{data.bookmarks.map((bookmark) => {
 					return (
 						<BookmarkCard
 							key={`SortedCard_${bookmark.id}`}
