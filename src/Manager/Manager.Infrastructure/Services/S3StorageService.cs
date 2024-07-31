@@ -47,7 +47,7 @@ public class S3StorageService : IS3StorageService
     {
         using AmazonS3Client s3Client = GenerateS3Client(bucketName) ?? throw new ManagerException($"Empty s3 client in {nameof(S3StorageService)}");
 
-        var putObjectRequest = new PutObjectRequest
+        var request = new PutObjectRequest
         {
             BucketName = bucketName,
             Key = objectKey,
@@ -56,13 +56,39 @@ public class S3StorageService : IS3StorageService
             DisablePayloadSigning = true // https://github.com/cloudflare/cloudflare-docs/issues/4683
         };
 
-        PutObjectResponse response = await s3Client.PutObjectAsync(putObjectRequest);
+        PutObjectResponse response = await s3Client.PutObjectAsync(request);
 
         if (response.HttpStatusCode != System.Net.HttpStatusCode.OK)
         {
             throw new ManagerException($"Error in uploading image for bucket {bucketName}");
         }
 
+    }
+
+    public async Task<string[]> DeleteFilesAsync(string bucketName, string[] objectKeys)
+    {
+        using AmazonS3Client s3Client = GenerateS3Client(bucketName) ?? throw new ManagerException($"Empty s3 client in {nameof(S3StorageService)}");
+
+        var request = new DeleteObjectsRequest
+        {
+            BucketName = bucketName,
+        };
+
+        var keys = new List<KeyVersion>();
+
+        foreach (string key in objectKeys)
+        {
+            keys.Add(new KeyVersion()
+            {
+                Key = key,
+            });
+        }
+
+        request.Objects = keys;
+
+        DeleteObjectsResponse response = await s3Client.DeleteObjectsAsync(request);
+
+        return response.DeletedObjects.Select(o => o.Key).ToArray();
     }
 
     private AmazonS3Client GenerateS3Client(string bucketName)

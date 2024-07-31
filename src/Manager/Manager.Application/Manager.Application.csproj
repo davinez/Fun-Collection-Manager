@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="MediatR" />
     <PackageReference Include="Ardalis.GuardClauses" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
@@ -33,9 +34,5 @@
     <Folder Include="Icons\Commands\" />
     <Folder Include="Services\" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <PlaywrightPlatform>winx;linux</PlaywrightPlatform>
-  </PropertyGroup>
 
 </Project>

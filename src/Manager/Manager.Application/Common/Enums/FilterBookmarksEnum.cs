@@ -5,9 +5,9 @@ namespace Manager.Application.Common.Enums;
 public enum FilterBookmarksEnum
 {
     [EnumMember(Value = "info")]
-    Info,
+    info,
     [EnumMember(Value = "creationDate")]
-    CreationDate,
+    creationDate,
     [EnumMember(Value = "url")]
-    URL
+    url
 }

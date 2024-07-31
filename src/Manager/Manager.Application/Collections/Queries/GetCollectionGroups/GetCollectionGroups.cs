@@ -32,16 +32,16 @@ public class GetCollectionGroupsQueryHandler : IRequestHandler<GetCollectionGrou
 
     public async Task<CollectionGroupsDto> Handle(GetCollectionGroupsQuery request, CancellationToken cancellationToken)
     {
-
         var userAccount = await _context.UserAccounts
            .AsNoTracking()
            .FirstOrDefaultAsync(u => u.IdentityProviderId.Equals(_user.HomeAccountId));
 
         Guard.Against.NotFound(_user.HomeAccountId, userAccount);
 
-        // ----Variables----
-
-        //  --user_account_id
+        /* 
+         ----SQL Variables----
+         -user_account_id
+        */
 
         var parameters = new { UserAccountId = userAccount.Id };
 

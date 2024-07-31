@@ -1,12 +1,15 @@
 ﻿using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
-using Manager.Application.Collections.Queries.GetCollectionGroups;
+using Manager.Application.Common.Dtos;
 using Manager.Application.Common.Enums;
+using Manager.Application.Common.Exceptions;
 using Manager.Application.Common.Interfaces;
 using Manager.Application.Common.Interfaces.Services;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -14,9 +17,15 @@ namespace Manager.Application.Bookmarks.Queries.GetAllBookmarksWithPagination;
 
 public record GetAllBookmarksWithPaginationQuery : IRequest<GetAllBookmarksDto>
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [FromQuery(Name = "sort_type")]
+    public SortEnum SortType { get; set; }
     public int Page { get; set; }
+    [FromQuery(Name = "page_limit")]
     public int PageLimit { get; set; }
+    [FromQuery(Name = "filter_type")]
     public FilterBookmarksEnum? FilterType { get; set; }
+    [FromQuery(Name = "search_value")]
     public string? SearchValue { get; set; }
 }
 
@@ -40,41 +49,68 @@ public class GetAllBookmarksWithPaginationQueryHandler : IRequestHandler<GetAllB
 
     public async Task<GetAllBookmarksDto> Handle(GetAllBookmarksWithPaginationQuery request, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Manager Request: {Name} {@UserId} - {@Request}",
-          nameof(GetCollectionGroupsQuery), _user.HomeAccountId, request);
-
         var userAccount = await _context.UserAccounts
            .AsNoTracking()
            .FirstOrDefaultAsync(u => u.IdentityProviderId.Equals(_user.HomeAccountId));
 
         Guard.Against.NotFound(_user.HomeAccountId, userAccount);
 
-        // ----Variables----
+        /* 
+         ----SQL Variables----
+         -user_account_id
+        */
 
-        //  --user_account_id
+        int totalRecords = await (from cg in _context.CollectionGroups
+                                  join c in _context.Collections on cg.Id equals c.CollectionGroupId
+                                  join b in _context.Bookmarks on c.Id equals b.CollectionId
+                                  where cg.UserAccountId == userAccount.Id
+                                  orderby b.Id ascending
+                                  select b.Id)
+                                  .CountAsync();
 
-        var parameters = new { UserAccountId = userAccount.Id };
+        var bookmarks = await (from cg in _context.CollectionGroups
+                               join c in _context.Collections on cg.Id equals c.CollectionGroupId
+                               join b in _context.Bookmarks on c.Id equals b.CollectionId
+                               where cg.UserAccountId == userAccount.Id
+                               orderby b.Id ascending
+                               select new AllBookmarksQueryDto()
+                               {
+                                   BookmarkId = b.Id,
+                                   BookmarkCover = b.Cover,
+                                   Title = b.Title,
+                                   Description = b.Description,
+                                   WebsiteUrl = b.WebsiteUrl,
+                                   CollectionId = c.Id,
+                                   CollectionIcon = c.Icon,
+                                   CollectionName = c.Name,
+                                   CollectionCreatedAt = c.Created
+                               }
+                   )
+                   .Skip((request.Page - 1) * request.PageLimit)
+                   .Take(request.PageLimit)
+                   .AsNoTracking()
+                   .ToListAsync(cancellationToken: cancellationToken);
 
-        string sql = $@"";
-
-        var collections = await _connection.QueryAsync<CollectionsGroupsQueryDto>(sql, parameters, null, cancellationToken);
-
-        var response = new CollectionGroupsDto()
+        var response = new GetAllBookmarksDto()
         {
-            AllBookmarksCounter = collections.Sum(c => c.BookmarksCounter),
-            TrashCounter = 0,
-            Groups = collections
-            .GroupBy(g => new { g.GroupId, g.GroupName })
-            .Select(group =>
+            Total = totalRecords,
+            Bookmarks = bookmarks.Select(b => new BookmarkDto()
             {
-                return new CollectionGroupDto()
+                Id = b.BookmarkId,
+                Cover = b.BookmarkCover,
+                Title = b.Title,
+                Description = b.Description,
+                WebsiteURL = b.WebsiteUrl,
+                BookmarkDetail = new BookmarkDetailDto()
                 {
-                    Id = group.Key.GroupId,
-                    Name = group.Key.GroupName,
-                    // Check if first row in GroupBy is null meaning that group doesnt have collections / is empty
-                    Collections = group.First().CollectionId == 0 ? null : group.ToArray().GenerateTreeWithRecursion(c => c.CollectionId, c => c.ParentNodeId)
-                };
-            }).ToList()
+                    CollectionDetail = new CollectionDetailDto()
+                    {
+                        Icon = b.CollectionIcon,
+                        Name = b.CollectionName ?? throw new ManagerException($"Null CollectionName")
+                    },
+                    CreatedAt = b.CollectionCreatedAt,
+                }
+            })
         };
 
         return response;

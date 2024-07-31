@@ -2,6 +2,6 @@
 
 public class CollectionDetailDto
 {
-    public required string Icon { get; set; }
+    public string? Icon { get; set; }
     public required string Name { get; set; }
 }

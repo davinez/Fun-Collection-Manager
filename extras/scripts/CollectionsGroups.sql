@@ -95,12 +95,16 @@ SELECT pg_catalog.setval(pg_get_serial_sequence('manager.collection_group', 'id'
 
 
 
---- Final Queries Collection Tree
+/********* Final Queries Collection Tree  *********/
 
 
-----Variables----
+/* 
+----SQL Variables----
 
---user_account_id
+-user_account_id
+
+*/
+
 
 
 	WITH RECURSIVE tree (
@@ -164,35 +168,6 @@ SELECT pg_catalog.setval(pg_get_serial_sequence('manager.collection_group', 'id'
         LEFT JOIN bookmarks_info b ON b.collection_id = t.collection_id;
 		--ORDER BY t.collection_id; 
 
-
-
--- Further optimization??
-
-
-select * from manager.collection_group cg where cg."name" = 'Prueba 1 Grupo'
-
-select * from manager.collection c where c."name" = 'PPPP'
-       
-       
-select * from manager.bookmark b 
-
-
---- DELETE Boomarks
-begin;
-
-
-select * from manager.bookmark b;
-
-
-DELETE FROM manager.bookmark
-WHERE collection_id=1;
-
-select * from manager.bookmark b;
-
--- commit;
-
-
-rollback;
 
 
 

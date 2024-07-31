@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Text.Json.Serialization;
 using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
 using Manager.API.Services;
+using Manager.Application.Common.Enums;
 using Manager.Application.Common.Exceptions;
 using Manager.Application.Common.Interfaces.Services;
 using Manager.Infrastructure.Data;
@@ -114,7 +116,7 @@ public static class DependencyInjection
 
         services.AddHttpContextAccessor();
 
-        services.AddHealthChecks()
+        services.AddHealthChecks()  
             .AddDbContextCheck<ManagerContext>();
 
         services.AddExceptionHandler<CustomExceptionHandler>();

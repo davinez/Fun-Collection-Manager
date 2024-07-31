@@ -11,7 +11,7 @@ namespace Manager.Application.Collections.Commands.DeleteCollection;
 
 public record DeleteCollectionCommand : IRequest
 {
-    public int CollectionId { get; init; }
+    public int CollectionId { get; set; }
 }
 
 public class DeleteCollectionCommandHandler : IRequestHandler<DeleteCollectionCommand>

@@ -51,8 +51,4 @@
     </Content>
   </ItemGroup>
 
-  <PropertyGroup>
-    <PlaywrightPlatform>winx;linux</PlaywrightPlatform>
-  </PropertyGroup>
-
 </Project>
