@@ -94,7 +94,7 @@ from manager.collection_group cg
 inner join manager.collection c on cg.id = c.collection_group_id 
 inner join manager.bookmark b on c.id = b.collection_id 
 where cg.user_account_id = 4
-and 
+
 
 
 

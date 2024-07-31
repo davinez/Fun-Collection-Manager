@@ -23,6 +23,7 @@
     <PackageReference Include="SkiaSharp" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" />   
     <PackageReference Include="Nanoid" />
+    <PackageReference Include="System.Linq.Dynamic.Core" />
   </ItemGroup>
 
   <ItemGroup>

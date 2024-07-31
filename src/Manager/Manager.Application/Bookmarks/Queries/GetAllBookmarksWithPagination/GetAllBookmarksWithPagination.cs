@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using Ardalis.GuardClauses;
 using Manager.Application.Common.Dtos;
 using Manager.Application.Common.Enums;
 using Manager.Application.Common.Exceptions;
+using Manager.Application.Common.Helpers;
 using Manager.Application.Common.Interfaces;
 using Manager.Application.Common.Interfaces.Services;
 using MediatR;
@@ -23,6 +25,7 @@ public record GetAllBookmarksWithPaginationQuery : IRequest<GetAllBookmarksDto>
     public int Page { get; set; }
     [FromQuery(Name = "page_limit")]
     public int PageLimit { get; set; }
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     [FromQuery(Name = "filter_type")]
     public FilterBookmarksEnum? FilterType { get; set; }
     [FromQuery(Name = "search_value")]
@@ -49,11 +52,16 @@ public class GetAllBookmarksWithPaginationQueryHandler : IRequestHandler<GetAllB
 
     public async Task<GetAllBookmarksDto> Handle(GetAllBookmarksWithPaginationQuery request, CancellationToken cancellationToken)
     {
+        // Generate SQL Query with only the 2 specified columns
+        // AnonymousType
         var userAccount = await _context.UserAccounts
            .AsNoTracking()
+           .Select(c => new { c.Id, c.IdentityProviderId })
            .FirstOrDefaultAsync(u => u.IdentityProviderId.Equals(_user.HomeAccountId));
 
         Guard.Against.NotFound(_user.HomeAccountId, userAccount);
+
+        string sortValue = EnumHelpers.GetSortValue(request.SortType);
 
         /* 
          ----SQL Variables----
@@ -64,15 +72,14 @@ public class GetAllBookmarksWithPaginationQueryHandler : IRequestHandler<GetAllB
                                   join c in _context.Collections on cg.Id equals c.CollectionGroupId
                                   join b in _context.Bookmarks on c.Id equals b.CollectionId
                                   where cg.UserAccountId == userAccount.Id
-                                  orderby b.Id ascending
-                                  select b.Id)
-                                  .CountAsync();
+                                  orderby b.Id
+                                  select b) // Generates Query SELECT count(*) 
+                                  .CountAsync(cancellationToken: cancellationToken);
 
         var bookmarks = await (from cg in _context.CollectionGroups
                                join c in _context.Collections on cg.Id equals c.CollectionGroupId
                                join b in _context.Bookmarks on c.Id equals b.CollectionId
                                where cg.UserAccountId == userAccount.Id
-                               orderby b.Id ascending
                                select new AllBookmarksQueryDto()
                                {
                                    BookmarkId = b.Id,
@@ -80,12 +87,14 @@ public class GetAllBookmarksWithPaginationQueryHandler : IRequestHandler<GetAllB
                                    Title = b.Title,
                                    Description = b.Description,
                                    WebsiteUrl = b.WebsiteUrl,
+                                   CreatedAt = b.Created,
                                    CollectionId = c.Id,
                                    CollectionIcon = c.Icon,
                                    CollectionName = c.Name,
-                                   CollectionCreatedAt = c.Created
+                                   CollectionCreatedAt = c.Created,
                                }
                    )
+                   .OrderBy(sortValue)
                    .Skip((request.Page - 1) * request.PageLimit)
                    .Take(request.PageLimit)
                    .AsNoTracking()
@@ -115,6 +124,7 @@ public class GetAllBookmarksWithPaginationQueryHandler : IRequestHandler<GetAllB
 
         return response;
     }
+
 }
 
 

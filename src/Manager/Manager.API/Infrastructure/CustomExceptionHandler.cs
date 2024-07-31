@@ -32,6 +32,8 @@ public class CustomExceptionHandler : IExceptionHandler
             };
     }
 
+    // ASP.NET Core log an unhandled exception even if a global exception handler is used
+    // https://learn.microsoft.com/en-us/answers/questions/1618819/why-does-asp-net-core-log-an-unhandled-exception-w
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
         var exceptionType = exception.GetType();

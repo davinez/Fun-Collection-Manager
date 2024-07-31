@@ -57,11 +57,12 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
 
         // Deprecated to use _user.HomeAccountId instead of Id for S3 naming bucket and avoid multiple database calls
         // Generate SQL Query with only the 2 specified columns
-        //int userId = (await _context.UserAccounts
-        //    .AsNoTracking()
-        //    .Select(c => new { c.Id, c.IdentityProviderId })
-        //    .FirstAsync(u => u.IdentityProviderId == _user.HomeAccountId, cancellationToken: cancellationToken))
-        //    .Id;
+        // AnonymousType
+        // var userAccount = await _context.UserAccounts
+        //   .AsNoTracking()
+        //   .Select(c => new { c.Id, c.IdentityProviderId })
+        //   .FirstOrDefaultAsync(u => u.IdentityProviderId.Equals(_user.HomeAccountId));
+        // Guard.Against.NotFound(_user.HomeAccountId, userAccount);
 
         // Scrap url
         BookmarkDataDto bookmarkData = await _supportservice.GetBookmarkData(request.NewURL);

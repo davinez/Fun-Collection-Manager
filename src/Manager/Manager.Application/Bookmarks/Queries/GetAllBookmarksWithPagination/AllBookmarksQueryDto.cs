@@ -10,9 +10,12 @@ public class AllBookmarksQueryDto
     public string? Title { get; set; }
     public string? Description { get; set; }
     public string? WebsiteUrl { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
     // Collection Info
     public int CollectionId { get; set; }
     public string? CollectionIcon { get; set; }
     public string? CollectionName { get; set; }
     public DateTimeOffset CollectionCreatedAt { get; set; }
+  
 }
+
