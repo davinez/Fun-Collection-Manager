@@ -76,6 +76,10 @@ public class GetAllBookmarksWithPaginationQueryHandler : IRequestHandler<GetAllB
                                   select b) // Generates Query SELECT count(*) 
                                   .CountAsync(cancellationToken: cancellationToken);
 
+        string whereCondition = "where 1 == 1";
+        object? whereArgs = null;
+        (string first, object[]) = LookupName(id1);
+
         var bookmarks = await (from cg in _context.CollectionGroups
                                join c in _context.Collections on cg.Id equals c.CollectionGroupId
                                join b in _context.Bookmarks on c.Id equals b.CollectionId
@@ -97,6 +101,7 @@ public class GetAllBookmarksWithPaginationQueryHandler : IRequestHandler<GetAllB
                    .OrderBy(sortValue)
                    .Skip((request.Page - 1) * request.PageLimit)
                    .Take(request.PageLimit)
+                   .Where(whereCondition, whereArgs)
                    .AsNoTracking()
                    .ToListAsync(cancellationToken: cancellationToken);
 

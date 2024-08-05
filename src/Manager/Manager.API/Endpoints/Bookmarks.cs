@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Manager.API.Endpoints;
 
@@ -36,6 +37,9 @@ public class Bookmarks : EndpointGroupBase
         [AsParameters] GetAllBookmarksWithPaginationQuery query
         )
     {
+        // Pre-process query
+        query.SearchValue = query.SearchValue?.Trim();
+
         var data = await sender.Send(query);
 
         return new ApiResponse<GetAllBookmarksDto>
