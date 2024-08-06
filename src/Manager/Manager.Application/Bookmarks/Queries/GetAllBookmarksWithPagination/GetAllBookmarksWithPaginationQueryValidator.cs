@@ -8,7 +8,7 @@ namespace Manager.Application.Bookmarks.Queries.GetAllBookmarksWithPagination;
 
 public class GetAllBookmarksWithPaginationQueryValidator : AbstractValidator<GetAllBookmarksWithPaginationQuery>
 {
-    private readonly char[] _chars = { '>', '<', '-' };
+    private readonly char[] _chars = { '>', '<', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
     public GetAllBookmarksWithPaginationQueryValidator()
     {
@@ -18,20 +18,28 @@ public class GetAllBookmarksWithPaginationQueryValidator : AbstractValidator<Get
         RuleFor(x => x.PageLimit)
             .GreaterThanOrEqualTo(1).WithMessage("Page limit at least greater than or equal to 1.");
 
+        // If FilterType is sent then search value cant be null/empty
         RuleFor(o => o)
-           // Nullability already checked in .When function, max lenght ">YYYY-MM-DD"
-           .Must(p => p.SearchValue!.Length <= 11)
-           .Must(BeValidSearchValue)
-               .WithMessage("Invalid search value format")
-           // The validator will only be executed if the result of the lambda returns true.
-           .When(p => p.FilterType != null && !string.IsNullOrWhiteSpace(p.SearchValue));
+          .Must(BeValidSearchValue)
+          .WithMessage("Invalid search value format")
+          // The validator will only be executed if the result of the lambda returns true.
+          .When(p => p.FilterType != null);
     }
 
     public bool BeValidSearchValue(GetAllBookmarksWithPaginationQuery query)
     {
+        if (string.IsNullOrWhiteSpace(query.SearchValue))
+        {
+            return false;
+        }
+
         if (query.FilterType == FilterBookmarksEnum.creationDate)
         {
             if (!OnlyAllowedChars(query.SearchValue!))
+                return false;
+
+            // max lenght ">YYYY-MM-DD"
+            if (query.SearchValue.Length > 11)
                 return false;
 
             // Lenght 4 => YYYY
@@ -44,7 +52,7 @@ public class GetAllBookmarksWithPaginationQueryValidator : AbstractValidator<Get
                 if (int.TryParse(query.SearchValue, out int year))
                 {
                     // you know that the parsing attempt was successful
-                    return year >= 2024 && year <= 2100;
+                    return true;
                 }
                 else
                 {
@@ -54,9 +62,9 @@ public class GetAllBookmarksWithPaginationQueryValidator : AbstractValidator<Get
             else if (query.SearchValue!.Length == 7)
             {
                 if (int.TryParse(query.SearchValue.Substring(0, 4), out int year) &&
-                    int.TryParse(query.SearchValue.Substring(6, 2), out int month))
+                    int.TryParse(query.SearchValue.Substring(5, 2), out int month))
                 {
-                    return year >= 2024 && year <= 2100 && month >= 1 && month <= 12;
+                    return month >= 1 && month <= 12;
                 }
                 else
                 {
@@ -67,11 +75,11 @@ public class GetAllBookmarksWithPaginationQueryValidator : AbstractValidator<Get
             {
                 if (
                     int.TryParse(query.SearchValue.Substring(0, 4), out int year) &&
-                    int.TryParse(query.SearchValue.Substring(6, 2), out int month) &&
-                    int.TryParse(query.SearchValue.Substring(9, 2), out int day)
+                    int.TryParse(query.SearchValue.Substring(5, 2), out int month) &&
+                    int.TryParse(query.SearchValue.Substring(8, 2), out int day)
                     )
                 {
-                    return year >= 2024 && year <= 2100 && month >= 1 && month <= 12 && day >= 1 && day <= 31;
+                    return month >= 1 && month <= 12 && day >= 1 && day <= 31;
                 }
                 else
                 {
@@ -84,12 +92,12 @@ public class GetAllBookmarksWithPaginationQueryValidator : AbstractValidator<Get
 
                 if (
                     int.TryParse(query.SearchValue.Substring(0, 4), out int year) &&
-                    int.TryParse(query.SearchValue.Substring(6, 2), out int month) &&
-                    int.TryParse(query.SearchValue.Substring(9, 2), out int day) &&
-                    comparisonChars.Contains(query.SearchValue[11])
+                    int.TryParse(query.SearchValue.Substring(5, 2), out int month) &&
+                    int.TryParse(query.SearchValue.Substring(8, 2), out int day) &&
+                    comparisonChars.Contains(query.SearchValue[10])
                     )
                 {
-                    return year >= 2024 && year <= 2100 && month >= 1 && month <= 12 && day >= 1 && day <= 31;
+                    return month >= 1 && month <= 12 && day >= 1 && day <= 31;
                 }
                 else
                 {
@@ -106,10 +114,7 @@ public class GetAllBookmarksWithPaginationQueryValidator : AbstractValidator<Get
         else if (query.FilterType == FilterBookmarksEnum.info || query.FilterType == FilterBookmarksEnum.url)
         {
             // Limit lenght in search bar
-            if (query.SearchValue!.Length > 255) 
-                return false;
-            else
-                return true;
+            return query.SearchValue!.Length <= 255;
         }
 
         return false;

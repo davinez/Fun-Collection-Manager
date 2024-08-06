@@ -97,6 +97,15 @@ where cg.user_account_id = 4
 
 
 
+select * from manager.bookmark b
+
+
+select * from manager.bookmark b 
+where b.title like '%descr%' 
+
+
+
+
 
 
 

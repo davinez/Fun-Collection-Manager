@@ -40,8 +40,12 @@ public static class EnumHelpers
         }
     }
 
-    public static (string, object[]) GetFilterBookmarkValue(FilterBookmarksEnum filterType, string searchValue)
+    public static (string, object[]) GetFilterBookmarkValue(FilterBookmarksEnum? filterType, string? searchValue)
     {
+        if (filterType == null && searchValue == null)
+        {
+            return ("1 == 1", []);
+        }
 
         switch (filterType)
         {
@@ -52,41 +56,41 @@ public static class EnumHelpers
                 // Lenght 10 => YYYY-MM-DD
                 // Lenght 11 => >YYYY-MM-DD or <YYYY-MM-DD
 
-                if (searchValue.Length == 4)
+                if (searchValue!.Length == 4)
                 {
-                    return ("created > @0 &&  created < @1", new object[] { new DateTime(int.Parse(searchValue), 1, 1), new DateTime(int.Parse(searchValue), 12, 31) });
+                    DateTimeOffset from = new DateTimeOffset(new DateTime(int.Parse(searchValue), 1, 1));
+                    DateTimeOffset to = new DateTimeOffset(new DateTime(int.Parse(searchValue), 12, 31));
+
+                    return ("CreatedAt > @0 &&  CreatedAt < @1", [from, to]);
                 }
                 else if (searchValue.Length == 7)
                 {
-                    return ("created > @0 &&  created < @1", new object[] {
-                        new DateTime(int.Parse(searchValue.Substring(0, 4)), int.Parse(searchValue.Substring(6, 2)), 1),
-                       new DateTime(int.Parse(searchValue.Substring(0, 4)), int.Parse(searchValue.Substring(6, 2)), 31),
-                    });
+                    DateTimeOffset from = new DateTimeOffset(new DateTime(int.Parse(searchValue.Substring(0, 4)), int.Parse(searchValue.Substring(5, 2)), 1));
+                    DateTimeOffset to = new DateTimeOffset(new DateTime(int.Parse(searchValue.Substring(0, 4)), int.Parse(searchValue.Substring(5, 2)), 31));
+
+                    return ("CreatedAt > @0 && CreatedAt < @1", [from, to]);
                 }
                 else if (searchValue.Length == 10)
                 {
-                    return ("created == @0", new object[] {
-                        new DateTime(int.Parse(searchValue.Substring(0, 4)), int.Parse(searchValue.Substring(6, 2)), int.Parse(searchValue.Substring(9, 2)))
-                    });
+                    DateTimeOffset exact = new DateTimeOffset(new DateTime(int.Parse(searchValue.Substring(0, 4)), int.Parse(searchValue.Substring(5, 2)), int.Parse(searchValue.Substring(8, 2))));
+
+                    return ("CreatedAt == @0", [exact]);
                 }
                 else if (searchValue.Length == 11)
                 {
-                    return ("created @0 @1", new object[] {
-                        searchValue[11],
-                        new DateTime(int.Parse(searchValue.Substring(0, 4)), int.Parse(searchValue.Substring(6, 2)), int.Parse(searchValue.Substring(9, 2)))
-                    });
+                    DateTimeOffset exact = new DateTimeOffset(new DateTime(int.Parse(searchValue.Substring(0, 4)), int.Parse(searchValue.Substring(5, 2)), int.Parse(searchValue.Substring(8, 2))));
+
+                    return ("CreatedAt @0 @1", [searchValue[10], exact]);
                 }
 
                 break;
             case FilterBookmarksEnum.url:
 
-                return ("website_url like '%@0%' ", new object[] {
-                        searchValue
-                    });
+                return ("WebsiteUrl.Contains(@0)", [searchValue!]);
+
             case FilterBookmarksEnum.info:
-                return ("title like '%@0%' ", new object[] {
-                        searchValue
-                    });
+
+                return ("Title.Contains(@0) or Description.Contains(@0)", [searchValue!]);
 
         }
 

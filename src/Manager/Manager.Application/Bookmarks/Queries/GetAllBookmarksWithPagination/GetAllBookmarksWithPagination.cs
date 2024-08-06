@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Buffers;
+using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -63,6 +64,8 @@ public class GetAllBookmarksWithPaginationQueryHandler : IRequestHandler<GetAllB
 
         string sortValue = EnumHelpers.GetSortValue(request.SortType);
 
+        (string whereCondition, object[] whereArgs) = EnumHelpers.GetFilterBookmarkValue(request.FilterType, request.SearchValue);
+
         /* 
          ----SQL Variables----
          -user_account_id
@@ -75,10 +78,6 @@ public class GetAllBookmarksWithPaginationQueryHandler : IRequestHandler<GetAllB
                                   orderby b.Id
                                   select b) // Generates Query SELECT count(*) 
                                   .CountAsync(cancellationToken: cancellationToken);
-
-        string whereCondition = "where 1 == 1";
-        object? whereArgs = null;
-        (string first, object[]) = LookupName(id1);
 
         var bookmarks = await (from cg in _context.CollectionGroups
                                join c in _context.Collections on cg.Id equals c.CollectionGroupId
