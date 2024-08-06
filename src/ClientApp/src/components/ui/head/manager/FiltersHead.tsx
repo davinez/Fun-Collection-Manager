@@ -60,21 +60,21 @@ export const FiltersHead = ({ icon, headerName }: TFiltersHeadProps) => {
 		},
 		{
 			value: SortEnum.NameAsc,
-			icon: FaArrowDownAZ,
+			icon: FaArrowUpAZ,
 			description: "By name (A-Z)",
 		},
 		{
 			value: SortEnum.NameDesc,
-			icon: FaArrowUpAZ,
+			icon: FaArrowDownAZ,
 			description: "By name (Z-A)",
 		},
 		{
-			value: SortEnum.SitesDesc,
+			value: SortEnum.SitesAsc,
 			icon: AiFillChrome,
 			description: "Sites (A-Z)",
 		},
 		{
-			value: SortEnum.SitesAsc,
+			value: SortEnum.SitesDesc,
 			icon: AiFillChrome,
 			description: "Sites (Z-A)",
 		},
