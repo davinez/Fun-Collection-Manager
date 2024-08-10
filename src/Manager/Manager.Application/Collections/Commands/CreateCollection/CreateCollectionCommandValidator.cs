@@ -25,6 +25,15 @@ public class CreateCollectionCommandValidator : AbstractValidator<CreateCollecti
 
     public static bool ValidFormatIfNotNull(int? value)
     {
-        return value == null || value > 1;
+        if (value != null && value > 0)
+        {
+            return true;
+        }
+        else if (value == null)
+        {
+            return true;
+        }
+
+        return false;
     }
 }

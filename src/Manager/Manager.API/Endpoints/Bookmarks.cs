@@ -4,12 +4,12 @@ using Manager.API.Infrastructure.Extensions;
 using Manager.Application.Bookmarks.Commands.CreateBookmark;
 using Manager.Application.Bookmarks.Commands.DeleteBookmarks;
 using Manager.Application.Bookmarks.Queries.GetAllBookmarksWithPagination;
+using Manager.Application.Bookmarks.Queries.GetBookmarksByCollectionWithPagination;
 using Manager.Application.Common.Models;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Manager.API.Endpoints;
 
@@ -21,6 +21,7 @@ public class Bookmarks : EndpointGroupBase
            .RequireAuthorization("All")
            .MapPost(CreateBookmark)
            .MapGet(GetAllBookmarksWithPagination, "all")
+           .MapGet(GetBookmarksByCollectionWithPagination, "by-collection/{id}")
            .MapDelete(DeleteBookmarks, "list");
     }
 
@@ -43,6 +44,24 @@ public class Bookmarks : EndpointGroupBase
         var data = await sender.Send(query);
 
         return new ApiResponse<GetAllBookmarksDto>
+        {
+            Data = data
+        };
+    }
+
+    public async Task<ApiResponse<GetBookmarksByCollectionDto>> GetBookmarksByCollectionWithPagination(
+        [FromServices] ISender sender,
+        [AsParameters] GetBookmarksByCollectionWithPaginationQuery query,
+        [FromRoute] int id
+        )
+    {
+        // Pre-process query
+        query.SearchValue = query.SearchValue?.Trim();
+        query.CollectionId = id;
+
+        var data = await sender.Send(query);
+
+        return new ApiResponse<GetBookmarksByCollectionDto>
         {
             Data = data
         };

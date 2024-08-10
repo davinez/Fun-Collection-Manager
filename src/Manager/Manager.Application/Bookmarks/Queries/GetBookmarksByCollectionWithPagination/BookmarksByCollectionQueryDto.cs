@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Manager.Application.Bookmarks.Queries.GetAllBookmarksWithPagination;
+namespace Manager.Application.Bookmarks.Queries.GetBookmarksByCollectionWithPagination;
 
-public class AllBookmarksQueryDto
+public class BookmarksByCollectionQueryDto
 {
     // Bookmark Info
     public int BookmarkId { get; set; }
@@ -11,9 +11,4 @@ public class AllBookmarksQueryDto
     public string? Description { get; set; }
     public string? WebsiteUrl { get; set; }
     public DateTimeOffset BookmarkCreatedAt { get; set; }
-    // Collection Info
-    public int CollectionId { get; set; }
-    public string? CollectionIcon { get; set; }
-    public string? CollectionName { get; set; }  
 }
-

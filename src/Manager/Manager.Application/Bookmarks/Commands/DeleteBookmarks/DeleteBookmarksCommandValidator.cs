@@ -5,8 +5,8 @@ internal class DeleteBookmarksCommandValidator : AbstractValidator<DeleteBookmar
 {
     public DeleteBookmarksCommandValidator()
     {
-        RuleFor(v => v.BookmarksIds)
+        RuleFor(v => v.BookmarkIds)
             .NotEmpty()
-            .WithMessage("Bookmarks Ids are required.");
+            .WithMessage("Bookmarks Id(s) are required.");
     }
 }

@@ -11,10 +11,6 @@ public class ChangeIconCommandValidator : AbstractValidator<ChangeIconCommand>
             .NotEmpty()
             .WithMessage("CollectionId is required.");
 
-        RuleFor(v => v.IsDefaultIcon)
-            .NotEmpty()
-            .WithMessage("IsDefaultIcon is required.");
-
         RuleFor(v => v.IconURL)
             .NotEmpty()
             .WithMessage("IconURL is required.");

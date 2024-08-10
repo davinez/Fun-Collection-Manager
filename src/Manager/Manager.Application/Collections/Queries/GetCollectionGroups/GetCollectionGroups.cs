@@ -103,8 +103,8 @@ public class GetCollectionGroupsQueryHandler : IRequestHandler<GetCollectionGrou
         END 
           AS ""BookmarksCounter""
         FROM tree t
-        LEFT JOIN bookmarks_info b ON b.collection_id = t.collection_id;";
-        // --ORDER BY t.collection_id;
+        LEFT JOIN bookmarks_info b ON b.collection_id = t.collection_id
+        ORDER BY t.collection_id;";
 
         var collections = await _connection.QueryAsync<CollectionsGroupsQueryDto>(sql, parameters, null, cancellationToken);
 

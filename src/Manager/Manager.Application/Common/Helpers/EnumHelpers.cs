@@ -24,9 +24,9 @@ public static class EnumHelpers
         switch (sortType)
         {
             case SortEnum.dateAsc:
-                return "CreatedAt asc";
+                return "BookmarkCreatedAt asc";
             case SortEnum.dateDesc:
-                return "CreatedAt desc";
+                return "BookmarkCreatedAt desc";
             case SortEnum.nameAsc:
                 return "Title asc";
             case SortEnum.nameDesc:
@@ -36,7 +36,7 @@ public static class EnumHelpers
             case SortEnum.sitesDesc:
                 return "WebsiteUrl desc";
             default:
-                return "CreatedAt asc";
+                return "BookmarkCreatedAt asc";
         }
     }
 
@@ -61,26 +61,26 @@ public static class EnumHelpers
                     DateTimeOffset from = new DateTimeOffset(new DateTime(int.Parse(searchValue), 1, 1));
                     DateTimeOffset to = new DateTimeOffset(new DateTime(int.Parse(searchValue), 12, 31));
 
-                    return ("CreatedAt > @0 &&  CreatedAt < @1", [from, to]);
+                    return ("BookmarkCreatedAt > @0 &&  BookmarkCreatedAt < @1", [from, to]);
                 }
                 else if (searchValue.Length == 7)
                 {
                     DateTimeOffset from = new DateTimeOffset(new DateTime(int.Parse(searchValue.Substring(0, 4)), int.Parse(searchValue.Substring(5, 2)), 1));
                     DateTimeOffset to = new DateTimeOffset(new DateTime(int.Parse(searchValue.Substring(0, 4)), int.Parse(searchValue.Substring(5, 2)), 31));
 
-                    return ("CreatedAt > @0 && CreatedAt < @1", [from, to]);
+                    return ("BookmarkCreatedAt > @0 && BookmarkCreatedAt < @1", [from, to]);
                 }
                 else if (searchValue.Length == 10)
                 {
                     DateTimeOffset exact = new DateTimeOffset(new DateTime(int.Parse(searchValue.Substring(0, 4)), int.Parse(searchValue.Substring(5, 2)), int.Parse(searchValue.Substring(8, 2))));
 
-                    return ("CreatedAt == @0", [exact]);
+                    return ("BookmarkCreatedAt == @0", [exact]);
                 }
                 else if (searchValue.Length == 11)
                 {
                     DateTimeOffset exact = new DateTimeOffset(new DateTime(int.Parse(searchValue.Substring(0, 4)), int.Parse(searchValue.Substring(5, 2)), int.Parse(searchValue.Substring(8, 2))));
 
-                    return ("CreatedAt @0 @1", [searchValue[10], exact]);
+                    return ("BookmarkCreatedAt @0 @1", [searchValue[10], exact]);
                 }
 
                 break;

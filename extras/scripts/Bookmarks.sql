@@ -77,7 +77,7 @@ debounceSearchValue.length !== 0 ?
 }
           
           
-
+-- All bookmarks
 select 
 -- Bookmark Info
 b.id as "BookmarkId",
@@ -85,15 +85,45 @@ b.cover as "BookmarkCover",
 b.title as "Title",
 b.description as "Description",
 b.website_url as "WebsiteUrl",
+b.created as "BookmarkCreatedAt",
 -- Collection Info
 c.id as "CollectionId",
 c.icon as "CollectionIcon",
-c."name" as "CollectionName",
-c.created as "CollectionCreatedAt"
+c."name" as "CollectionName"
 from manager.collection_group cg 
 inner join manager.collection c on cg.id = c.collection_group_id 
 inner join manager.bookmark b on c.id = b.collection_id 
 where cg.user_account_id = 4
+
+
+-- By collection
+select 
+-- Bookmark Info
+b.id as "BookmarkId",
+b.cover as "BookmarkCover",
+b.title as "Title",
+b.description as "Description",
+b.website_url as "WebsiteUrl",
+b.created as "BookmarkCreatedAt"
+from manager.collection_group cg 
+inner join manager.collection c on cg.id = c.collection_group_id 
+inner join manager.bookmark b on c.id = b.collection_id 
+where cg.user_account_id = 4
+and b.title like '%Hyuse%'
+and c.id = 48
+
+
+select 
+-- Bookmark Info
+count(b.id) as "TotalRecords",
+-- Collection Info
+c."name" as "CollectionName"
+from manager.collection_group cg 
+inner join manager.collection c on cg.id = c.collection_group_id 
+inner join manager.bookmark b on c.id = b.collection_id 
+where cg.user_account_id = 4
+and c.id = 48
+group by c."name" 
 
 
 
@@ -101,7 +131,7 @@ select * from manager.bookmark b
 
 
 select * from manager.bookmark b 
-where b.title like '%descr%' 
+where b.title like '%CA%' or b.description like '%fuente%'
 
 
 

@@ -15,7 +15,7 @@ namespace Manager.Application.Bookmarks.Commands.DeleteBookmarks;
 
 public record DeleteBookmarksCommand : IRequest
 {
-    public required int[] BookmarksIds { get; set; }
+    public required int[] BookmarkIds { get; set; }
 }
 
 public class DeleteBookmarksCommandHandler : IRequestHandler<DeleteBookmarksCommand>
@@ -40,7 +40,7 @@ public class DeleteBookmarksCommandHandler : IRequestHandler<DeleteBookmarksComm
     public async Task Handle(DeleteBookmarksCommand request, CancellationToken cancellationToken)
     {
         List<Bookmark>? bookmarks = await _context.Bookmarks
-            .Where(c => request.BookmarksIds.Contains(c.Id) &&
+            .Where(c => request.BookmarkIds.Contains(c.Id) &&
                         c.Collection.CollectionGroup.UserAccount.IdentityProviderId == _user.HomeAccountId)
             .ToListAsync(cancellationToken);
 
