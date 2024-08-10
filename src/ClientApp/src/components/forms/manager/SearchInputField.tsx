@@ -33,7 +33,7 @@ export const SearchInputField = ({
 			}
 		},
 		// delay in ms
-		2000,
+		1500,
 		// Config debounce
 		{
 			leading: false,

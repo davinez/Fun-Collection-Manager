@@ -53,7 +53,7 @@ export const renderNodesState = (
       .map((collection) => {
         return collection.childCollections.length > 0
           ? [collection.id, ...getIds(collection.childCollections)]
-          : [];
+          : [collection.id];
       })
       .flat();
 

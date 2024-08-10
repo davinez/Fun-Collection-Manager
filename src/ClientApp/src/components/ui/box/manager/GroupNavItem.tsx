@@ -31,9 +31,7 @@ import {
 } from "@/shared/types/api/manager.types";
 import { FormActionEnum } from "@/shared/types/global.types";
 // General
-import {
-	useDeleteGroupMutation,
-} from "@/api/services/manager";
+import { useDeleteGroupMutation } from "@/api/services/manager";
 import { useState } from "react";
 import { useStore } from "@/store/UseStore";
 import queryClient from "@/api/query-client";
@@ -43,12 +41,6 @@ type TGroupNavItemProps = {
 	group: TCollectionGroup;
 	onOpenGroupModal: () => void;
 	handleOnClickCollapseAllCollections: () => void;
-	nodesData: {
-		nodesState: TDynamicCollapseState[];
-		setNodesState: React.Dispatch<
-			React.SetStateAction<TDynamicCollapseState[]>
-		>;
-	};
 	children: React.ReactNode;
 };
 
@@ -56,7 +48,6 @@ export const GroupNavItem = ({
 	group,
 	onOpenGroupModal,
 	handleOnClickCollapseAllCollections,
-	nodesData,
 	children,
 	...rest
 }: TGroupNavItemProps & FlexProps): React.ReactElement => {
@@ -320,23 +311,28 @@ export const GroupNavItem = ({
 				{group.collections &&
 					group.collections.length > 0 &&
 					group.collections.map((collection) => {
-						return (
-							<RecursiveNavItem
-								key={`CollectionNavItem_${collection.id}`}
-								w="100%"
-								_hover={{
-									bg: "brandPrimary.950",
-								}}
-								pl={collection.childCollections.length > 0 ? 0 : 3}
-								groupId={group.id}
-								collection={collection}
-								nodePadding={3}
-								nodesState={nodesData.nodesState}
-								setNodesState={nodesData.setNodesState}
-							>
-								{collection.name}
-							</RecursiveNavItem>
-						);
+						let nodeStateExists: number | undefined =
+							managerSlice.collectionsNodeState?.findIndex(
+								(node) => node.nodeId === collection.id
+							);
+
+						if (nodeStateExists !== undefined && nodeStateExists !== -1) {
+							return (
+								<RecursiveNavItem
+									key={`CollectionNavItem_${collection.id}`}
+									w="100%"
+									_hover={{
+										bg: "brandPrimary.950",
+									}}
+									pl={collection.childCollections.length > 0 ? 0 : 3}
+									groupId={group.id}
+									collection={collection}
+									nodePadding={3}
+								>
+									{collection.name}
+								</RecursiveNavItem>
+							);
+						}
 					})}
 			</Collapse>
 		</>

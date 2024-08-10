@@ -6,10 +6,11 @@ import {
   ShowInBookmarkEnum,
   FilterBookmarksEnum
 } from "@/shared/types/global.types";
-import { TGetBookmarksParams } from "@/shared/types/api/manager.types";
+import { TDynamicCollapseState, TGetBookmarksParams } from "@/shared/types/api/manager.types";
 import { PAGE_ITEM_LIMIT } from "shared/config";
 
 export type TManagerSliceDefinition = {
+  collectionsNodeState: TDynamicCollapseState[] | undefined;
   groupModalFormAction: FormActionEnum;
   bookmarkModalFormAction: FormActionEnum;
   selectedSidebarGroupId: number;
@@ -23,6 +24,9 @@ export type TManagerSliceDefinition = {
 };
 
 export type TManagerSliceActions = {
+  setCollectionNodes: (payload: TDynamicCollapseState[]) => void;
+  toggleCollectionNode: (payload: number) => void;
+  closeAllCollectionNodes: () => void;
   setGroupModalFormAction: (payload: FormActionEnum) => void;
   setBookmarkModalFormAction: (payload: FormActionEnum) => void;
   setSelectedSidebarGroupId: (payload: number) => void;
@@ -43,6 +47,7 @@ export type TManagerSliceActions = {
 export type TManagerSlice = TManagerSliceDefinition & TManagerSliceActions;
 
 const initialManagerSliceState: TManagerSliceDefinition = {
+  collectionsNodeState: [],
   groupModalFormAction: FormActionEnum.Add,
   bookmarkModalFormAction: FormActionEnum.Add,
   selectedSidebarGroupId: 0,
@@ -64,6 +69,39 @@ const initialManagerSliceState: TManagerSliceDefinition = {
 
 export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
   ...initialManagerSliceState,
+  setCollectionNodes: (payload): void =>
+    set((state) => {
+      state.managerSlice.collectionsNodeState = payload;
+    }),
+  toggleCollectionNode: (payload): void =>
+    set((state) => {
+
+      if (!state.managerSlice.collectionsNodeState) {
+        return;
+      }
+
+      const index = state.managerSlice.collectionsNodeState
+        .findIndex(node => node.nodeId === payload);
+
+      if (index !== -1) {
+        const node = state.managerSlice.collectionsNodeState[index] as TDynamicCollapseState;
+        node.isOpen = node.isOpen ? false : true;
+      }
+    }),
+  closeAllCollectionNodes: (): void =>
+    set((state) => {
+      if (!state.managerSlice.collectionsNodeState) {
+        return;
+      }
+
+      state.managerSlice.collectionsNodeState.forEach(node => {
+
+        if (node.isOpen) {
+          node.isOpen = false;
+        }
+
+      });
+    }),
   setSelectedSidebarGroupId: (payload): void =>
     set((state) => {
       state.managerSlice.selectedSidebarGroupId = payload;

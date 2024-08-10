@@ -31,7 +31,7 @@ import type {
 	TGetCollectionGroups,
 } from "@/shared/types/api/manager.types";
 // General
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/useApiClient";
 import { useNavigate } from "react-router-dom";
@@ -50,20 +50,19 @@ const GroupsNavItems = ({
 	onOpenGroupModal,
 }: TGroupsNavItemsProps): React.ReactElement => {
 	// Hooks
-	const [nodesState, setNodesState] = useState<TDynamicCollapseState[]>(
-		renderNodesState(data.groups)
-	);
+	const { managerSlice } = useStore();
+
+	// Update/Set nodes sidebar sate on groups change
+	useEffect(() => {
+		const generatedStateStructure: TDynamicCollapseState[] = renderNodesState(
+			data.groups
+		);
+		managerSlice.setCollectionNodes(generatedStateStructure);
+	}, [data.groups]);
 
 	// Handlers
 	const handleOnClickCollapseAllCollections = () => {
-		setNodesState(
-			[...(nodesState as TDynamicCollapseState[])].map((node) => {
-				return {
-					...node,
-					isOpen: false,
-				};
-			})
-		);
+		managerSlice.closeAllCollectionNodes();
 	};
 
 	// Handle Error
@@ -84,12 +83,6 @@ const GroupsNavItems = ({
 						handleOnClickCollapseAllCollections={
 							handleOnClickCollapseAllCollections
 						}
-						nodesData={{
-							nodesState: nodesState as TDynamicCollapseState[],
-							setNodesState: setNodesState as React.Dispatch<
-								React.SetStateAction<TDynamicCollapseState[]>
-							>,
-						}}
 					>
 						{group.name}
 					</GroupNavItem>
@@ -278,6 +271,22 @@ export const ManagerSidebar =
 							/>
 						</>
 					)}
+
+					{/*** Agregar division para notas ***/}
+					<Flex
+						w="100%"
+						aria-label="navitem-division"
+						align="center"
+						gap={0}
+						p={0}
+						justify="center"
+						py={2}
+						px={3}
+						textStyle="primary"
+						color="brandPrimary.100"
+					>
+						<Text>Notes</Text>
+					</Flex>
 				</Flex>
 			</>
 		);

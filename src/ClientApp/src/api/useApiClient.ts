@@ -186,9 +186,7 @@ export const useApiClient = (baseURL: string): TApi => {
           Authorization: `Bearer ${authSlice.accessToken}`,
         },
         params: parameters,
-        data: {
-          source: data
-        }
+        data
       }),
   };
 }

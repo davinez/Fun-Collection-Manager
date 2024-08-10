@@ -130,6 +130,17 @@ export const CollectionIconForm = ({
 	};
 
 	const handleOnClickSelectedIcon = (url: string) => {
+
+		if (collectionIcon === url) {
+			toast({
+				title: "Icon already set",
+				status: "success",
+				duration: 5000,
+				isClosable: true,
+			});
+			return;
+		}
+
 		const payload: TCollectionUpdateIconFormPayload = {
 			isDefaultIcon: false,
 			iconURL: url,

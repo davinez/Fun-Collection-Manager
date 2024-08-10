@@ -20,6 +20,8 @@ import type {
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/useApiClient";
+import NotFoundPage from "@/routes/NotFoundPage";
+import EmptyPage from "@/routes/EmptyPage";
 
 type TMainContentProps = {
 	data: TGetAllBookmarks;
@@ -124,6 +126,14 @@ export const AllBookmarksPage =
 
 		if (isErrorGetAllBookmarks) return <ErrorBox />;
 
-		// TODO: if data.length === 0 and searchterm !== empty then render Not Found bookmarks Content - Message
+		if (
+			managerSlice.getBookmarkParams.debounceSearchValue.length > 0 &&
+			getAllBookmarksResponse.total === 0
+		) {
+			return <NotFoundPage />;
+		} else if (getAllBookmarksResponse.total === 0) {
+			return <EmptyPage />;
+		}
+
 		return <MainContent data={getAllBookmarksResponse} />;
 	};

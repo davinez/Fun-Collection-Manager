@@ -90,7 +90,7 @@ export const getCollectionByIdFetchQuery = async (apiClient: TApi, id: number) =
 export const useGetAllBookmarksQuery = ({ page, pageLimit, filterType, debounceSearchValue, selectedSortValueCollectionFilter }: TGetBookmarksParams) => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useQuery({
-    queryKey: ["all-bookmarks", { currentPage: page, debounceSearchValue, currentSortValue: selectedSortValueCollectionFilter }],
+    queryKey: ["bookmarks", "all-bookmarks", { currentPage: page, debounceSearchValue, currentSortValue: selectedSortValueCollectionFilter }],
     queryFn: async () => {
       const response = await apiClient.get<TApiResponse<TGetAllBookmarks>>('/bookmarks/all',
         debounceSearchValue.length !== 0 ?
@@ -112,28 +112,33 @@ export const useGetAllBookmarksQuery = ({ page, pageLimit, filterType, debounceS
   });
 }
 
-export const useGetBookmarksByCollectionQuery = ({ page, pageLimit, filterType, debounceSearchValue }: TGetBookmarksParams, collectionId: string | undefined) => {
+export const useGetBookmarksByCollectionQuery = ({ page, pageLimit, filterType, debounceSearchValue, selectedSortValueCollectionFilter }: TGetBookmarksParams, collectionId: string | undefined) => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useQuery({
-    queryKey: ["collection-bookmarks", { currentPage: page, debounceSearchValue }],
+    queryKey: ["bookmarks", "collection-bookmarks", collectionId, { currentPage: page, debounceSearchValue, currentSortValue: selectedSortValueCollectionFilter }],
     queryFn: async () => {
-      const response = await apiClient.get<TApiResponse<TGetBookmarksByCollection>>(`/manager/collections/${collectionId}/bookmarks`,
+
+      const response = await apiClient.get<TApiResponse<TGetBookmarksByCollection>>(`/bookmarks/by-collection/${collectionId}`,
         debounceSearchValue.length !== 0 ?
           {
+            sort_type: selectedSortValueCollectionFilter,
             page: page,
             page_limit: pageLimit,
             filter_type: filterType,
             search_value: debounceSearchValue
           } :
           {
+            sort_type: selectedSortValueCollectionFilter,
             page: page,
             page_limit: pageLimit
           }
       );
       return response.data.data
+
     },
     // https://tanstack.com/query/latest/docs/framework/react/guides/disabling-queries#lazy-queries
-    enabled: !!collectionId
+    // enabled: collectionId === undefined ? false : true
+    //enabled: false
   });
 }
 
