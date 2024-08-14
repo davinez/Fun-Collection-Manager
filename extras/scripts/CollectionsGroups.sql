@@ -88,6 +88,7 @@ where c.parent_node_id = 3;
 rollback;
 
 
+
 SELECT pg_catalog.setval(pg_get_serial_sequence('manager.collection', 'id'), (SELECT MAX(id) FROM manager.collection c)+1);
 
 SELECT pg_catalog.setval(pg_get_serial_sequence('manager.collection_group', 'id'), (SELECT MAX(id) FROM manager.collection_group cg)+1);

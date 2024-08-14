@@ -9,6 +9,7 @@ using Manager.Application.Common.Exceptions;
 using Manager.Application.Common.Helpers;
 using Manager.Application.Common.Interfaces;
 using Manager.Application.Common.Interfaces.Services;
+using Manager.Domain.Constants;
 using Manager.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -30,19 +31,22 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
     private readonly IManagerContext _context;
     private readonly IS3StorageService _storageService;
     private readonly IManagerSupportService _supportservice;
+    private readonly IRedisCacheService _cache;
 
     public CreateBookmarkCommandHandler(
         IConfiguration configuration,
         IUser user,
         IManagerContext context,
         IS3StorageService storageService,
-        IManagerSupportService supportservice)
+        IManagerSupportService supportservice,
+        IRedisCacheService cache)
     {
         _configuration = configuration;
         _user = user;
         _context = context;
         _storageService = storageService;
         _supportservice = supportservice;
+        _cache = cache;
     }
 
     public async Task Handle(CreateBookmarkCommand request, CancellationToken cancellationToken)
@@ -115,6 +119,8 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
         _context.Bookmarks.Add(newBookmark);
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        await _cache.RemoveItem(string.Format(CacheKeys.CollectionGroups, _user.HomeAccountId));
     }
 
 }

@@ -23,7 +23,7 @@ public class S3StorageService : IS3StorageService
 
     public async Task<IEnumerable<IconDto>> GetAllIconsAsync(CancellationToken cancellationToken)
     {
-        string domainURL = _configuration["S3Storage:R2Domain"] ?? throw new ManagerException($"Empty config section in {nameof(S3StorageService)} icons url");
+       // string domainURL = _configuration["S3Storage:R2Domain"] ?? throw new ManagerException($"Empty config section in {nameof(S3StorageService)} icons url");
         string bucketName = _configuration["S3Storage:BucketIcons"] ?? throw new ManagerException($"Empty config section in {nameof(S3StorageService)} icons bucket");
 
         using AmazonS3Client s3Client = GenerateS3Client(bucketName) ?? throw new ManagerException($"Empty s3 client in {nameof(S3StorageService)}");
@@ -37,7 +37,7 @@ public class S3StorageService : IS3StorageService
 
         var response = responseClient.S3Objects.Select(s3Object => new IconDto()
         {
-            URL = domainURL + "/" + s3Object.Key
+            Key = s3Object.Key
         });
 
         return response;

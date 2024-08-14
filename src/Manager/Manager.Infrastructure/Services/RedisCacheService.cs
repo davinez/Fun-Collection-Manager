@@ -30,9 +30,12 @@ public class RedisCacheService : IRedisCacheService
 
     public async Task SaveItem<T>(string key, T data, TimeSpan cacheDuration)
     {
+        // Expire management
+        // https://code-maze.com/csharp-web-application-caching-redis/
         var options = new DistributedCacheEntryOptions
         {
-            AbsoluteExpirationRelativeToNow = cacheDuration
+            //AbsoluteExpirationRelativeToNow = cacheDuration,
+            //SlidingExpiration = cacheDuration
         };
 
         var jsonData = JsonSerializer.Serialize(data);

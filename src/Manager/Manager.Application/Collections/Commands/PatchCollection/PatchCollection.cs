@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Manager.Application.Common.Interfaces;
 using Manager.Application.Common.Interfaces.Services;
+using Manager.Domain.Constants;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,11 +21,13 @@ public class PatchCollectionCommandHandler : IRequestHandler<PatchCollectionComm
 {
     private readonly IUser _user;
     private readonly IManagerContext _context;
+    private readonly IRedisCacheService _cache;
 
-    public PatchCollectionCommandHandler(IUser user, IManagerContext context)
+    public PatchCollectionCommandHandler(IUser user, IManagerContext context, IRedisCacheService cache)
     {
         _user = user;
         _context = context;
+        _cache = cache;
     }
 
     public async Task Handle(PatchCollectionCommand request, CancellationToken cancellationToken)
@@ -39,6 +42,8 @@ public class PatchCollectionCommandHandler : IRequestHandler<PatchCollectionComm
         collection.Name = request.Name;
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        await _cache.RemoveItem(string.Format(CacheKeys.CollectionGroups, _user.HomeAccountId));
     }
 }
 

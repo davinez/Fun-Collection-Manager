@@ -11,8 +11,8 @@ public class CreateCollectionCommandValidator : AbstractValidator<CreateCollecti
             .WithMessage("Name is required.");
 
         RuleFor(v => v.Icon)
-           .NotEmpty()
-           .WithMessage("Icon is required.");
+           .Must(p => p == null)
+           .WithMessage("Icon is not required on creation step");
 
         RuleFor(v => v.GroupId)
            .NotEmpty()

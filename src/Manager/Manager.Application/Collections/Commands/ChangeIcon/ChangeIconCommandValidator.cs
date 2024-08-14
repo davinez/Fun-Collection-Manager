@@ -1,37 +1,55 @@
 ﻿using System;
 using FluentValidation;
+using Manager.Application.Common.Exceptions;
+using Microsoft.Extensions.Configuration;
 
 namespace Manager.Application.Collections.Commands.ChangeIcon;
 
 public class ChangeIconCommandValidator : AbstractValidator<ChangeIconCommand>
 {
-    public ChangeIconCommandValidator()
+    private readonly IConfiguration _configuration;
+
+    public ChangeIconCommandValidator(IConfiguration configuration)
     {
+        _configuration = configuration;
+
         RuleFor(v => v.CollectionId)
             .NotEmpty()
             .WithMessage("CollectionId is required.");
 
-        RuleFor(v => v.IconURL)
-            .NotEmpty()
-            .WithMessage("IconURL is required.");
-
-        RuleFor(v => new { v.IsDefaultIcon, v.IconURL })
-            .Must(x => ValidURLFormat(x.IsDefaultIcon, x.IconURL))
-            .WithMessage("Invalid IconURL");
+        RuleFor(v => new { v.IsDefaultIcon, v.IconKey })
+            .Must(x =>
+            {
+                if (x.IsDefaultIcon && x.IconKey != null)
+                {
+                    return false;
+                }
+                else if (x.IsDefaultIcon && x.IconKey == null)
+                {
+                    return true;
+                }
+                else if (!x.IsDefaultIcon && string.IsNullOrWhiteSpace(x.IconKey))
+                {
+                    return false;
+                }
+                else
+                {
+                    string urlDomain = _configuration["S3Storage:R2DomainService"] ?? throw new ManagerException($"Empty config section in {nameof(ChangeIconCommandValidator)} R2DefaultDomain");
+                    return ValidURLFormat(x.IconKey!, urlDomain);
+                }
+            })
+            .WithMessage("Invalid IconKey");
 
     }
 
-    public static bool ValidURLFormat(bool isDefaultIcon, string iconUrl)
+    public static bool ValidURLFormat(string iconKey, string urlDomain)
     {
-        if (!isDefaultIcon)
-        {
-            bool result = Uri.TryCreate(iconUrl, UriKind.Absolute, out var uriResult) &&
-                        (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+        string fullURL = urlDomain + "/" + iconKey;
 
-            return result;
-        }
+        bool result = Uri.TryCreate(fullURL, UriKind.Absolute, out var uriResult) &&
+                    (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
 
-        return true;
+        return result;
     }
 
 }

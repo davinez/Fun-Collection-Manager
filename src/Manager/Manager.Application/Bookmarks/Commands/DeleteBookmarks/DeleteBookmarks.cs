@@ -6,6 +6,7 @@ using Ardalis.GuardClauses;
 using Manager.Application.Common.Exceptions;
 using Manager.Application.Common.Interfaces;
 using Manager.Application.Common.Interfaces.Services;
+using Manager.Domain.Constants;
 using Manager.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -24,17 +25,20 @@ public class DeleteBookmarksCommandHandler : IRequestHandler<DeleteBookmarksComm
     private readonly IUser _user;
     private readonly IManagerContext _context;
     private readonly IS3StorageService _storageService;
+    private readonly IRedisCacheService _cache;
 
     public DeleteBookmarksCommandHandler(
         IUser user,
         IManagerContext context,
         IS3StorageService storageService,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IRedisCacheService cache)
     {
         _user = user;
         _context = context;
         _storageService = storageService;
         _configuration = configuration;
+        _cache = cache;
     }
 
     public async Task Handle(DeleteBookmarksCommand request, CancellationToken cancellationToken)
@@ -57,6 +61,8 @@ public class DeleteBookmarksCommandHandler : IRequestHandler<DeleteBookmarksComm
         _context.Bookmarks.RemoveRange(bookmarks);
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        await _cache.RemoveItem(string.Format(CacheKeys.CollectionGroups, _user.HomeAccountId));
     }
 }
 

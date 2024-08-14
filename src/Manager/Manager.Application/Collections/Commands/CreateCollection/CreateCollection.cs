@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Manager.Application.Common.Interfaces;
 using Manager.Application.Common.Interfaces.Services;
+using Manager.Domain.Constants;
 using Manager.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ namespace Manager.Application.Collections.Commands.CreateCollection;
 public record CreateCollectionCommand : IRequest
 {
     public required string Name { get; init; }
-    public required string Icon { get; init; }
+    public string? Icon { get; init; }
     public int GroupId { get; init; }
     public int? ParentCollectionId { get; init; }
 
@@ -23,11 +24,13 @@ public class CreateCollectionCommandHandler : IRequestHandler<CreateCollectionCo
 {
     private readonly IUser _user;
     private readonly IManagerContext _context;
+    private readonly IRedisCacheService _cache;
 
-    public CreateCollectionCommandHandler(IUser user, IManagerContext context)
+    public CreateCollectionCommandHandler(IUser user, IManagerContext context, IRedisCacheService cache)
     {
         _user = user;
         _context = context;
+        _cache = cache;
     }
 
     public async Task Handle(CreateCollectionCommand request, CancellationToken cancellationToken)
@@ -44,7 +47,6 @@ public class CreateCollectionCommandHandler : IRequestHandler<CreateCollectionCo
         var newCollection = new Collection()
         {
             Name = request.Name,
-            Icon = request.Icon,
             CollectionGroupId = group.Id,
             ParentNodeId = request.ParentCollectionId,
         };
@@ -52,6 +54,8 @@ public class CreateCollectionCommandHandler : IRequestHandler<CreateCollectionCo
         _context.Collections.Add(newCollection);
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        await _cache.RemoveItem(string.Format(CacheKeys.CollectionGroups, _user.HomeAccountId));
 
     }
 }

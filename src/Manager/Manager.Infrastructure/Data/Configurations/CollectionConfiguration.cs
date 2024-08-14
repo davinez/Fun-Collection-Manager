@@ -18,7 +18,7 @@ public class CollectionConfiguration : IEntityTypeConfiguration<Collection>
         builder.Property(p => p.Icon)
                .HasColumnName("icon")
                .HasMaxLength(255)
-               .IsRequired();
+               .IsRequired(false);
 
         // Foreign Keys
         builder.Property(p => p.ParentNodeId)
