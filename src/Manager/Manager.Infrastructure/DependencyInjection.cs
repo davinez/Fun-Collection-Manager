@@ -17,7 +17,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("managerdb");
+        var connectionString = configuration.GetConnectionString("ManagerDB");
 
         Guard.Against.Null(connectionString, message: "Connection string 'managerdb' not found.");
 
@@ -37,6 +37,7 @@ public static class DependencyInjection
 
         services.AddScoped<IMicrosoftGraphService, MicrosoftGraphService>();
         services.AddScoped<IS3StorageService, S3StorageService>();
+        services.AddScoped<IRedisCacheService, RedisCacheService>();
 
         services.AddHttpClient<IManagerSupportService, ManagerSupportService>();
 
@@ -45,6 +46,12 @@ public static class DependencyInjection
                 .AddBearerToken(IdentityConstants.BearerScheme);
 
         services.AddSingleton(TimeProvider.System);
+
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = configuration.GetConnectionString("Redis");
+            options.InstanceName = "manager_";
+        });
 
         return services;
     }

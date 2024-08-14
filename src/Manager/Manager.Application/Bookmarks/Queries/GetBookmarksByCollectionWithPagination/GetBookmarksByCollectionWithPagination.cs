@@ -53,7 +53,10 @@ public class GetBookmarksByCollectionWithPaginationQueryHandler : IRequestHandle
     private readonly IUser _user;
     private readonly IManagerContext _context;
 
-    public GetBookmarksByCollectionWithPaginationQueryHandler(ILogger<GetBookmarksByCollectionWithPaginationQuery> logger, IUser user, IManagerContext context)
+    public GetBookmarksByCollectionWithPaginationQueryHandler(
+        ILogger<GetBookmarksByCollectionWithPaginationQuery> logger, 
+        IUser user,
+        IManagerContext context)
     {
         _logger = logger;
 
@@ -71,10 +74,10 @@ public class GetBookmarksByCollectionWithPaginationQueryHandler : IRequestHandle
            .FirstOrDefaultAsync(u => u.IdentityProviderId.Equals(_user.HomeAccountId));
 
         Guard.Against.NotFound(_user.HomeAccountId, userAccount);
+    
+        string sqlSortValue = EnumHelpers.GetSortValue(request.SortType);
 
-        string sortValue = EnumHelpers.GetSortValue(request.SortType);
-
-        (string whereCondition, object[] whereArgs) = EnumHelpers.GetFilterBookmarkValue(request.FilterType, request.SearchValue);
+        (string sqlWhereCondition, object[] sqlWhereArgs) = EnumHelpers.GetFilterBookmarkValue(request.FilterType, request.SearchValue);
 
         /* 
          ----SQL Variables----
@@ -93,7 +96,7 @@ public class GetBookmarksByCollectionWithPaginationQueryHandler : IRequestHandle
                                         BookmarkCreatedAt = c.Created,
                                         CollectionName = c.Name,
                                     })
-                                  .Where(whereCondition, whereArgs)
+                                  .Where(sqlWhereCondition, sqlWhereArgs)
                                   .GroupBy(group => group.CollectionName)
                                   .Select(group => new { CollectionName = group.Key, TotalRecords = group.Count() })
                                   .AsNoTracking()
@@ -113,10 +116,10 @@ public class GetBookmarksByCollectionWithPaginationQueryHandler : IRequestHandle
                                    BookmarkCreatedAt = b.Created,
                                }
                    )
-                   .OrderBy(sortValue)
+                   .OrderBy(sqlSortValue)
                    .Skip((request.Page - 1) * request.PageLimit)
                    .Take(request.PageLimit)
-                   .Where(whereCondition, whereArgs)
+                   .Where(sqlWhereCondition, sqlWhereArgs)
                    .AsNoTracking()
                    .ToListAsync(cancellationToken: cancellationToken);
 

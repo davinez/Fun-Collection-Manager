@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Manager.Application.Common.Interfaces;
 using Manager.Application.Common.Interfaces.Services;
+using Manager.Domain.Constants;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,11 +20,13 @@ public class DeleteCollectionGroupCommandHandler : IRequestHandler<DeleteCollect
 {
     private readonly IUser _user;
     private readonly IManagerContext _context;
+    private readonly IRedisCacheService _cache;
 
-    public DeleteCollectionGroupCommandHandler(IUser user, IManagerContext context)
+    public DeleteCollectionGroupCommandHandler(IUser user, IManagerContext context, IRedisCacheService cache)
     {
         _user = user;
         _context = context;
+        _cache = cache;
     }
 
     public async Task Handle(DeleteCollectionGroupCommand request, CancellationToken cancellationToken)
@@ -39,6 +42,8 @@ public class DeleteCollectionGroupCommandHandler : IRequestHandler<DeleteCollect
         _context.CollectionGroups.Remove(group);
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        await _cache.RemoveItem(string.Format(CacheKeys.CollectionGroups, _user.HomeAccountId));
     }
 }
 

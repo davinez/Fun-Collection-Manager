@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Manager.Application.Common.Helpers.Tree;
 using Manager.Application.Common.Interfaces;
 using Manager.Application.Common.Interfaces.Services;
+using Manager.Domain.Constants;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -20,23 +22,39 @@ public class GetCollectionGroupsQueryHandler : IRequestHandler<GetCollectionGrou
     private readonly IUser _user;
     private readonly IManagerReadDbConnection _connection;
     private readonly IManagerContext _context;
+    private readonly IRedisCacheService _cache;
 
-    public GetCollectionGroupsQueryHandler(ILogger<GetCollectionGroupsQuery> logger, IUser user, IManagerReadDbConnection connection, IManagerContext context)
+    public GetCollectionGroupsQueryHandler(
+        ILogger<GetCollectionGroupsQuery> logger, 
+        IUser user, 
+        IManagerReadDbConnection connection, 
+        IManagerContext context,
+        IRedisCacheService cache)
     {
         _logger = logger;
 
         _user = user;
         _connection = connection;
         _context = context;
+        _cache = cache;
     }
 
     public async Task<CollectionGroupsDto> Handle(GetCollectionGroupsQuery request, CancellationToken cancellationToken)
-    {
+    {            
         var userAccount = await _context.UserAccounts
            .AsNoTracking()
            .FirstOrDefaultAsync(u => u.IdentityProviderId.Equals(_user.HomeAccountId));
 
         Guard.Against.NotFound(_user.HomeAccountId, userAccount);
+
+        // Check cache first
+        var cacheKey = string.Format(CacheKeys.CollectionGroups, _user.HomeAccountId);
+        var collectionGroups = await _cache.GetCachedItem<CollectionGroupsDto>(cacheKey);
+
+        if (collectionGroups != null)
+        {
+            return collectionGroups;
+        }
 
         /* 
          ----SQL Variables----
@@ -125,6 +143,9 @@ public class GetCollectionGroupsQueryHandler : IRequestHandler<GetCollectionGrou
                 };
             }).ToList()
         };
+
+        // Store in cache
+        await _cache.SaveItem(cacheKey, response, TimeSpan.FromSeconds(60));
 
         return response;
     }
