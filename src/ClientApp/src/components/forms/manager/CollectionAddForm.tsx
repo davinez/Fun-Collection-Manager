@@ -28,7 +28,6 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
 import { useCallback, useRef } from "react";
-import { DEFAULT_ICON } from "shared/config";
 
 type TCollectionAddFormProps = {
 	setIsShowingInput: React.Dispatch<React.SetStateAction<boolean>>;
@@ -78,7 +77,7 @@ export const CollectionAddForm = ({
 	const onSubmit: SubmitHandler<TCollectionAddFormPayload> = (data): void => {
 		const payload: TCollectionAddFormPayload & TCollectionAddExtrasPayload = {
 			name: data.name,
-			icon: DEFAULT_ICON,
+			icon: undefined,
 			groupId,
 			parentCollectionId: parentCollectionId,
 		};

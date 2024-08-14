@@ -27,7 +27,7 @@ import {
 } from "@/components/forms/manager";
 import { CollectionModal } from "components/ui/modal/manager";
 // Assets
-import { DEFAULT_ICON } from "shared/config";
+import { DEFAULT_ICON, R2_DOMAIN } from "shared/config";
 // Types
 import {
 	type TCollection,
@@ -254,7 +254,7 @@ export const RecursiveNavItem = ({
 							boxSize="5"
 							color="brandPrimary.150"
 							objectFit="contain"
-							src={collection.icon}
+							src={!collection.icon ? DEFAULT_ICON : R2_DOMAIN + "/" + collection.icon}
 							fallbackSrc={DEFAULT_ICON}
 							alt="Default Icon"
 						/>

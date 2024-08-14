@@ -25,7 +25,7 @@ type TCollectionModalProps = {
 	modalAction: CollectionModalActionEnum;
 	handleDeleteMutation?: () => void;
 	collectionId: number;
-	collectionIcon: string;
+	collectionIcon: string | undefined;
 };
 
 export const CollectionModal = ({

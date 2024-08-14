@@ -6,6 +6,7 @@ interface ImportMetaEnv {
   readonly VITE_ENTRA_AUTHORITY: string;
   readonly VITE_API_BASE_AUTH: string;
   readonly VITE_API_BASE_MANAGER: string;
+  readonly VITE_R2_DOMAIN: string;
   // more env variables...
 }
 

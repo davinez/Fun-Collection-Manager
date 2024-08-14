@@ -26,12 +26,12 @@ import {
 } from "@/api/services/manager";
 import { defaultHandlerApiError } from "@/api/useApiClient";
 import queryClient from "@/api/query-client";
-import { useState, useEffect } from "react";
-import { DEFAULT_ICON } from "shared/config";
+import { useEffect } from "react";
+import { DEFAULT_ICON, R2_DOMAIN } from "shared/config";
 
 type TCollectionIconFormProps = {
 	collectionId: number;
-	collectionIcon: string;
+	collectionIcon: string | undefined;
 	onClose: () => void;
 };
 
@@ -68,9 +68,9 @@ export const CollectionIconForm = ({
 	//const onSubmit = (data): void => {};
 
 	const handleOnClickResetIcon = () => {
-		if (collectionIcon === DEFAULT_ICON) {
+		if (!collectionIcon) {
 			toast({
-				title: "Default icon already set",
+				title: "Default icon already in use",
 				status: "success",
 				duration: 5000,
 				isClosable: true,
@@ -78,7 +78,7 @@ export const CollectionIconForm = ({
 		} else {
 			const payload: TCollectionUpdateIconFormPayload = {
 				isDefaultIcon: true,
-				iconURL: DEFAULT_ICON,
+				iconKey: undefined,
 			};
 
 			const validationResult =
@@ -129,9 +129,9 @@ export const CollectionIconForm = ({
 		}
 	};
 
-	const handleOnClickSelectedIcon = (url: string) => {
+	const handleOnClickSelectedIcon = (key: string) => {
 
-		if (collectionIcon === url) {
+		if (collectionIcon === key) {
 			toast({
 				title: "Icon already set",
 				status: "success",
@@ -143,7 +143,7 @@ export const CollectionIconForm = ({
 
 		const payload: TCollectionUpdateIconFormPayload = {
 			isDefaultIcon: false,
-			iconURL: url,
+			iconKey: key,
 		};
 
 		const validationResult = collectionUpdateIconFormPayload.safeParse(payload);
@@ -253,11 +253,11 @@ export const CollectionIconForm = ({
 											borderRadius="2px"
 											boxSize="8"
 											color="brandPrimary.150"
-											objectFit="contain"
-											src={icon.url}
+											objectFit="contain" 
+											src={R2_DOMAIN + "/" + icon.key}
 											fallbackSrc={DEFAULT_ICON}
 											alt="Default Icon"
-											onClick={() => handleOnClickSelectedIcon(icon.url)}
+											onClick={() => handleOnClickSelectedIcon(icon.key)}
 											cursor="pointer"
 										/>
 									</Box>

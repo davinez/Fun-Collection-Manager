@@ -27,7 +27,7 @@ export type TCollectionGroup = {
 export type TCollection = {
   id: number;
   name: string;
-  icon: string;
+  icon: string | undefined;
   bookmarksCounter: number;
   childCollections: TCollection[];
 }
@@ -77,7 +77,7 @@ export type TGetAllIcons = {
 type IconsGroups = {
   title: string;
   icons: {
-    url: string;
+    key: string;
   }[];
 }
 
@@ -141,6 +141,7 @@ export const bookmarkUpdateFormPayload = z.object({
         ACCEPTED_IMAGE_TYPES.includes(file.type)
       );
     }, "File type is not supported")
+    // Validate when cover is not undefined
     .optional()
     .or(z.literal('')), // cover?: "" | FileList | undefined;
   title: z
@@ -177,7 +178,7 @@ export const collectionAddFormPayload = z.object({
 export type TCollectionAddFormPayload = z.infer<typeof collectionAddFormPayload>;
 
 export type TCollectionAddExtrasPayload = {
-  icon: string;
+  icon: undefined;
   groupId: number;
   parentCollectionId: number | undefined;
 }
@@ -193,10 +194,11 @@ export type TCollectionUpdateFormPayload = z.infer<typeof collectionUpdateFormPa
 export const collectionUpdateIconFormPayload = z.object({
   isDefaultIcon: z
     .boolean({ message: "isDefaultIcon is required" }),
-  iconURL: z
+  iconKey: z
     .string()
     .trim()
-    .min(1, { message: "URL is required" })
+    .min(1, { message: "Icon Key is required" })
+    .optional()
 });
 export type TCollectionUpdateIconFormPayload = z.infer<typeof collectionUpdateIconFormPayload>;
 
