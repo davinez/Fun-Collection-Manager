@@ -3,6 +3,7 @@ using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
 using Manager.Application.Bookmarks.Commands.CreateBookmark;
 using Manager.Application.Bookmarks.Commands.DeleteBookmarks;
+using Manager.Application.Bookmarks.Commands.PatchBookmark;
 using Manager.Application.Bookmarks.Queries.GetAllBookmarksWithPagination;
 using Manager.Application.Bookmarks.Queries.GetBookmarksByCollectionWithPagination;
 using Manager.Application.Common.Models;
@@ -20,6 +21,7 @@ public class Bookmarks : EndpointGroupBase
         app.MapGroup(this)
            .RequireAuthorization("All")
            .MapPost(CreateBookmark)
+           .MapPatch(PatchBookmark, "{id}")
            .MapGet(GetAllBookmarksWithPagination, "all")
            .MapGet(GetBookmarksByCollectionWithPagination, "by-collection/{id}")
            .MapDelete(DeleteBookmarks, "list");
@@ -27,6 +29,15 @@ public class Bookmarks : EndpointGroupBase
 
     public async Task<IResult> CreateBookmark([FromServices] ISender sender, [FromBody] CreateBookmarkCommand command)
     {
+        await sender.Send(command);
+
+        return Results.NoContent();
+    }
+
+    public async Task<IResult> PatchBookmark([FromServices] ISender sender, int id, [FromForm] PatchBookmarkCommand command)
+    {
+        command.CollectionId = id;
+
         await sender.Send(command);
 
         return Results.NoContent();

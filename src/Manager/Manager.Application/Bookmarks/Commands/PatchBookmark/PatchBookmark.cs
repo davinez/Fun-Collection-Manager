@@ -1,30 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
+using Manager.Application.Bookmarks.Commands.CreateBookmark;
 using Manager.Application.Common.Dtos.Services.ManagerSupportService;
 using Manager.Application.Common.Exceptions;
 using Manager.Application.Common.Helpers;
-using Manager.Application.Common.Interfaces;
 using Manager.Application.Common.Interfaces.Services;
+using Manager.Application.Common.Interfaces;
 using Manager.Domain.Constants;
-using Manager.Domain.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NanoidDotNet;
+using Microsoft.AspNetCore.Http;
 
-namespace Manager.Application.Bookmarks.Commands.CreateBookmark;
+namespace Manager.Application.Bookmarks.Commands.PatchBookmark;
 
-public record CreateBookmarkCommand : IRequest
+public record PatchBookmarkCommand : IRequest
 {
-    public int CollectionId { get; set; }
-    public required string NewURL { get; set; }
+    public int BookmarkId { get; set; }
+    public required string Title { get; set; }
+    public required string Description { get; set; }
+    public required string WebsiteURL { get; set; }
+    public IFormFile? Cover { get; set; }
 }
 
-public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkCommand>
+public class PatchBookmarkCommandHandler : IRequestHandler<PatchBookmarkCommand>
 {
     private readonly IConfiguration _configuration;
     private readonly IUser _user;
@@ -33,7 +38,7 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
     private readonly IManagerSupportService _supportservice;
     private readonly IRedisCacheService _cache;
 
-    public CreateBookmarkCommandHandler(
+    public PatchBookmarkCommandHandler(
         IConfiguration configuration,
         IUser user,
         IManagerContext context,
@@ -49,7 +54,7 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
         _cache = cache;
     }
 
-    public async Task Handle(CreateBookmarkCommand request, CancellationToken cancellationToken)
+    public async Task Handle(PatchBookmarkCommand request, CancellationToken cancellationToken)
     {
         var collection = await _context.Collections
             .AsNoTracking()
@@ -124,3 +129,4 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
     }
 
 }
+
