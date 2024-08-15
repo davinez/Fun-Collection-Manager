@@ -44,6 +44,7 @@ interface AxiosRetryConfig extends AxiosRequestConfig {
 export type TApi = {
   get: <T>(url: string, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
   post: <T>(url: string, data: object, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
+  patchForm: <T>(url: string, data: object, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
   patch: <T>(url: string, data: object, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
   delete: <T>(url: string, data?: object, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
 }
@@ -168,6 +169,13 @@ export const useApiClient = (baseURL: string): TApi => {
       }),
     post: <T>(url: string, data: object, parameters?: object) =>
       apiClientAxios.post<T>(url, data, {
+        headers: {
+          Authorization: `Bearer ${authSlice.accessToken}`,
+        },
+        params: parameters,
+      }),
+    patchForm: <T>(url: string, data: object, parameters?: object) =>
+      apiClientAxios.patchForm<T>(url, data, {
         headers: {
           Authorization: `Bearer ${authSlice.accessToken}`,
         },

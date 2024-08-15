@@ -272,21 +272,8 @@ export const ManagerSidebar =
 						</>
 					)}
 
-					{/*** Agregar division para notas ***/}
-					<Flex
-						w="100%"
-						aria-label="navitem-division"
-						align="center"
-						gap={0}
-						p={0}
-						justify="center"
-						py={2}
-						px={3}
-						textStyle="primary"
-						color="brandPrimary.100"
-					>
-						<Text>Notes</Text>
-					</Flex>
+					{/*** Add here extras divisions sections below collection groups ***/}
+					
 				</Flex>
 			</>
 		);

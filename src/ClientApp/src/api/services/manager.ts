@@ -202,14 +202,15 @@ export const useDeleteGroupMutation = () => {
 
 type TuseUpdateBookmarkMutationVariables = {
   bookmarkId: number;
-  payload: TBookmarkUpdatePayload;
+  //payload: TBookmarkUpdatePayload;
+  payload: FormData;
 }
 
 export const useUpdateBookmarkMutation = () => {
   const apiClient = useApiClient(API_BASE_URL_MANAGER);
   return useMutation({
     mutationFn: async ({ bookmarkId, payload }: TuseUpdateBookmarkMutationVariables) => {
-      const response = await apiClient.patch<TApiResponse>(`/bookmarks/${bookmarkId}`, payload);
+      const response = await apiClient.patchForm<TApiResponse>(`/bookmarks/${bookmarkId}`, payload);
       return response.data;
     },
   });

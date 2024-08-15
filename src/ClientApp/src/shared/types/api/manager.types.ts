@@ -58,7 +58,7 @@ export type TGetBookmarksByCollection = {
 
 export type TBookmark = {
   id: number;
-  cover: string;
+  cover: string | undefined;
   title: string;
   description: string;
   websiteURL: string;

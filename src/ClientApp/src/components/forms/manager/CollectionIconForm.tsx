@@ -27,7 +27,7 @@ import {
 import { defaultHandlerApiError } from "@/api/useApiClient";
 import queryClient from "@/api/query-client";
 import { useEffect } from "react";
-import { DEFAULT_ICON, R2_DOMAIN } from "shared/config";
+import { DEFAULT_ICON, R2_ICONS_DOMAIN } from "shared/config";
 
 type TCollectionIconFormProps = {
 	collectionId: number;
@@ -254,7 +254,7 @@ export const CollectionIconForm = ({
 											boxSize="8"
 											color="brandPrimary.150"
 											objectFit="contain" 
-											src={R2_DOMAIN + "/" + icon.key}
+											src={R2_ICONS_DOMAIN + "/" + icon.key}
 											fallbackSrc={DEFAULT_ICON}
 											alt="Default Icon"
 											onClick={() => handleOnClickSelectedIcon(icon.key)}

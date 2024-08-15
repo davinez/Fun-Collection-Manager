@@ -6,7 +6,7 @@ import {
 	Button,
 	Stack,
 	useToast,
-	Flex
+	Flex,
 } from "@chakra-ui/react";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
@@ -22,11 +22,10 @@ import {
 // General
 import { zodResolver } from "@hookform/resolvers/zod";
 import queryClient from "@/api/query-client";
-import {
-	useUpdateBookmarkMutation,
-} from "@/api/services/manager";
-import { SubmitHandler, useForm, FormProvider } from "react-hook-form";
+import { useUpdateBookmarkMutation } from "@/api/services/manager";
+import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import { defaultHandlerApiError } from "@/api/useApiClient";
+import { dataTagSymbol } from "@tanstack/react-query";
 
 type TBookmarkUpdateFormProps = {
 	onClose: () => void;
@@ -35,7 +34,7 @@ type TBookmarkUpdateFormProps = {
 
 export const BookmarkUpdateForm = ({
 	onClose,
-	bookmark
+	bookmark,
 }: TBookmarkUpdateFormProps) => {
 	// Hooks
 	const methods = useForm<TBookmarkUpdatePayload>({
@@ -52,8 +51,21 @@ export const BookmarkUpdateForm = ({
 	const onSubmit: SubmitHandler<TBookmarkUpdatePayload> = (
 		data: TBookmarkUpdatePayload
 	): void => {
+		// Convert object to FomrData
+		// We will require only the first upload file
+		const formData = new FormData();
+
+		let key: keyof typeof data;
+		for (key in data) {
+			if (key === "cover" && data[key]) {
+				formData.append(key, (data[key] as FileList).item(0) as File);
+			} else if (key !== "cover") {
+				formData.append(key, data[key] as string);
+			}
+		}
+
 		updateBookmarkMutation.mutate(
-			{ bookmarkId: bookmark.id, payload: data },
+			{ bookmarkId: bookmark.id, payload: formData },
 			{
 				onSuccess: (data, variables, context) => {
 					queryClient.invalidateQueries({ queryKey: ["bookmarks"] });
@@ -87,8 +99,6 @@ export const BookmarkUpdateForm = ({
 					<ModalCloseButton size="lg" position="unset" />
 				</Flex>
 
-			
-
 				<InputField
 					fontSize={textStylesTheme.textStyles.primary.fontSize}
 					py={0}
@@ -109,7 +119,7 @@ export const BookmarkUpdateForm = ({
 					id="title"
 					label="Title"
 					errorMessage={errors.title ? errors.title.message : undefined}
-				  defaultValue={bookmark.title}
+					defaultValue={bookmark.title}
 				/>
 
 				<TextAreaField
