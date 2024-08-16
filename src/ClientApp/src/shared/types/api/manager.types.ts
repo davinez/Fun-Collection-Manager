@@ -146,13 +146,16 @@ export const bookmarkUpdateFormPayload = z.object({
     .or(z.literal('')), // cover?: "" | FileList | undefined;
   title: z
     .string()
-    .min(2, { message: "Title is required" }),
+    .min(2, { message: "Title is required" })
+    .max(100, { message: "Title with max 100 characters" }),
   description: z
     .string()
-    .min(2, { message: "Description is required" }),
+    .min(2, { message: "Description is required" })
+    .max(255, { message: "Title with max 255 characters" }),
   websiteURL: z
     .string()
     .url({ message: "URL address format is required" })
+    .max(2048, { message: "URL adress with max 2048 characters" }),
 });
 export type TBookmarkUpdatePayload = z.infer<typeof bookmarkUpdateFormPayload>;
 

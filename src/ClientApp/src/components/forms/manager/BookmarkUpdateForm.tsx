@@ -76,6 +76,7 @@ export const BookmarkUpdateForm = ({
 						isClosable: true,
 					});
 					reset();
+					onClose();
 				},
 				onError: (error, variables, context) => {
 					toast({
