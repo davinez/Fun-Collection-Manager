@@ -65,6 +65,21 @@ public class S3StorageService : IS3StorageService
 
     }
 
+    public async Task<string> DeleteFileAsync(string bucketName, string objectKey)
+    {
+        using AmazonS3Client s3Client = GenerateS3Client(bucketName) ?? throw new ManagerException($"Empty s3 client in {nameof(S3StorageService)}");
+
+        var request = new DeleteObjectRequest
+        {
+            BucketName = bucketName,
+            Key = objectKey
+        };
+
+        DeleteObjectResponse response = await s3Client.DeleteObjectAsync(request);
+
+        return response.DeleteMarker;
+    }
+
     public async Task<string[]> DeleteFilesAsync(string bucketName, string[] objectKeys)
     {
         using AmazonS3Client s3Client = GenerateS3Client(bucketName) ?? throw new ManagerException($"Empty s3 client in {nameof(S3StorageService)}");

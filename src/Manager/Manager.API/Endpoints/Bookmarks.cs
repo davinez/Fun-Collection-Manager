@@ -21,7 +21,7 @@ public class Bookmarks : EndpointGroupBase
         app.MapGroup(this)
            .RequireAuthorization("All")
            .MapPost(CreateBookmark)
-           .MapPatch(PatchBookmark, "{id}")
+           .MapPatch(PatchBookmark, "{id}", true)
            .MapGet(GetAllBookmarksWithPagination, "all")
            .MapGet(GetBookmarksByCollectionWithPagination, "by-collection/{id}")
            .MapDelete(DeleteBookmarks, "list");
@@ -36,7 +36,7 @@ public class Bookmarks : EndpointGroupBase
 
     public async Task<IResult> PatchBookmark([FromServices] ISender sender, int id, [FromForm] PatchBookmarkCommand command)
     {
-        command.CollectionId = id;
+        command.BookmarkId = id;
 
         await sender.Send(command);
 

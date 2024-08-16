@@ -39,12 +39,21 @@ public static class IEndpointRouteBuilderExtensions
         return builder;
     }
 
-    public static IEndpointRouteBuilder MapPatch(this IEndpointRouteBuilder builder, Delegate handler, [StringSyntax("Route")] string pattern)
+    public static IEndpointRouteBuilder MapPatch(this IEndpointRouteBuilder builder, Delegate handler, [StringSyntax("Route")] string pattern, bool disableAntiForgery = false)
     {
         Guard.Against.AnonymousMethod(handler);
 
+        if (disableAntiForgery)
+        {
+            builder.MapPatch(pattern, handler)
+                   .WithName(handler.Method.Name)
+                   .DisableAntiforgery();
+
+            return builder;
+        }
+
         builder.MapPatch(pattern, handler)
-            .WithName(handler.Method.Name);
+               .WithName(handler.Method.Name);
 
         return builder;
     }
