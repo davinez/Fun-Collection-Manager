@@ -50,7 +50,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 			{managerSlice.showHeadSelectOptions ? (
 				<SelectOptionsHead
 					aria-label="page-head"
-					bookmarksCount={data.total as number}
+					bookmarksCount={data.bookmarks.length as number}
 					onOpenBookmarkModal={onOpenBookmarkModal}
 				/>
 			) : (

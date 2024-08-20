@@ -53,6 +53,7 @@ export const BookmarkDeleteForm = ({ onClose }: TBookmarkDeleteFormProps) => {
 		deleteBookmarkMutation.mutate(payload, {
 			onSuccess: (data, variables, context) => {
 				// TODO: validate if only with invalidating bookmarks query or "collection-groups"
+				managerSlice.resetSelectedBookmarksCheckbox();
 				queryClient.invalidateQueries({ queryKey: ["bookmarks"] });
 				toast({
 					title: "Bookmark deleted.",

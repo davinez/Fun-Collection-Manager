@@ -1,5 +1,5 @@
 // Design
-import { Grid, GridItem } from "@chakra-ui/react";
+import { Grid, GridItem, useDisclosure } from "@chakra-ui/react";
 // Components
 import { ManagerSidebar } from "./ManagerSidebar";
 import { ManagerNavbar } from "./ManagerNavbar";
@@ -14,6 +14,8 @@ import { Suspense } from "react";
 
 export const ManagerLayout = (): JSX.Element => {
 	const outlet = useOutlet();
+	// Sidebar Drawer
+	const { isOpen: isOpenDrawer, onOpen: onOpenDrawer, onClose: onCloseDrawer } = useDisclosure();
 
 	return (
 		<Grid
@@ -33,23 +35,7 @@ export const ManagerLayout = (): JSX.Element => {
 			bg="gray.50"
 			overflowX="clip"
 		>
-			<GridItem
-				as="aside"
-				area="sidebar"
-				pos="fixed"
-				top="0"
-				left="0"
-				h="full"
-				pb="10"
-				overflowX="hidden"
-				overflowY="auto"
-				w={{ sm: "200px", md: "220px" }}
-				bg="brandPrimary.900"
-				borderRight="1px solid"
-				borderRightColor="gray"
-			>
-				<ManagerSidebar />
-			</GridItem>
+			<ManagerSidebar isOpenDrawer={isOpenDrawer} onCloseDrawer={onCloseDrawer} />
 
 			<GridItem
 				as="header"
@@ -67,7 +53,7 @@ export const ManagerLayout = (): JSX.Element => {
 				pr="20px"
 				gap={2}
 			>
-				<ManagerNavbar />
+				<ManagerNavbar onOpenDrawer={onOpenDrawer} />
 			</GridItem>
 
 			<GridItem as="main" w="100%" h="100%" area="main" bg="brandPrimary.800">

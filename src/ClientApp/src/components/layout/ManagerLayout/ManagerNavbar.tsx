@@ -19,6 +19,8 @@ import {
 	PopoverBody,
 	Flex,
 	Text,
+	IconButton,
+	useMediaQuery,
 } from "@chakra-ui/react";
 import {
 	AiFillCaretDown,
@@ -41,10 +43,15 @@ import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 import { Location, useLocation } from "react-router-dom";
 import { getEnumKeyByEnumValue } from "@/shared/utils";
+import { FiMenu } from "react-icons/fi";
 
-type TManagerNavbarProps = {};
+type TManagerNavbarProps = {
+	onOpenDrawer: () => void;
+};
 
-export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
+export const ManagerNavbar = ({
+	onOpenDrawer,
+}: TManagerNavbarProps): React.ReactElement => {
 	const filterbookmarkOptions = [
 		{
 			value: FilterBookmarksEnum.Info,
@@ -71,6 +78,7 @@ export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 		)
 	);
 	const location: Location = useLocation();
+	const [isLargerThan800] = useMediaQuery("(min-width: 800px)");
 
 	// Reset state get params on url change
 	useEffect(() => {
@@ -95,6 +103,16 @@ export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 
 	return (
 		<>
+			{!isLargerThan800 && (
+				<IconButton
+					display={{ base: "flex", md: "none" }}
+					onClick={onOpenDrawer}
+					variant="outline"
+					aria-label="open menu"
+					icon={<FiMenu />}
+				/>
+			)}
+
 			<InputGroup
 				aria-label="page-navbar-leftbuttons-div"
 				h="55%"
