@@ -16,7 +16,7 @@ export const defaultHandlerApiError = (error: Error | unknown) => {
       console.error("Unknown server error or failed connection");
       return;
     }
-
+ 
     if (error.response) {
       // TODO: Check possible responses, from api response or axios generic
       if (Object.keys(error.response.data).length > 0) {

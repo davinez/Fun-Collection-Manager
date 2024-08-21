@@ -153,7 +153,6 @@ export const RecursiveNavItem = ({
 
 		deleteCollectionMutation.mutate(payload, {
 			onSuccess: (data, variables, context) => {
-				// TODO: validate invalidating key "collection-groups" to avoid re fetch all
 				queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
 				toast({
 					title: "Collection deleted.",

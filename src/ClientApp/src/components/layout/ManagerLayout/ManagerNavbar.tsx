@@ -21,6 +21,7 @@ import {
 	Text,
 	IconButton,
 	useMediaQuery,
+	useDisclosure,
 } from "@chakra-ui/react";
 import {
 	AiFillCaretDown,
@@ -44,7 +45,7 @@ import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 import { Location, useLocation } from "react-router-dom";
 import { getEnumKeyByEnumValue } from "@/shared/utils";
-
+import { HelpSearchModal } from "@/components/ui/modal/manager/HelpSearchModal";
 
 type TManagerNavbarProps = {
 	onOpenDrawer: () => void;
@@ -78,6 +79,11 @@ export const ManagerNavbar = ({
 			(option) => option.value === managerSlice.getBookmarkParams.filterType
 		)
 	);
+	const {
+		isOpen: isOpenHelpModal,
+		onOpen: onOpenHelpModal,
+		onClose: onCloseHelpModal,
+	} = useDisclosure();
 	const location: Location = useLocation();
 	const [isLargerThan800] = useMediaQuery("(min-width: 800px)");
 
@@ -102,13 +108,20 @@ export const ManagerNavbar = ({
 		}
 	};
 
+	// handleOnClickHelpButton
+	const handleOnClickHelpButton = () => {
+		onOpenHelpModal();
+	};
+
 	return (
 		<>
+			<HelpSearchModal isOpen={isOpenHelpModal} onClose={onCloseHelpModal} />
+
 			{!isLargerThan800 && (
 				<IconButton
 					onClick={onOpenDrawer}
 					bg="brandPrimary.950"
-					aria-label="open menu sidebar"	
+					aria-label="open menu sidebar"
 					h="55%"
 					icon={<Icon as={FiMenu} color="brandPrimary.150" />}
 				/>
@@ -214,10 +227,11 @@ export const ManagerNavbar = ({
 							<MenuDivider />
 							<MenuItem
 								bg="brandPrimary.900"
+								textStyle="primary"
 								_hover={{
 									bg: "brandSecondary.800",
 								}}
-								// onclick={open modal with table of comands in search input}
+								onClick={handleOnClickHelpButton}
 							>
 								Help
 							</MenuItem>
