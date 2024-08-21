@@ -150,7 +150,7 @@ export const BookmarkCard = ({
 					{managerSlice.selectedShowInValueCollectionFilter.includes(
 						ShowInBookmarkEnum.Cover
 					) && (
-						<Box w="100%" h={{ sm: "8rem", md: "12rem", lg: "12.5rem" }}>
+						<Box w="100%" h={{ base: "12rem", md: "12.5rem", lg: "12.5rem" }}>
 							<Image
 								w="100%"
 								h="100%"

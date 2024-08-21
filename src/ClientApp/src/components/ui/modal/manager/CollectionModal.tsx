@@ -48,7 +48,7 @@ export const CollectionModal = ({
 					border="1px solid"
 					borderColor="brandPrimary.900"
 				  minH="150px"
-					maxW={{sm: "80vw", md: "60vw", lg: "60vw"}}
+					maxW={{base: "80vw", md: "60vw", lg: "60vw"}}
 				>
 					{modalAction === CollectionModalActionEnum.Icon && (
 						<CollectionIconForm collectionId={collectionId} collectionIcon={collectionIcon} onClose={onClose}/>

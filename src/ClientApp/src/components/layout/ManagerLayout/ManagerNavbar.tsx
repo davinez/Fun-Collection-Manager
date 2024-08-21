@@ -31,6 +31,7 @@ import {
 	AiFillClockCircle,
 	AiFillChrome,
 } from "react-icons/ai";
+import { FiMenu } from "react-icons/fi";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
 import { URLAddForm, SearchInputField } from "@/components/forms/manager";
@@ -43,7 +44,7 @@ import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 import { Location, useLocation } from "react-router-dom";
 import { getEnumKeyByEnumValue } from "@/shared/utils";
-import { FiMenu } from "react-icons/fi";
+
 
 type TManagerNavbarProps = {
 	onOpenDrawer: () => void;
@@ -105,11 +106,11 @@ export const ManagerNavbar = ({
 		<>
 			{!isLargerThan800 && (
 				<IconButton
-					display={{ base: "flex", md: "none" }}
 					onClick={onOpenDrawer}
-					variant="outline"
-					aria-label="open menu"
-					icon={<FiMenu />}
+					bg="brandPrimary.950"
+					aria-label="open menu sidebar"	
+					h="55%"
+					icon={<Icon as={FiMenu} color="brandPrimary.150" />}
 				/>
 			)}
 

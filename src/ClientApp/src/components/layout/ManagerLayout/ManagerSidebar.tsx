@@ -100,17 +100,29 @@ const GroupsNavItems = ({
 };
 
 type TUpperSectionProps = {
+	onCloseDrawer: () => void;
 	handleOnClickLogOut: () => void;
 	userDisplayName: string | undefined;
 };
 
 const UpperSection = ({
+	onCloseDrawer,
 	handleOnClickLogOut,
 	userDisplayName,
 }: TUpperSectionProps): React.ReactElement => {
+	const [isLargerThan800] = useMediaQuery("(min-width: 800px)");
+
 	// Return handling
 	return (
-		<Flex w="100%" pl="3" py="2" alignItems="center">
+		<Flex
+			aria-label="upper-section"
+			w="100%"
+			pl="3"
+			pr="2"
+			py="2"
+			alignItems="center"
+			justifyContent="space-between"
+		>
 			<Menu>
 				<MenuButton
 					as={Button}
@@ -164,6 +176,14 @@ const UpperSection = ({
 					</MenuItem>
 				</MenuList>
 			</Menu>
+
+			{!isLargerThan800 && (
+				<CloseButton
+					size="lg"
+					color="brandPrimary.100"
+					onClick={onCloseDrawer}
+				/>
+			)}
 		</Flex>
 	);
 };
@@ -189,7 +209,6 @@ export const ManagerSidebarContent = ({
 	const currentAccount = instance.getAccountByHomeId(
 		authSlice.accountIdentifiers.homeAccountId as string
 	) as AccountInfo;
-	const [isLargerThan800] = useMediaQuery("(min-width: 800px)");
 
 	// Handlers
 	const handleOnClickLogOut = async () => {
@@ -211,13 +230,8 @@ export const ManagerSidebarContent = ({
 	return (
 		<>
 			<GroupModal isOpen={isOpenGroupModal} onClose={onCloseGroupModal} />
-			{!isLargerThan800 && (
-				<CloseButton
-					display={{ base: "flex", md: "none" }}
-					onClick={onCloseDrawer}
-				/>
-			)}
 			<UpperSection
+				onCloseDrawer={onCloseDrawer}
 				handleOnClickLogOut={handleOnClickLogOut}
 				userDisplayName={authSlice.userDisplayName}
 			/>
@@ -298,21 +312,7 @@ export const ManagerSidebar = ({
 
 	// Fetched
 	return (
-		<GridItem
-			as="aside"
-			area="sidebar"
-			pos="fixed"
-			top="0"
-			left="0"
-			h="full"
-			pb="10"
-			overflowX="hidden"
-			overflowY="auto"
-			w={{ sm: "200px", md: "220px" }}
-			bg="brandPrimary.900"
-			borderRight="1px solid"
-			borderRightColor="gray"
-		>
+		<>
 			{isLargerThan800 && (
 				<ManagerSidebarContent
 					data={getCollectionGroupsResponse}
@@ -326,13 +326,14 @@ export const ManagerSidebar = ({
 				returnFocusOnClose={false}
 				onOverlayClick={onCloseDrawer}
 			>
-				<DrawerContent>
+				{/* Styling according to GridItem sidebar in Layout */}
+				<DrawerContent bg="brandPrimary.900">
 					<ManagerSidebarContent
 						data={getCollectionGroupsResponse}
 						onCloseDrawer={onCloseDrawer}
 					/>
 				</DrawerContent>
 			</Drawer>
-		</GridItem>
+		</>
 	);
 };

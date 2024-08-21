@@ -68,7 +68,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 				py={4}
 				display="grid"
 				gridAutoRows="1fr" /* make all rows the same height */
-				gridTemplateColumns={{ sm: "1fr 1fr", md: "1fr 1fr 1fr" }}
+				gridTemplateColumns={{ base: "1fr", md: "1fr 1fr 1fr" }}
 				gap={4}
 				justifyItems="center"
 				alignItems="center"

@@ -203,7 +203,7 @@ export const FiltersHead = ({ icon, headerName }: TFiltersHeadProps) => {
 		>
 			<Flex
 				aria-label="left-head-section"
-				w={{ sm: "42%", md: "13.4%" }}
+				w={{ base: "60%", md: "50%" }}
 				alignItems="center"
 				justify="start"
 				gap={2}
@@ -260,7 +260,7 @@ export const FiltersHead = ({ icon, headerName }: TFiltersHeadProps) => {
 				aria-label="right-head-section"
 				justify="center"
 				align="center"
-				gap={{ sm: 1, md: 1 }}
+				gap={{ base: 1, md: 1 }}
 			>
 				<Popover>
 					<PopoverTrigger>
