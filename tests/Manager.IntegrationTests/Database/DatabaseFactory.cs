@@ -1,16 +1,14 @@
 ﻿using System.Threading.Tasks;
 
-namespace Manager.FunctionalTests;
+namespace Manager.FunctionalTests.Database;
 
-public static class TestDatabaseFactory
+public static class DatabaseFactory
 {
     public static async Task<ITestDatabase> CreateAsync()
     {
-
         //if DEBUG
-        //var database = new PostgresSqlTestDatabase();
-        var database = new TestcontainersTestDatabase();
-
+        //var database = new PostgresDatabase();
+        var database = new TestContainerDatabase();
 
         await database.InitialiseAsync();
 

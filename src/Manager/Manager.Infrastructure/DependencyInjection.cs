@@ -41,10 +41,6 @@ public static class DependencyInjection
 
         services.AddHttpClient<IManagerSupportService, ManagerSupportService>();
 
-        // TODO: Is nessecary?
-        services.AddAuthentication()
-                .AddBearerToken(IdentityConstants.BearerScheme);
-
         services.AddSingleton(TimeProvider.System);
 
         services.AddStackExchangeRedisCache(options =>

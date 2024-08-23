@@ -8,15 +8,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Respawn;
 
-namespace Manager.FunctionalTests;
+namespace Manager.FunctionalTests.Database;
 
-public class PostgresSqlTestDatabase : ITestDatabase
+public class PostgresDatabase : ITestDatabase
 {
     private readonly string _connectionString = null!;
     private SqlConnection _connection = null!;
     private Respawner _respawner = null!;
 
-    public PostgresSqlTestDatabase()
+    public PostgresDatabase()
     {
         var configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
@@ -33,15 +33,13 @@ public class PostgresSqlTestDatabase : ITestDatabase
     public async Task InitialiseAsync()
     {
         _connection = new SqlConnection(_connectionString);
+        
+        await Task.CompletedTask;
+    }
 
-        var options = new DbContextOptionsBuilder<ManagerContext>()
-            .UseNpgsql(_connectionString)
-            .Options;
-
-        var context = new ManagerContext(options);
-
-        context.Database.Migrate();
-
+    public async Task InitialiseRespawnAsyn()
+    {
+        // Config Respawn
         _respawner = await Respawner.CreateAsync(_connectionString, new RespawnerOptions
         {
             TablesToIgnore = new Respawn.Graph.Table[] { "__EFMigrationsHistory" }

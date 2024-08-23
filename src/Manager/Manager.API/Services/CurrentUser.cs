@@ -13,7 +13,6 @@ namespace Manager.API.Services;
 /// </summary>
 public class CurrentUser : IUser
 {
-
     public CurrentUser(IHttpContextAccessor httpContextAccessor)
     {
         bool isAuthenticated = httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;

@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using Manager.Application.Common.Interfaces.Services;
 using Manager.Infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -26,9 +27,9 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureTestServices(services =>
         {
-            //services
-            //    .RemoveAll<IUser>()
-            //    .AddTransient(provider => Mock.Of<IUser>(s => s.Id == GetUserId()));
+            services
+                .RemoveAll<IUser>()
+                .AddTransient(provider => Mock.Of<IUser>(user => user.HomeAccountId == GetUserId()));
 
             services
                 .RemoveAll<DbContextOptions<ManagerContext>>()

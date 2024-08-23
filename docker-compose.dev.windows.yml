@@ -22,6 +22,7 @@ services:
   
   manager.db:
     container_name: manager-db
+    # Docker uses the default tag latest if there are no tags defined in the pull request.
     image: postgres
     ports:
       - "5432:5432"

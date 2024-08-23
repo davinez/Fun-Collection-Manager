@@ -1,5 +1,13 @@
 
 
+------------------------------- START GENERAL QUERIES ---------------------
+
+
+
+select * from manager.bookmark b 
+where b.title = 'Bookmark B CA N2 G2'
+
+
 
 
 
@@ -11,6 +19,9 @@ select * from manager.collection c where c."name" = 'PPPP'
 select * from manager.bookmark b 
 
 
+
+
+------------------------------- END GENERAL QUERIES ---------------------
 
 
 -------DELETE Boomarks
@@ -42,41 +53,7 @@ rollback;
 
 */
 
-
-export type TGetAllBookmarks = {
-  bookmarks: TBookmark[];
-  total: number;
-}
-
-
-export type TBookmark = {
-  id: number;
-  cover: string;
-  title: string;
-  description: string;
-  websiteURL: string;
-  bookmarkDetail: TBookmarkDetail;
-}
-
-type TBookmarkDetail = {
-  collectionDetail?: { icon: string, name: string };
-  createdAt: string;
-}
-
-
-debounceSearchValue.length !== 0 ?
-{
-            page: page,
-            page_limit: pageLimit,
-            filter_type: filterType,
-            search_value: debounceSearchValue
-} :
-{
-            page: page,
-            page_limit: pageLimit
-}
-          
-          
+                
 -- All bookmarks
 select 
 -- Bookmark Info
@@ -125,13 +102,6 @@ where cg.user_account_id = 4
 and c.id = 48
 group by c."name" 
 
-
-
-select * from manager.bookmark b
-
-
-select * from manager.bookmark b 
-where b.title like '%CA%' or b.description like '%fuente%'
 
 
 

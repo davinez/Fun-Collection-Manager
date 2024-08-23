@@ -1,28 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
+﻿using System.Data.Common;
 using System.Threading.Tasks;
+using DotNet.Testcontainers.Builders;
 using Manager.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Respawn;
+using Respawn.Graph;
+using SkiaSharp;
 using Testcontainers.PostgreSql;
 
-namespace Manager.FunctionalTests;
+namespace Manager.FunctionalTests.Database;
 
-public class TestcontainersTestDatabase : ITestDatabase
+public class TestContainerDatabase : ITestDatabase
 {
     private readonly PostgreSqlContainer _container;
     private DbConnection _connection = null!;
     private string _connectionString = null!;
     private Respawner _respawner = null!;
 
-    public TestcontainersTestDatabase()
+    public TestContainerDatabase()
     {
         _container = new PostgreSqlBuilder()
-            .WithAutoRemove(true)
+            // Change this to same version as your production database!
+            .WithImage("postgres:latest")
+            .WithDatabase("manager")
+            .WithUsername("postgres")
+            .WithPassword("postgres")
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilCommandIsCompleted("pg_isready"))
+            .WithCleanUp(true)
             .Build();
     }
 
@@ -33,18 +38,17 @@ public class TestcontainersTestDatabase : ITestDatabase
         _connectionString = _container.GetConnectionString();
 
         _connection = new SqlConnection(_connectionString);
+    }
 
-        var options = new DbContextOptionsBuilder<ManagerContext>()
-            .UseNpgsql(_connectionString)
-            .Options;
-
-        var context = new ManagerContext(options);
-
-        context.Database.Migrate();
-
+    public async Task InitialiseRespawnAsyn()
+    {
+        // Config Respawn
         _respawner = await Respawner.CreateAsync(_connectionString, new RespawnerOptions
         {
-            TablesToIgnore = new Respawn.Graph.Table[] { "__EFMigrationsHistory" }
+            TablesToIgnore = new Respawn.Graph.Table[] {
+                 new Table("manager", "__EFMigrationsHistory"),
+                 new Table("manager", "plan")          
+            }
         });
     }
 
