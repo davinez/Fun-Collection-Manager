@@ -16,7 +16,7 @@ export const defaultHandlerApiError = (error: Error | unknown) => {
       console.error("Unknown server error or failed connection");
       return;
     }
- 
+
     if (error.response) {
       // TODO: Check possible responses, from api response or axios generic
       if (Object.keys(error.response.data).length > 0) {
@@ -42,7 +42,7 @@ interface AxiosRetryConfig extends AxiosRequestConfig {
 }
 
 export type TApi = {
-  get: <T>(url: string, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
+  get: <T>(url: string, parameters?: object, accessToken?: string) => Promise<AxiosResponse<T, unknown>>;
   post: <T>(url: string, data: object, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
   patchForm: <T>(url: string, data: object, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
   patch: <T>(url: string, data: object, parameters?: object) => Promise<AxiosResponse<T, unknown>>;
@@ -59,39 +59,20 @@ export const useApiClient = (baseURL: string): TApi => {
   });
 
   // Add interceptors
-  /*
-  // Check scopes for user-api
-      const tokenRequest = {
-        account: activeAccount,
-        scopes: loginRequest.scopes,
-      };
-
-      // Acquire an access token active account already exists 
-      instance
-        .acquireTokenSilent(tokenRequest)
-        .then((loginResponse) => {
-          // Update / Set again user data
-          authSlice.setLoginUser({
-            localAccountId: loginResponse.account.localAccountId,
-            homeAccountId: loginResponse.account.homeAccountId,
-            username: loginResponse.account.username,
-            userEmail: "email placeholder obtener de claims",
-            userScopes: loginResponse.scopes,
-            accessToken: loginResponse.accessToken,
-          });
-
-          navigate("/my/manager/dashboard");
-        })
-        .catch(async (error) => {
-          defaultHandlerApiError(error);
-          onOpenFailedLoginAlert();
-        });
-
-  */
   apiClientAxios.interceptors.response.use(
     (response) => response,
     async (error) => {
       const originalRequest: AxiosRetryConfig = error.config;
+      // Error 403 => already authorize but access invalid
+      if (error.code !== "ERR_NETWORK" && error.response.status === 403) {
+        authSlice.logout();
+        await instance.logoutPopup({
+          account: instance.getActiveAccount(),
+        });
+        instance.clearCache();
+        navigate("/");
+      }
+
       // If the error status is 401 and there is no originalRequest._retry flag,
       // it means the token has expired and we need to refresh it
       if (error.code !== "ERR_NETWORK" && error.response.status === 401 && !originalRequest._retry) {
@@ -118,14 +99,15 @@ export const useApiClient = (baseURL: string): TApi => {
           }
 
           return axios(originalRequest);
-        } catch (error) {
-          // Catch interaction_required errors and call interactive method to resolve
+        } catch (error)
+        // Catch interaction_required errors and call interactive method to resolve
+        {
           if (error instanceof InteractionRequiredAuthError && activeAccount !== null) {
             originalRequest._retry = true;
 
             const tokenRequest = {
               account: activeAccount,
-              scopes: [],
+              scopes: [...managerAPIRequest.scopes],
             };
             try {
               // Before Retry the original request a new login is required to update access and refresh tokens
@@ -140,6 +122,9 @@ export const useApiClient = (baseURL: string): TApi => {
             } catch (error) {
               defaultHandlerApiError(error);
               authSlice.logout();
+              await instance.logoutPopup({
+                account: instance.getActiveAccount(),
+              });
               instance.clearCache();
               navigate("/");
             }
@@ -148,6 +133,9 @@ export const useApiClient = (baseURL: string): TApi => {
           } else {
             defaultHandlerApiError(error);
             authSlice.logout();
+            await instance.logoutPopup({
+              account: instance.getActiveAccount(),
+            });
             instance.clearCache();
             navigate("/");
           }
@@ -160,10 +148,10 @@ export const useApiClient = (baseURL: string): TApi => {
   )
 
   return {
-    get: <T>(url: string, parameters?: object) =>
+    get: <T>(url: string, parameters?: object, accessToken?: string) =>
       apiClientAxios.get<T>(url, {
         headers: {
-          Authorization: `Bearer ${authSlice.accessToken}`,
+          Authorization: `Bearer ${accessToken ? accessToken : authSlice.accessToken}`,
         },
         params: parameters,
       }),

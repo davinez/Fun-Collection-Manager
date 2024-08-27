@@ -48,9 +48,15 @@ export const useStore = create<TCombinedStore>()(
             ...currentState.authSlice,
             ...typedPersistedState?.authSlice,
           },
+          managerSlice: {
+            // We need to do a deep merge here because the default merge strategy is a
+            // shallow merge. Without doing this, our actions would not be included in
+            // our merged state, resulting in unexpected behavior.
+            ...currentState.managerSlice,
+            ...typedPersistedState?.managerSlice,
+          },
           barSlice: currentState.barSlice,
-          fooSlice: currentState.fooSlice,
-          managerSlice: currentState.managerSlice
+          fooSlice: currentState.fooSlice
         };
       },
       onRehydrateStorage: () => {
