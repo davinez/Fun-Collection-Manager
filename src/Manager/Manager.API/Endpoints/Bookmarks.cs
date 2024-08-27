@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
 using Manager.Application.Bookmarks.Commands.CreateBookmark;
@@ -11,6 +12,8 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Identity.Web;
 
 namespace Manager.API.Endpoints;
 
@@ -18,6 +21,8 @@ public class Bookmarks : EndpointGroupBase
 {
     public override void Map(WebApplication app)
     {
+       // string[] scopesClaim = app.Configuration.GetSection("EntraIDAuthConfig:Scopes").Get<string[]>() ?? throw new ArgumentNullException($"Null value for Scopes in {nameof(CollectionGroups)}");
+
         app.MapGroup(this)
            .RequireAuthorization("All")
            .MapPost(CreateBookmark)

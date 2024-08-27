@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
 using Manager.Application.CollectionGroups.Commands.CreateCollectionGroup;
@@ -10,6 +11,8 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Identity.Web;
 
 namespace Manager.API.Endpoints;
 

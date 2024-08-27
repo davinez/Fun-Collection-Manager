@@ -16,7 +16,7 @@ public class Accounts : EndpointGroupBase
     public override void Map(WebApplication app)
     {
         app.MapGroup(this)
-            .RequireAuthorization()
+            .RequireAuthorization("All")
             .MapPost(CreateUserAccount)
             .MapGet(GetUserAccountByIdP);
     }

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
-using System.Text.Json.Serialization;
+using Manager.API.Endpoints;
 using Manager.API.Infrastructure;
 using Manager.API.Infrastructure.Extensions;
 using Manager.API.Services;
-using Manager.Application.Common.Enums;
 using Manager.Application.Common.Exceptions;
 using Manager.Application.Common.Interfaces.Services;
 using Manager.Infrastructure.Data;
@@ -76,7 +76,7 @@ public static class DependencyInjection
         }))
       .WithMetrics(metrics => metrics
         .ConfigureResource(resource => resource
-            .AddService("ManagerWebApi"))      
+            .AddService("ManagerWebApi"))
         .AddRuntimeInstrumentation()
         .AddAspNetCoreInstrumentation()
         .AddProcessInstrumentation()
@@ -116,7 +116,7 @@ public static class DependencyInjection
 
         services.AddHttpContextAccessor();
 
-        services.AddHealthChecks()  
+        services.AddHealthChecks()
             .AddDbContextCheck<ManagerContext>();
 
         services.AddExceptionHandler<CustomExceptionHandler>();
@@ -172,13 +172,24 @@ public static class DependencyInjection
 
         services.AddAuthorization(options =>
         {
-            options.AddPolicy("Administrator", policy => policy.RequireRole("Administrator"));
-            options.AddPolicy("General.Level1", policy => policy.RequireRole("General.Level1"));
+            //options.AddPolicy("Administrator", policy => policy.RequireRole("Administrator"));
+            //options.AddPolicy("General.Level1", policy => policy.RequireRole("General.Level1"));
 
             options.AddPolicy("All", policy =>
-                     policy.RequireAssertion(context =>
+            {               
+                policy.RequireAssertion(context =>
                              context.User.HasClaim(ClaimTypes.Role, "Administrator") ||
-                             context.User.HasClaim(ClaimTypes.Role, "General.Level1")));
+                             context.User.HasClaim(ClaimTypes.Role, "General.Level1"));
+
+                string[] scopesClaim = configuration.GetSection("EntraIDAuthConfig:Scopes").Get<string[]>() ?? throw new ArgumentNullException($"Null value for Scopes in {nameof(CollectionGroups)}");
+
+                // All scopes are required, not only one of allowedValues
+                foreach (var scopeClaim in scopesClaim)
+                {
+                    policy.RequireScope(scopeClaim);
+                }
+            });
+
         });
 
         services.AddScoped<IUser, CurrentUser>();

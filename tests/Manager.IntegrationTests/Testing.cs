@@ -41,19 +41,22 @@ public partial class Testing
     private static string _authority = null!;
     private static string _tenantId = null!;
     private static string _clientId = null!;
+
     private static string _adminFucomaUsername = null!;
     private static string _adminFucomaPassword = null!;
+    private static string _generalFucomaUsername = null!;
+    private static string _generalFucomaPassword = null!;
 
 
     [OneTimeSetUp]
     public async Task RunBeforeAnyTests()
     {
-        // Database
-        _database = await DatabaseFactory.CreateAsync();
-
         // App Factory
-        _factory = new CustomWebApplicationFactory(_database.GetConnection());
+        _factory = new CustomWebApplicationFactory();
         _config = _factory.Services.GetService<IConfiguration>() ?? throw new ArgumentNullException($"Null IConfig Service in {nameof(Testing)}");
+
+        // Database
+        _database = await DatabaseFactory.CreateAsync(_config);
 
         // Migrations
         using var scope = _factory.Services.CreateScope();
@@ -66,11 +69,14 @@ public partial class Testing
         await SeedAsync();
 
         // Config Values
-        _authority = _config.GetValue<string>("EntraID:Authority") ?? throw new ArgumentNullException($"Null value for Authority in {nameof(Testing)}");
-        _tenantId = _config.GetValue<string>("EntraID:Authority") ?? throw new ArgumentNullException($"Null value for TenantId in {nameof(Testing)}");
-        _clientId = _config.GetValue<string>("EntraID:Authority") ?? throw new ArgumentNullException($"Null value for ClientId in {nameof(Testing)}");
-        _adminFucomaUsername = _config.GetValue<string>("EntraID:Authority") ?? throw new ArgumentNullException($"Null value for AdminFucomaUsername in {nameof(Testing)}");
-        _adminFucomaPassword = _config.GetValue<string>("EntraID:Authority") ?? throw new ArgumentNullException($"Null value for AdminFucomaPassword in {nameof(Testing)}");
+        _authority = _config.GetValue<string>("EntraIDAuthConfig:Instance") ?? throw new ArgumentNullException($"Null value for Authority in {nameof(Testing)}");
+        _tenantId = _config.GetValue<string>("EntraID:ManagerApiApp:TenantId") ?? throw new ArgumentNullException($"Null value for TenantId in {nameof(Testing)}");
+        _clientId = _config.GetValue<string>("EntraID:ManagerApiApp:ClientId") ?? throw new ArgumentNullException($"Null value for ClientId in {nameof(Testing)}");
+      
+        _adminFucomaUsername = _config.GetValue<string>("EntraID:Testing:AdminUser:Email") ?? throw new ArgumentNullException($"Null value for AdminFucomaUsername in {nameof(Testing)}");
+        _adminFucomaPassword = _config.GetValue<string>("EntraID:Testing:AdminUser:Password") ?? throw new ArgumentNullException($"Null value for AdminFucomaPassword in {nameof(Testing)}");
+        _generalFucomaUsername = _config.GetValue<string>("EntraID:Testing:GeneralUser:Email") ?? throw new ArgumentNullException($"Null value for GeneralFucomaUsername in {nameof(Testing)}");
+        _generalFucomaPassword = _config.GetValue<string>("EntraID:Testing:GeneralUser:Password") ?? throw new ArgumentNullException($"Null value for GeneralFucomaPassword in {nameof(Testing)}");
     }
 
     // Is it used in the CustomWebApplicationFactory before each test?
@@ -85,6 +91,15 @@ public partial class Testing
     public static CustomWebApplicationFactory GetWebAppFactory()
     {
         return _factory;
+    }
+
+    public static ManagerContext GetDbContext()
+    {
+        using var scope = _factory.Services.CreateScope();
+
+        var dbContext = scope.ServiceProvider.GetRequiredService<ManagerContext>();
+
+        return dbContext;
     }
 
     public static async Task SeedAsync()
@@ -105,12 +120,12 @@ public partial class Testing
 
     public static async Task<string> RunAsGeneralUserAsync()
     {
-        return await RunAsUserAsync("test@local", "Testing1234!");
+        return await RunAsUserAsync(_adminFucomaUsername, _adminFucomaPassword);
     }
 
     public static async Task<string> RunAsAdministratorAsync()
     {
-        return await RunAsUserAsync("administrator@local", "Administrator1234!");
+        return await RunAsUserAsync(_generalFucomaUsername, _generalFucomaPassword);
     }
 
     // Get Azure AD Enternal Token throught MSAL, default lifetime beetwen 60 and 90 minutes
@@ -120,8 +135,8 @@ public partial class Testing
     {
         string[] scopes =
                 [
-                    $"api://${_authority}/Manager.Read",
-                    $"api://${_authority}/Manager.Write"
+                    $"api://${_clientId}/Manager.Read",
+                    $"api://${_clientId}/Manager.Write"
                 ];
 
         _azureAD = PublicClientApplicationBuilder.Create(_clientId).WithAuthority(_authority).Build();
@@ -133,7 +148,7 @@ public partial class Testing
             {
                 // Remove token for cache first
                 await _azureAD.RemoveAsync(account);
-            }        
+            }
         }
 
         AuthenticationResult? result = await _azureAD.AcquireTokenByUsernamePassword(scopes, userName, password).ExecuteAsync();

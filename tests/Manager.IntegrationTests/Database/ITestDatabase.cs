@@ -9,8 +9,6 @@ public interface ITestDatabase
 
     Task InitialiseRespawnAsyn();
 
-    DbConnection GetConnection();
-
     Task ResetAsync();
 
     Task DisposeAsync();

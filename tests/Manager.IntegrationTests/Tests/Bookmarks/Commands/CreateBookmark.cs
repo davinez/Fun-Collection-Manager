@@ -1,10 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Manager.Application.Bookmarks.Commands.CreateBookmark;
+using Manager.Domain.Entities;
+using Manager.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 
 namespace Manager.FunctionalTests.Tests.Bookmarks.Commands;
@@ -17,46 +20,93 @@ public class CreateBookmark : BaseTestFixture
     public async Task ShouldCreateBookmark()
     {
         // Arrange
-        var userId = await RunAsGeneralUserAsync();
-        HttpClient client = GetWebAppFactory().CreateClient();
+        var identityProviderId = await RunAsGeneralUserAsync();
 
-        // Act
-        var response = await client.GetAsync("/api/Resident/GetAllResidents");
+        ManagerContext dbContext = GetDbContext();
 
-        response.EnsureSuccessStatusCode();
+        // Seed father tables of bookmark
 
-        var content = await response.Content.ReadAsStringAsync();
-        var allresidentsResponse = JsonSerializer.Deserialize<GetAllResidentsResponse>(content);
+        var userAccount = await dbContext.UserAccounts
+                                    .AsNoTracking()
+                                    .FirstOrDefaultAsync(u =>
+                                    u.IdentityProviderId.Equals(identityProviderId));
 
+        userAccount.Should().NotBeNull();
 
-        allresidentsResponse.Should().NotBeNull();
-        allresidentsResponse.residents.Should().NotBeNull();
-        allresidentsResponse.residents.Should().BeEmpty();
-
-
-        var listId = await SendAsync(new CreateTodoListCommand
+        // Table 1
+        var newCollectionGroup = new CollectionGroup
         {
-            Title = "New List"
-        });
-
-        var command = new CreateTodoItemCommand
-        {
-            ListId = listId,
-            Title = "Tasks"
+            Name = "Test Collection Group 1",
+            UserAccountId = userAccount!.Id,
         };
 
-        var itemId = await SendAsync(command);
+        dbContext.CollectionGroups.Add(newCollectionGroup);
 
-        var item = await FindAsync<TodoItem>(itemId);
+        await dbContext.SaveChangesAsync();
+
+        // Table 2
+        var newCollection = new Collection()
+        {
+            Name = "Test Collection Group 1",
+            CollectionGroupId = newCollectionGroup.Id,
+            ParentNodeId = 0,
+        };
+
+        dbContext.Collections.Add(newCollection);
+
+        await dbContext.SaveChangesAsync();
+
+        // Request
+        var request = new CreateBookmarkCommand()
+        {
+            CollectionId = newCollectionGroup.Id,
+            NewURL = "https://www.nestle.com.mx/",
+        };
+
+        // Act
+        HttpClient client = GetWebAppFactory().CreateClient();
+
+        var response = await client.PostAsJsonAsync("/api/bookmarks", request);
 
         // Assert
-        item.Should().NotBeNull();
-        item!.ListId.Should().Be(command.ListId);
-        item.Title.Should().Be(command.Title);
-        item.CreatedBy.Should().Be(userId);
-        item.Created.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMilliseconds(10000));
-        item.LastModifiedBy.Should().Be(userId);
-        item.LastModified.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMilliseconds(10000));
+        response.EnsureSuccessStatusCode();
+
+        var bookmarks = await dbContext.Bookmarks
+                                  .AsNoTracking()
+                                  .Where(b => b.CollectionId == newCollection.Id)
+                                  .ToListAsync();
+
+        // Only one created
+        bookmarks.Should().NotBeNullOrEmpty();
+        bookmarks.Should().ContainSingle();
+
+        var uniqueBookmark = bookmarks.First();
+
+        if (uniqueBookmark.Cover != null)
+        {
+            uniqueBookmark.Cover.Should().NotBeNullOrWhiteSpace();
+        }
+
+
+
+        uniqueBookmark.Title.Should().NotBeNullOrWhiteSpace();
+        uniqueBookmark.Description.Should().NotBeNullOrWhiteSpace();
+        uniqueBookmark.WebsiteUrl.Should().NotBeNullOrWhiteSpace();
+
+        bool isValidFormat = ValidURLFormat(uniqueBookmark.WebsiteUrl!);
+
+        isValidFormat.Should().BeTrue();
+
+        uniqueBookmark.Created.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(1));
+        uniqueBookmark.LastModified.Should().BeNull();
+    }
+
+    public static bool ValidURLFormat(string newUrl)
+    {
+        bool result = Uri.TryCreate(newUrl, UriKind.Absolute, out var uriResult) &&
+                    (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+
+        return result;
     }
 
 }
