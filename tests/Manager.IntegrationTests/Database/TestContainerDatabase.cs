@@ -1,8 +1,5 @@
 ﻿using System.Threading.Tasks;
 using DotNet.Testcontainers.Builders;
-using Microsoft.Extensions.Configuration;
-using Respawn;
-using Respawn.Graph;
 using Testcontainers.PostgreSql;
 
 namespace Manager.FunctionalTests.Database;
@@ -10,9 +7,8 @@ namespace Manager.FunctionalTests.Database;
 public class TestContainerDatabase : ITestDatabase
 {
     private readonly PostgreSqlContainer _container;
-    private Respawner _respawner = null!;
 
-    public TestContainerDatabase(IConfiguration configuration)
+    public TestContainerDatabase()
     {
         _container = new PostgreSqlBuilder()
             // Change this to same version as your production database!
@@ -30,25 +26,14 @@ public class TestContainerDatabase : ITestDatabase
         await _container.StartAsync();
     }
 
-    public async Task InitialiseRespawnAsyn()
+    public string GetHostname()
     {
-        string connectionString = _container.GetConnectionString();
-
-        // Config Respawn
-        _respawner = await Respawner.CreateAsync(connectionString, new RespawnerOptions
-        {
-            TablesToIgnore = new Respawn.Graph.Table[] {
-                 new Table("manager", "__EFMigrationsHistory"),
-                 new Table("manager", "plan")
-            }
-        });
+        return _container.Hostname;
     }
 
-    public async Task ResetAsync()
+    public int GetPort()
     {
-        string connectionString = _container.GetConnectionString();
-
-        await _respawner.ResetAsync(connectionString);
+        return _container.GetMappedPublicPort(5432);
     }
 
     public async Task DisposeAsync()

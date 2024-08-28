@@ -1,8 +1,6 @@
-﻿using System.Data.Common;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using DotNet.Testcontainers;
-using Manager.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -33,7 +31,7 @@ public class PostgresDatabase : ITestDatabase
     public async Task InitialiseAsync()
     {
         _connection = new SqlConnection(_connectionString);
-        
+
         await Task.CompletedTask;
     }
 
@@ -46,9 +44,14 @@ public class PostgresDatabase : ITestDatabase
         });
     }
 
-    public DbConnection GetConnection()
+    public string GetHostname()
     {
-        return _connection;
+        return "";
+    }
+
+    public int GetPort()
+    {
+        return 0;
     }
 
     public async Task ResetAsync()

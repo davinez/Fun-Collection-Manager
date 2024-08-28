@@ -1,15 +1,11 @@
-﻿using System.Data.Common;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Manager.FunctionalTests.Database;
 
 public interface ITestDatabase
 {
     Task InitialiseAsync();
-
-    Task InitialiseRespawnAsyn();
-
-    Task ResetAsync();
-
+    string GetHostname();
+    int GetPort();
     Task DisposeAsync();
 }

@@ -3,6 +3,7 @@ using System.IO;
 using Ardalis.GuardClauses;
 using Docker.DotNet.Models;
 using Manager.Application.Common.Interfaces.Services;
+using Manager.FunctionalTests.Database;
 using Manager.Infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
+using Testcontainers.PostgreSql;
 
 namespace Manager.FunctionalTests;
 
@@ -20,8 +22,11 @@ using static Testing;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
-    public CustomWebApplicationFactory()
+    private readonly ITestDatabase _testDatabase;
+
+    public CustomWebApplicationFactory(ITestDatabase testDatabase)
     {
+        _testDatabase = testDatabase;
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -43,7 +48,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         builder
             // This configuration is used during the creation of the application
             // (e.g. BEFORE WebApplication.CreateBuilder(args) is called in Program.cs).
-           // .UseConfiguration(config)
+            .UseConfiguration(config)
             .ConfigureAppConfiguration((context, configurationBuilder) =>
             {
                 // Clear Config sources
@@ -54,9 +59,9 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 configurationBuilder.AddConfiguration(config);
             });
 
-        var connectionString = config.GetConnectionString("ManagerTestDB");
-
-        Guard.Against.Null(connectionString, message: "Connection string 'ManagerTestDB' not found in testing environment");
+        var host = _testDatabase.GetHostname();
+        var port = _testDatabase.GetPort();
+        var connectionString = $"Server={host};Port={port};Database=ManagerDB;User Id=postgres;Password=postgres";
 
         builder.ConfigureTestServices(services =>
         {

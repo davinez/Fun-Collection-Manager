@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using Manager.Application.Common.Exceptions;
@@ -9,7 +10,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
+using Npgsql;
 using NUnit.Framework;
+using Respawn;
+using Respawn.Graph;
 
 namespace Manager.FunctionalTests;
 
@@ -30,6 +34,8 @@ More: https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=
 public partial class Testing
 {
     private static ITestDatabase _database;
+    private static Respawner _respawner = null!;
+    private static DbConnection _dbConnection = null!;
     private static CustomWebApplicationFactory _factory = null!;
     private IConfiguration _config = null!;
 
@@ -51,32 +57,75 @@ public partial class Testing
     [OneTimeSetUp]
     public async Task RunBeforeAnyTests()
     {
-        // App Factory
-        _factory = new CustomWebApplicationFactory();
-        _config = _factory.Services.GetService<IConfiguration>() ?? throw new ArgumentNullException($"Null IConfig Service in {nameof(Testing)}");
+        try
+        {
+            // Database
+            _database = await DatabaseFactory.CreateAsync();
 
-        // Database
-        _database = await DatabaseFactory.CreateAsync(_config);
+            // App Factory
+            _factory = new CustomWebApplicationFactory(_database);
+            _config = _factory.Services.GetService<IConfiguration>() ?? throw new ArgumentNullException($"Null IConfig Service in {nameof(Testing)}");
 
-        // Migrations
-        using var scope = _factory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ManagerContext>();
-        await dbContext.Database.MigrateAsync();
+            // Migrations
+            using var scope = _factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ManagerContext>();
 
-        await _database.InitialiseRespawnAsyn();
+            if ((await dbContext.Database.GetPendingMigrationsAsync()).Any())
+            {
+                await dbContext.Database.MigrateAsync();
+            }
 
-        // Seeding
-        await SeedAsync();
+            await InitialiseRespawnAsyn();
 
-        // Config Values
-        _authority = _config.GetValue<string>("EntraIDAuthConfig:Instance") ?? throw new ArgumentNullException($"Null value for Authority in {nameof(Testing)}");
-        _tenantId = _config.GetValue<string>("EntraID:ManagerApiApp:TenantId") ?? throw new ArgumentNullException($"Null value for TenantId in {nameof(Testing)}");
-        _clientId = _config.GetValue<string>("EntraID:ManagerApiApp:ClientId") ?? throw new ArgumentNullException($"Null value for ClientId in {nameof(Testing)}");
-      
-        _adminFucomaUsername = _config.GetValue<string>("EntraID:Testing:AdminUser:Email") ?? throw new ArgumentNullException($"Null value for AdminFucomaUsername in {nameof(Testing)}");
-        _adminFucomaPassword = _config.GetValue<string>("EntraID:Testing:AdminUser:Password") ?? throw new ArgumentNullException($"Null value for AdminFucomaPassword in {nameof(Testing)}");
-        _generalFucomaUsername = _config.GetValue<string>("EntraID:Testing:GeneralUser:Email") ?? throw new ArgumentNullException($"Null value for GeneralFucomaUsername in {nameof(Testing)}");
-        _generalFucomaPassword = _config.GetValue<string>("EntraID:Testing:GeneralUser:Password") ?? throw new ArgumentNullException($"Null value for GeneralFucomaPassword in {nameof(Testing)}");
+            // Seeding
+            await SeedAsync();
+
+            // Config Values
+            _authority = _config.GetValue<string>("EntraIDAuthConfig:Instance") ?? throw new ArgumentNullException($"Null value for Authority in {nameof(Testing)}");
+            _tenantId = _config.GetValue<string>("EntraID:ManagerApiApp:TenantId") ?? throw new ArgumentNullException($"Null value for TenantId in {nameof(Testing)}");
+            _clientId = _config.GetValue<string>("EntraID:ManagerApiApp:ClientId") ?? throw new ArgumentNullException($"Null value for ClientId in {nameof(Testing)}");
+
+            _adminFucomaUsername = _config.GetValue<string>("EntraID:Testing:AdminUser:Email") ?? throw new ArgumentNullException($"Null value for AdminFucomaUsername in {nameof(Testing)}");
+            _adminFucomaPassword = _config.GetValue<string>("EntraID:Testing:AdminUser:Password") ?? throw new ArgumentNullException($"Null value for AdminFucomaPassword in {nameof(Testing)}");
+            _generalFucomaUsername = _config.GetValue<string>("EntraID:Testing:GeneralUser:Email") ?? throw new ArgumentNullException($"Null value for GeneralFucomaUsername in {nameof(Testing)}");
+            _generalFucomaPassword = _config.GetValue<string>("EntraID:Testing:GeneralUser:Password") ?? throw new ArgumentNullException($"Null value for GeneralFucomaPassword in {nameof(Testing)}");
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+            throw;
+        }
+    }
+
+    private async Task InitialiseRespawnAsyn()
+    {
+        var host = _database.GetHostname();
+        var port = _database.GetPort();
+        var connectionString = $"Server={host};Port={port};Database=ManagerDB;User Id=postgres;Password=postgres";
+
+        _dbConnection = new NpgsqlConnection(connectionString);
+
+        await _dbConnection.OpenAsync();
+
+        // Config Respawn
+        _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
+        {
+            DbAdapter = DbAdapter.Postgres,
+            TablesToIgnore = new Respawn.Graph.Table[] {
+                 new Table("manager", "__EFMigrationsHistory"),
+                 new Table("manager", "plan")
+            }
+        });
+
+        await _dbConnection.CloseAsync();
+    }
+
+    private static async Task ResetDatabaseAsync()
+    {
+        await _dbConnection.OpenAsync();
+        await _respawner.ResetAsync(_dbConnection);
+        await _dbConnection.CloseAsync();
     }
 
     // Is it used in the CustomWebApplicationFactory before each test?
@@ -133,11 +182,16 @@ public partial class Testing
     // More Info use of msal .net: https://learn.microsoft.com/en-us/entra/msal/dotnet/acquiring-tokens/desktop-mobile/username-password-authentication
     public static async Task<string> RunAsUserAsync(string userName, string password)
     {
+        //string[] scopes =
+        //        [
+        //            $"api://${_clientId}/Manager.Read",
+        //            $"api://${_clientId}/Manager.Write"
+        //        ];
+
         string[] scopes =
-                [
-                    $"api://${_clientId}/Manager.Read",
-                    $"api://${_clientId}/Manager.Write"
-                ];
+               [
+                   "user.read"
+               ];
 
         _azureAD = PublicClientApplicationBuilder.Create(_clientId).WithAuthority(_authority).Build();
 
@@ -151,10 +205,16 @@ public partial class Testing
             }
         }
 
-        AuthenticationResult? result = await _azureAD.AcquireTokenByUsernamePassword(scopes, userName, password).ExecuteAsync();
-        if (result == null)
+        AuthenticationResult? result;
+
+        try
         {
-            throw new ManagerException("Null result on user AcquireTokenByUsernamePassword");
+            result = await _azureAD.AcquireTokenByUsernamePassword(scopes, userName, password).ExecuteAsync();
+        }
+        catch (MsalException ex)
+        {
+            Console.WriteLine(ex.ToString());
+            throw;
         }
 
         _homeAccountId = result.Account.HomeAccountId.Identifier;
@@ -194,7 +254,7 @@ public partial class Testing
     {
         try
         {
-            await _database.ResetAsync();
+            await ResetDatabaseAsync();
         }
         catch (Exception)
         {
@@ -208,6 +268,7 @@ public partial class Testing
     {
         await _database.DisposeAsync();
         await _factory.DisposeAsync();
+        await _dbConnection.DisposeAsync();
 
         // Remove cache of test AD User
         var account = await _azureAD.GetAccountAsync(_homeAccountId);

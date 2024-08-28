@@ -25,8 +25,9 @@ services:
     # Docker uses the default tag latest if there are no tags defined in the pull request.
     image: postgres
     ports:
-      - "5432:5432"
+      - "5433:5433"
     environment:
+      PGPORT: 5433
       POSTGRES_USER: managerdev
       POSTGRES_PASSWORD: managerpassdev
       POSTGRES_DB: ManagerDB
