@@ -2,7 +2,6 @@
 using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
-using Manager.Application.Common.Exceptions;
 using Manager.Domain.Entities;
 using Manager.FunctionalTests.Database;
 using Manager.Infrastructure.Data;
@@ -42,12 +41,14 @@ public partial class Testing
     // Auth Azure Entra ID
     private static IPublicClientApplication _azureAD = null!;
     private static string? _homeAccountId = null!;
-    private static string? _entraIdAccessToken = null!;
+    public static string? _entraIdAccessToken = null!;
 
     private static string _authority = null!;
     private static string _tenantId = null!;
-    private static string _clientId = null!;
+    private static string _clientIdTestApp = null!;
 
+    //private static string _accessToken = null!;
+    //private static string _refreshToken = null!;
     private static string _adminFucomaUsername = null!;
     private static string _adminFucomaPassword = null!;
     private static string _generalFucomaUsername = null!;
@@ -83,8 +84,10 @@ public partial class Testing
             // Config Values
             _authority = _config.GetValue<string>("EntraIDAuthConfig:Instance") ?? throw new ArgumentNullException($"Null value for Authority in {nameof(Testing)}");
             _tenantId = _config.GetValue<string>("EntraID:ManagerApiApp:TenantId") ?? throw new ArgumentNullException($"Null value for TenantId in {nameof(Testing)}");
-            _clientId = _config.GetValue<string>("EntraID:ManagerApiApp:ClientId") ?? throw new ArgumentNullException($"Null value for ClientId in {nameof(Testing)}");
+            _clientIdTestApp = _config.GetValue<string>("EntraID:Testing:ManagerTestApp:ClientId") ?? throw new ArgumentNullException($"Null value for ClientId in {nameof(Testing)}");
 
+            //_accessToken = _config.GetValue<string>("EntraID:Testing:AccessToken") ?? throw new ArgumentNullException($"Null value for Access Token in {nameof(Testing)}");
+            //_refreshToken = _config.GetValue<string>("EntraID:Testing:RefreshToken") ?? throw new ArgumentNullException($"Null value for Refresh Token in {nameof(Testing)}");
             _adminFucomaUsername = _config.GetValue<string>("EntraID:Testing:AdminUser:Email") ?? throw new ArgumentNullException($"Null value for AdminFucomaUsername in {nameof(Testing)}");
             _adminFucomaPassword = _config.GetValue<string>("EntraID:Testing:AdminUser:Password") ?? throw new ArgumentNullException($"Null value for AdminFucomaPassword in {nameof(Testing)}");
             _generalFucomaUsername = _config.GetValue<string>("EntraID:Testing:GeneralUser:Email") ?? throw new ArgumentNullException($"Null value for GeneralFucomaUsername in {nameof(Testing)}");
@@ -130,9 +133,14 @@ public partial class Testing
 
     // Is it used in the CustomWebApplicationFactory before each test?
     // should be because the transient injections makes that in each request
-    // a instance of the service/class is createdm so in each creations the
+    // a instance of the service/class is created so in each creations the
     // method GetUserId() is called
     public static string? GetUserId()
+    {
+        return _homeAccountId;
+    }
+
+    public static string? GetAccessToken()
     {
         return _homeAccountId;
     }
@@ -144,7 +152,7 @@ public partial class Testing
 
     public static ManagerContext GetDbContext()
     {
-        using var scope = _factory.Services.CreateScope();
+        var scope = _factory.Services.CreateScope();
 
         var dbContext = scope.ServiceProvider.GetRequiredService<ManagerContext>();
 
@@ -193,7 +201,7 @@ public partial class Testing
                    "user.read"
                ];
 
-        _azureAD = PublicClientApplicationBuilder.Create(_clientId).WithAuthority(_authority).Build();
+        _azureAD = PublicClientApplicationBuilder.Create(_clientIdTestApp).WithAuthority(_authority).Build();
 
         var accounts = await _azureAD.GetAccountsAsync();
         if (accounts.Any())
@@ -210,6 +218,17 @@ public partial class Testing
         try
         {
             result = await _azureAD.AcquireTokenByUsernamePassword(scopes, userName, password).ExecuteAsync();
+
+            _homeAccountId = result.Account.HomeAccountId.Identifier;
+
+            string[] scopesManagerAPI =
+                  [
+                  "api://156687b4-4e89-4f20-b99a-97120bab635f/Manager.Read",
+                  "api://156687b4-4e89-4f20-b99a-97120bab635f/Manager.Write"
+                  ];
+
+            result = await _azureAD.AcquireTokenSilent(scopesManagerAPI, result.Account).ExecuteAsync();
+
         }
         catch (MsalException ex)
         {
@@ -217,7 +236,6 @@ public partial class Testing
             throw;
         }
 
-        _homeAccountId = result.Account.HomeAccountId.Identifier;
         _entraIdAccessToken = result.AccessToken;
 
         // Add Test User of Entra Id to database

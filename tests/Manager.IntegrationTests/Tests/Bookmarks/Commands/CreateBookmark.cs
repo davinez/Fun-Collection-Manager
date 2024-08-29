@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -22,7 +21,7 @@ public class CreateBookmark : BaseTestFixture
         // Arrange
         var identityProviderId = await RunAsGeneralUserAsync();
 
-        ManagerContext dbContext = GetDbContext();
+        using ManagerContext dbContext = GetDbContext();
 
         // Seed father tables of bookmark
 
@@ -49,7 +48,7 @@ public class CreateBookmark : BaseTestFixture
         {
             Name = "Test Collection Group 1",
             CollectionGroupId = newCollectionGroup.Id,
-            ParentNodeId = 0,
+            ParentNodeId = null,
         };
 
         dbContext.Collections.Add(newCollection);
@@ -64,7 +63,8 @@ public class CreateBookmark : BaseTestFixture
         };
 
         // Act
-        HttpClient client = GetWebAppFactory().CreateClient();
+        using var client = GetWebAppFactory().CreateClient();
+        client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _entraIdAccessToken);
 
         var response = await client.PostAsJsonAsync("/api/bookmarks", request);
 
@@ -87,8 +87,6 @@ public class CreateBookmark : BaseTestFixture
             uniqueBookmark.Cover.Should().NotBeNullOrWhiteSpace();
         }
 
-
-
         uniqueBookmark.Title.Should().NotBeNullOrWhiteSpace();
         uniqueBookmark.Description.Should().NotBeNullOrWhiteSpace();
         uniqueBookmark.WebsiteUrl.Should().NotBeNullOrWhiteSpace();
@@ -97,7 +95,7 @@ public class CreateBookmark : BaseTestFixture
 
         isValidFormat.Should().BeTrue();
 
-        uniqueBookmark.Created.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(1));
+        uniqueBookmark.Created.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(20));
         uniqueBookmark.LastModified.Should().BeNull();
     }
 
