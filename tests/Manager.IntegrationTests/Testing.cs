@@ -47,8 +47,6 @@ public partial class Testing
     private static string _tenantId = null!;
     private static string _clientIdTestApp = null!;
 
-    //private static string _accessToken = null!;
-    //private static string _refreshToken = null!;
     private static string _adminFucomaUsername = null!;
     private static string _adminFucomaPassword = null!;
     private static string _generalFucomaUsername = null!;
@@ -86,13 +84,10 @@ public partial class Testing
             _tenantId = _config.GetValue<string>("EntraID:ManagerApiApp:TenantId") ?? throw new ArgumentNullException($"Null value for TenantId in {nameof(Testing)}");
             _clientIdTestApp = _config.GetValue<string>("EntraID:Testing:ManagerTestApp:ClientId") ?? throw new ArgumentNullException($"Null value for ClientId in {nameof(Testing)}");
 
-            //_accessToken = _config.GetValue<string>("EntraID:Testing:AccessToken") ?? throw new ArgumentNullException($"Null value for Access Token in {nameof(Testing)}");
-            //_refreshToken = _config.GetValue<string>("EntraID:Testing:RefreshToken") ?? throw new ArgumentNullException($"Null value for Refresh Token in {nameof(Testing)}");
             _adminFucomaUsername = _config.GetValue<string>("EntraID:Testing:AdminUser:Email") ?? throw new ArgumentNullException($"Null value for AdminFucomaUsername in {nameof(Testing)}");
             _adminFucomaPassword = _config.GetValue<string>("EntraID:Testing:AdminUser:Password") ?? throw new ArgumentNullException($"Null value for AdminFucomaPassword in {nameof(Testing)}");
             _generalFucomaUsername = _config.GetValue<string>("EntraID:Testing:GeneralUser:Email") ?? throw new ArgumentNullException($"Null value for GeneralFucomaUsername in {nameof(Testing)}");
             _generalFucomaPassword = _config.GetValue<string>("EntraID:Testing:GeneralUser:Password") ?? throw new ArgumentNullException($"Null value for GeneralFucomaPassword in {nameof(Testing)}");
-
         }
         catch (Exception ex)
         {
