@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Manager.Domain</RootNamespace>
+    <AssemblyName>Manager.Domain</AssemblyName>
+  </PropertyGroup>
+  
+  <ItemGroup>
+   
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ValueObjects\" />
+  </ItemGroup>
+
+</Project>

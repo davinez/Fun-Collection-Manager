@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+
+  manager.api:
+    container_name: manager-api
+    build:
+      context: .
+      dockerfile: src/Manager/Manager.API/Dockerfile
+      args:
+         CONFIG_MODE: Debug
+    ports:
+      - "8081:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    env_file:
+      - .env.dev.manager
+    depends_on:
+     - manager.db
+    networks:
+      - fucoma-app-network
+  
+  manager.db:
+    container_name: manager-db
+    # Docker uses the default tag latest if there are no tags defined in the pull request.
+    image: postgres
+    ports:
+      - "5433:5433"
+    environment:
+      PGPORT: 5433
+      POSTGRES_USER: managerdev
+      POSTGRES_PASSWORD: managerpassdev
+      POSTGRES_DB: ManagerDB
+    volumes:
+      - ./data/manager.db:/var/lib/postgresql/data
+    networks:
+      - fucoma-app-network
+
+networks:
+  fucoma-app-network:
+    name: vpsnetwork
+    external: true
+     
