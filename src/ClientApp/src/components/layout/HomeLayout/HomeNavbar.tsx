@@ -16,6 +16,7 @@ import { GeneralAlert } from "components/ui/alert";
 // Types
 import {
 	createUserAccountPayload,
+	TUserAccount,
 	type TCreateUserAccountPayload,
 } from "@/shared/types/api/auth.types";
 // General
@@ -25,13 +26,13 @@ import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/useApiClient";
 import {
 	useCreateUserAccountMutation,
-	getUserAccountByIdPFetchQuery,
 } from "@/api/services/auth";
 import { useMsal } from "@azure/msal-react";
 import { InteractionStatus } from "@azure/msal-browser";
 import { useApiClient } from "@/api/useApiClient";
 import { API_BASE_URL_AUTH } from "shared/config";
 import { loginRequest, managerAPIRequest } from "shared/config/authConfig";
+import { TApiResponse } from "@/shared/types/api/api-responses.types";
 
 export default function HomeNavbar(): React.ReactElement {
 	// Hooks
@@ -60,7 +61,7 @@ export default function HomeNavbar(): React.ReactElement {
 			if (activeAccount === null) {
 				toast({
 					title: "Error",
-					description: "Error after login",
+					description: "Error getting active account. Please log in again",
 					status: "error",
 					duration: 5000,
 					isClosable: true,
@@ -75,13 +76,18 @@ export default function HomeNavbar(): React.ReactElement {
 
 			const managerAPIToken = await instance.acquireTokenSilent(tokenRequest);
 
-			authSlice.setAccessToken(managerAPIToken.accessToken);
-
-			const userAccount = await getUserAccountByIdPFetchQuery(
-				apiClient,
-				loginResponse.account.homeAccountId,
-				true
-			);
+			// We dont use react-query because we onnly required the latest and imperative way data without cache
+			// We pass the access token because the variable apiClient returned from the useApiClient hook
+			// doesnt update the inside get method with the latest access tokenRequest (useStore), until the re-render
+			const userAccount = (
+				await apiClient.get<TApiResponse<TUserAccount | undefined>>(
+					"/accounts",
+					{
+						identity_provider_id: loginResponse.account.homeAccountId,
+					},
+					managerAPIToken.accessToken
+				)
+			).data.data;
 
 			if (!userAccount) {
 				const payload: TCreateUserAccountPayload = {
@@ -173,26 +179,6 @@ export default function HomeNavbar(): React.ReactElement {
 					onOpenFailedLoginAlert();
 					return;
 				}
-
-				const activeAccount = instance.getActiveAccount();
-
-				if (activeAccount === null) {
-					toast({
-						title: "Error",
-						description: "Error getting active account. Please log in again",
-						status: "error",
-						duration: 5000,
-						isClosable: true,
-					});
-					return;
-				}
-
-				const tokenRequest = {
-					account: activeAccount,
-					scopes: [...managerAPIRequest.scopes],
-				};
-
-				const managerAPIToken = await instance.acquireTokenSilent(tokenRequest);
 
 				// Handle login response
 				authSlice.setLoginUser({

@@ -2,10 +2,7 @@
 import { useToast, useDisclosure, Box, Flex } from "@chakra-ui/react";
 import { AiFillCloud } from "react-icons/ai";
 // Components
-import {
-	FiltersHead,
-	SelectOptionsHead,
-} from "components/ui/head/manager";
+import { FiltersHead, SelectOptionsHead } from "components/ui/head/manager";
 import { LoadingBox, ErrorBox } from "@/components/ui/box";
 import { BookmarkCard } from "@/components/ui/card/manager";
 import { BookmarkModal } from "@/components/ui/modal/manager";
@@ -14,7 +11,6 @@ import { MainPagination } from "@/components/ui/pagination/manager";
 
 // Hooks
 import { useGetAllBookmarksQuery } from "@/api/services/manager";
-import useBookmarkSort from "@/hooks/manager/useBookmarkSort";
 // Types
 import type {
 	TBookmark,
@@ -24,6 +20,8 @@ import type {
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/useApiClient";
+import NotFoundPage from "@/routes/NotFoundPage";
+import EmptyPage from "@/routes/EmptyPage";
 
 type TMainContentProps = {
 	data: TGetAllBookmarks;
@@ -38,13 +36,8 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 		onOpen: onOpenBookmarkModal,
 		onClose: onCloseBookmarkModal,
 	} = useDisclosure();
-	const [sortedData] = useBookmarkSort(data.bookmarks);
 
 	// Handlers
-
-	if (!sortedData) {
-		return <LoadingBox />;
-	}
 
 	return (
 		<>
@@ -57,7 +50,7 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 			{managerSlice.showHeadSelectOptions ? (
 				<SelectOptionsHead
 					aria-label="page-head"
-					bookmarksCount={data.total as number}
+					bookmarksCount={data.bookmarks.length as number}
 					onOpenBookmarkModal={onOpenBookmarkModal}
 				/>
 			) : (
@@ -75,12 +68,12 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 				py={4}
 				display="grid"
 				gridAutoRows="1fr" /* make all rows the same height */
-				gridTemplateColumns={{ sm: "1fr 1fr", md: "1fr 1fr 1fr" }}
+				gridTemplateColumns={{ base: "1fr", md: "1fr 1fr 1fr" }}
 				gap={4}
 				justifyItems="center"
 				alignItems="center"
 			>
-				{sortedData.map((bookmark) => {
+				{data.bookmarks.map((bookmark) => {
 					return (
 						<BookmarkCard
 							key={`SortedCard_${bookmark.id}`}
@@ -133,6 +126,14 @@ export const AllBookmarksPage =
 
 		if (isErrorGetAllBookmarks) return <ErrorBox />;
 
-		// TODO: if data.length === 0 and searchterm !== empty then render Not Found bookmarks Content - Message
+		if (
+			managerSlice.getBookmarkParams.debounceSearchValue.length > 0 &&
+			getAllBookmarksResponse.total === 0
+		) {
+			return <NotFoundPage />;
+		} else if (getAllBookmarksResponse.total === 0) {
+			return <EmptyPage />;
+		}
+
 		return <MainContent data={getAllBookmarksResponse} />;
 	};

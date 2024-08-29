@@ -79,19 +79,17 @@ export const GroupUpdateForm = ({ onClose }: TGroupUpdateFormProps) => {
 			{
 				onSuccess: (data, variables, context) => {
 					queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
-					queryClient.invalidateQueries({
-						queryKey: ["group", managerSlice.selectedSidebarGroupId],
-					});
 					toast({
 						title: "Group updated.",
 						status: "success",
 						duration: 5000,
 						isClosable: true,
 					});
-					reset();
 					onClose();
+					reset();
 					// Reset selected group Id
-					managerSlice.setSelectedSidebarGroupId(0);
+					// If set to 0 it triggers another fetch through UseQuery but failed cause the 0 ID
+					// managerSlice.setSelectedSidebarGroupId(0);
 				},
 				onError: (error, variables, context) => {
 					toast({

@@ -11,7 +11,6 @@ import { MainPagination } from "@/components/ui/pagination/manager";
 
 // Hooks
 import { useGetBookmarksByCollectionQuery } from "@/api/services/manager";
-import useBookmarkSort from "@/hooks/manager/useBookmarkSort";
 // Types
 import type {
 	TBookmark,
@@ -22,7 +21,9 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/useApiClient";
-import { isNumber } from "shared/utils";
+import NotFoundPage from "@/routes/NotFoundPage";
+import EmptyPage from "@/routes/EmptyPage";
+
 
 type TMainContentProps = {
 	data: TGetBookmarksByCollection;
@@ -37,13 +38,8 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 		onOpen: onOpenBookmarkModal,
 		onClose: onCloseBookmarkModal,
 	} = useDisclosure();
-	const [sortedData] = useBookmarkSort(data.bookmarks);
 
 	// Handlers
-
-	if (!sortedData) {
-		return <LoadingBox />;
-	}
 
 	return (
 		<>
@@ -74,12 +70,12 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 				py={4}
 				display="grid"
 				gridAutoRows="1fr" /* make all rows the same height */
-				gridTemplateColumns={{ sm: "1fr 1fr", md: "1fr 1fr 1fr" }}
+				gridTemplateColumns={{ base: "1fr", md: "1fr 1fr 1fr" }}
 				gap={4}
 				justifyItems="center"
 				alignItems="center"
 			>
-				{sortedData.map((bookmark) => {
+				{data.bookmarks.map((bookmark) => {
 					return (
 						<BookmarkCard
 							key={`SortedCard_${bookmark.id}`}
@@ -97,13 +93,15 @@ const MainContent = ({ data }: TMainContentProps): React.ReactElement => {
 	);
 };
 
-type TCollectionPageProps = {};
+type TCollectionPageProps = {
+	
+};
 
 export const CollectionPage =
 	({}: TCollectionPageProps): React.ReactElement => {
 		// Hooks
 
-		// Get the Collection Id param from the URL.
+	  // Get the Collection Id param from the URL.
 		const { collectionId } = useParams();
 		const { managerSlice } = useStore();
 
@@ -114,9 +112,10 @@ export const CollectionPage =
 			data: getBookmarksResponse,
 		} = useGetBookmarksByCollectionQuery(
 			managerSlice.getBookmarkParams,
-			collectionId && isNumber(collectionId) ? collectionId : undefined
+			collectionId as string
 		);
 		const toast = useToast();
+
 
 		useEffect(() => {
 			if (isErrorGetBookmarks) {
@@ -135,7 +134,7 @@ export const CollectionPage =
 
 		// Return handling
 
-		if (isPendingGetBookmarks)
+		if (isPendingGetBookmarks || !getBookmarksResponse)
 			return (
 				<Flex p={5} align="center" justify="space-between">
 					<LoadingBox />
@@ -149,6 +148,15 @@ export const CollectionPage =
 				</Flex>
 			);
 
-		//TODO: if data.length === 0 and searchterm !== empty then render Not Found bookmarks Content - Message
+			if (
+				managerSlice.getBookmarkParams.debounceSearchValue.length > 0 &&
+				getBookmarksResponse.total === 0
+			) {
+				return <NotFoundPage />;
+			} else if (getBookmarksResponse.total === 0) {
+				return <EmptyPage />;
+			}
+
+
 		return <MainContent data={getBookmarksResponse} />;
 	};

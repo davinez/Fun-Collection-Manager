@@ -26,7 +26,7 @@ import {
 // General
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
-import { DEFAULT_ICON, DEFAULT_BOOKMARK_COVER } from "shared/config";
+import { DEFAULT_ICON, DEFAULT_BOOKMARK_COVER, R2_COVERS_DOMAIN, R2_ICONS_DOMAIN } from "shared/config";
 import { getUrlHostname, isValidHttpUrl } from "@/shared/utils";
 
 type TBookmarkCardProps = {
@@ -150,7 +150,7 @@ export const BookmarkCard = ({
 					{managerSlice.selectedShowInValueCollectionFilter.includes(
 						ShowInBookmarkEnum.Cover
 					) && (
-						<Box w="100%" h={{ sm: "6rem", md: "12rem", lg: "10rem" }}>
+						<Box w="100%" h={{ base: "12rem", md: "12.5rem", lg: "12.5rem" }}>
 							<Image
 								w="100%"
 								h="100%"
@@ -164,8 +164,8 @@ export const BookmarkCard = ({
 										? "6px"
 										: "0px"
 								}
-								objectFit="fill"
-								src={bookmark.cover}
+								objectFit="cover"
+								src={!bookmark.cover ? DEFAULT_BOOKMARK_COVER : R2_COVERS_DOMAIN + "/" + bookmark.cover}
 								fallbackSrc={DEFAULT_BOOKMARK_COVER}
 								alt="Default Icon"
 							/>
@@ -268,7 +268,7 @@ export const BookmarkCard = ({
 												w="auto"
 												boxSize="4"
 												objectFit="contain"
-												src={bookmark.bookmarkDetail.collectionDetail.icon}
+												src={R2_ICONS_DOMAIN + "/" + bookmark.bookmarkDetail.collectionDetail.icon}
 												fallbackSrc={DEFAULT_ICON}
 												alt="Default Icon"
 											/>
@@ -315,7 +315,7 @@ export const BookmarkCard = ({
 											WebkitBoxOrient: "vertical",
 										}}
 									>
-										&#x2022; {bookmark.bookmarkDetail.createdAt}
+										&#x2022; {new Date(bookmark.bookmarkDetail.createdAt).toDateString()}
 									</Text>
 								</Box>
 							</Flex>

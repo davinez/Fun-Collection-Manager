@@ -19,6 +19,9 @@ import {
 	PopoverBody,
 	Flex,
 	Text,
+	IconButton,
+	useMediaQuery,
+	useDisclosure,
 } from "@chakra-ui/react";
 import {
 	AiFillCaretDown,
@@ -29,6 +32,7 @@ import {
 	AiFillClockCircle,
 	AiFillChrome,
 } from "react-icons/ai";
+import { FiMenu } from "react-icons/fi";
 import textStylesTheme from "shared/styles/theme/foundations/textStyles";
 // Components
 import { URLAddForm, SearchInputField } from "@/components/forms/manager";
@@ -39,14 +43,17 @@ import { FilterBookmarksEnum } from "@/shared/types/global.types";
 // General
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/UseStore";
-import {
-	Location,
-	useLocation,
-} from "react-router-dom";
+import { Location, useLocation } from "react-router-dom";
+import { getEnumKeyByEnumValue } from "@/shared/utils";
+import { HelpSearchModal } from "@/components/ui/modal/manager/HelpSearchModal";
 
-type TManagerNavbarProps = {};
+type TManagerNavbarProps = {
+	onOpenDrawer: () => void;
+};
 
-export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
+export const ManagerNavbar = ({
+	onOpenDrawer,
+}: TManagerNavbarProps): React.ReactElement => {
 	const filterbookmarkOptions = [
 		{
 			value: FilterBookmarksEnum.Info,
@@ -72,7 +79,13 @@ export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 			(option) => option.value === managerSlice.getBookmarkParams.filterType
 		)
 	);
+	const {
+		isOpen: isOpenHelpModal,
+		onOpen: onOpenHelpModal,
+		onClose: onCloseHelpModal,
+	} = useDisclosure();
 	const location: Location = useLocation();
+	const [isLargerThan800] = useMediaQuery("(min-width: 800px)");
 
 	// Reset state get params on url change
 	useEffect(() => {
@@ -84,11 +97,10 @@ export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 
 	const handleOnChangeBookmarkFilterOption = (value: string | string[]) => {
 		if (typeof value === "string") {
-			const enumValueExists =
-				Object.values(FilterBookmarksEnum).includes(value);
-			// Only if value of radio option exists in enum value
-			if (enumValueExists) {
-				managerSlice.setGetBookmarkParamsFilter(value);
+			const enumKey = getEnumKeyByEnumValue(FilterBookmarksEnum, value);
+			// Only if value of radio option exists in enum
+			if (enumKey) {
+				managerSlice.setGetBookmarkParamsFilter(FilterBookmarksEnum[enumKey]);
 				setFilterOptionRadio(
 					filterbookmarkOptions.find((option) => option.value === value)
 				);
@@ -96,8 +108,25 @@ export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 		}
 	};
 
+	// handleOnClickHelpButton
+	const handleOnClickHelpButton = () => {
+		onOpenHelpModal();
+	};
+
 	return (
 		<>
+			<HelpSearchModal isOpen={isOpenHelpModal} onClose={onCloseHelpModal} />
+
+			{!isLargerThan800 && (
+				<IconButton
+					onClick={onOpenDrawer}
+					bg="brandPrimary.950"
+					aria-label="open menu sidebar"
+					h="55%"
+					icon={<Icon as={FiMenu} color="brandPrimary.150" />}
+				/>
+			)}
+
 			<InputGroup
 				aria-label="page-navbar-leftbuttons-div"
 				h="55%"
@@ -198,10 +227,11 @@ export const ManagerNavbar = ({}: TManagerNavbarProps): React.ReactElement => {
 							<MenuDivider />
 							<MenuItem
 								bg="brandPrimary.900"
+								textStyle="primary"
 								_hover={{
 									bg: "brandSecondary.800",
 								}}
-								// onclick={open modal with table of comands in search input}
+								onClick={handleOnClickHelpButton}
 							>
 								Help
 							</MenuItem>

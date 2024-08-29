@@ -6,15 +6,15 @@ import {
   ShowInBookmarkEnum,
   FilterBookmarksEnum
 } from "@/shared/types/global.types";
-import { TGetBookmarksParams } from "@/shared/types/api/manager.types";
+import { TDynamicCollapseState, TGetBookmarksParams } from "@/shared/types/api/manager.types";
 import { PAGE_ITEM_LIMIT } from "shared/config";
 
 export type TManagerSliceDefinition = {
+  collectionsNodeState: TDynamicCollapseState[] | undefined;
   groupModalFormAction: FormActionEnum;
   bookmarkModalFormAction: FormActionEnum;
   selectedSidebarGroupId: number;
   selectedSidebarCollection: number | undefined;
-  selectedSortValueCollectionFilter: string;
   selectedViewValueCollectionFilter: string;
   selectedShowInValueCollectionFilter: string[];
   selectedBookmarksCheckbox: number[];
@@ -24,11 +24,14 @@ export type TManagerSliceDefinition = {
 };
 
 export type TManagerSliceActions = {
+  setCollectionNodes: (payload: TDynamicCollapseState[]) => void;
+  toggleCollectionNode: (payload: number) => void;
+  closeAllCollectionNodes: () => void;
   setGroupModalFormAction: (payload: FormActionEnum) => void;
   setBookmarkModalFormAction: (payload: FormActionEnum) => void;
   setSelectedSidebarGroupId: (payload: number) => void;
   setSelectedSidebarCollection: (payload: number) => void;
-  setSelectedSortValueCollectionFilter: (payload: string) => void;
+  setSelectedSortValueCollectionFilter: (payload: SortEnum) => void;
   setSelectedViewValueCollectionFilter: (payload: string) => void;
   setSelectedShowInValueCollectionFilter: (payload: string[]) => void;
   setSelectedBookmarksCheckbox: (payload: number | number[]) => void;
@@ -36,7 +39,7 @@ export type TManagerSliceActions = {
   resetGetBookmarkParams: () => void;
   setSelectAllBookmarks: (payload: boolean) => void;
   setShowHeadSelectOptions: (payload: boolean) => void;
-  setGetBookmarkParamsFilter: (payload: string) => void;
+  setGetBookmarkParamsFilter: (payload: FilterBookmarksEnum) => void;
   setGetBookmarkParamsSearchValue: (payload: string) => void;
   setGetBookmarkParamsPage: (payload: number) => void;
 };
@@ -44,11 +47,11 @@ export type TManagerSliceActions = {
 export type TManagerSlice = TManagerSliceDefinition & TManagerSliceActions;
 
 const initialManagerSliceState: TManagerSliceDefinition = {
+  collectionsNodeState: [],
   groupModalFormAction: FormActionEnum.Add,
   bookmarkModalFormAction: FormActionEnum.Add,
   selectedSidebarGroupId: 0,
   selectedSidebarCollection: undefined,
-  selectedSortValueCollectionFilter: SortEnum.DateAsc,
   selectedViewValueCollectionFilter: ViewCollectionsEnum.Card,
   selectedShowInValueCollectionFilter: [ShowInBookmarkEnum.Cover, ShowInBookmarkEnum.Title, ShowInBookmarkEnum.BookmarkInfo],
   selectedBookmarksCheckbox: [],
@@ -58,12 +61,47 @@ const initialManagerSliceState: TManagerSliceDefinition = {
     page: 1,
     pageLimit: PAGE_ITEM_LIMIT,
     filterType: FilterBookmarksEnum.Info,
-    debounceSearchValue: ""
+    debounceSearchValue: "",
+    // Sort Filter
+    selectedSortValueCollectionFilter: SortEnum.DateAsc,
   }
 };
 
 export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
   ...initialManagerSliceState,
+  setCollectionNodes: (payload): void =>
+    set((state) => {
+      state.managerSlice.collectionsNodeState = payload;
+    }),
+  toggleCollectionNode: (payload): void =>
+    set((state) => {
+
+      if (!state.managerSlice.collectionsNodeState) {
+        return;
+      }
+
+      const index = state.managerSlice.collectionsNodeState
+        .findIndex(node => node.nodeId === payload);
+
+      if (index !== -1) {
+        const node = state.managerSlice.collectionsNodeState[index] as TDynamicCollapseState;
+        node.isOpen = node.isOpen ? false : true;
+      }
+    }),
+  closeAllCollectionNodes: (): void =>
+    set((state) => {
+      if (!state.managerSlice.collectionsNodeState) {
+        return;
+      }
+
+      state.managerSlice.collectionsNodeState.forEach(node => {
+
+        if (node.isOpen) {
+          node.isOpen = false;
+        }
+
+      });
+    }),
   setSelectedSidebarGroupId: (payload): void =>
     set((state) => {
       state.managerSlice.selectedSidebarGroupId = payload;
@@ -78,7 +116,7 @@ export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
     }),
   setSelectedSortValueCollectionFilter: (payload): void =>
     set((state) => {
-      state.managerSlice.selectedSortValueCollectionFilter = payload;
+      state.managerSlice.getBookmarkParams.selectedSortValueCollectionFilter = payload;
     }),
   setSelectedViewValueCollectionFilter: (payload): void =>
     set((state) => {
@@ -135,7 +173,8 @@ export const ManagerSlice: TStateSlice<TManagerSlice> = (set) => ({
         page: 1,
         pageLimit: PAGE_ITEM_LIMIT,
         filterType: FilterBookmarksEnum.Info,
-        debounceSearchValue: ""
+        debounceSearchValue: "",
+        selectedSortValueCollectionFilter: SortEnum.DateAsc,
       };
     }),
   //   updateWallet: (payload) =>

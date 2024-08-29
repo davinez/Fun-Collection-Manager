@@ -53,6 +53,8 @@ export const AuthSlice: TStateSlice<TAuthSlice> = (set) => ({
         homeAccountId: undefined,
         username: undefined
       }
+
+      state.authSlice.userDisplayName = undefined;
       state.authSlice.userEmail = undefined;
       state.authSlice.userRoles = undefined;
       state.authSlice.accessToken = undefined;

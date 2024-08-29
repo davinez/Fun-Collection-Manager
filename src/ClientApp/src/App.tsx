@@ -11,7 +11,7 @@ import {
 	ProtectedAdminLayout,
 } from "@/components/layout";
 // Pages
-import NotFound from "@/routes/NotFound";
+import NotFoundPage from "@/routes/NotFoundPage";
 import HomePage from "@/routes/HomePage";
 import LoginPage from "@/routes/LoginPage";
 import SignupPage from "@/routes/SignupPage";
@@ -19,6 +19,7 @@ import { DashboardPage } from "@/routes/manager/DashboardPage";
 import { AllBookmarksPage } from "@/routes/manager/AllBookmarksPage";
 import { CollectionPage } from "@/routes/manager/CollectionPage";
 import { GeneralAlert } from "components/ui/alert";
+import { CollectionPageParams } from "components/ui/validation";
 
 // set a fallback route/page if error ocurrs or enter an invalid route, that page should show and error alert
 
@@ -30,7 +31,7 @@ export const App = createBrowserRouter(
 				<GeneralAlert description="Something went wrong!" status="error" />
 			}
 		>
-       <Route path='*' element={<NotFound />} />
+			<Route path="*" element={<NotFoundPage />} />
 
 			<Route element={<HomeLayout />}>
 				<Route path="/" element={<HomePage />} />
@@ -42,7 +43,13 @@ export const App = createBrowserRouter(
 				<Route path="manager" element={<ManagerLayout />}>
 					<Route index path="dashboard" element={<DashboardPage />} />
 					<Route path="all" caseSensitive element={<AllBookmarksPage />} />
-					<Route path=":collectionId" caseSensitive element={<CollectionPage />} />
+					<Route element={<CollectionPageParams />}>
+						<Route
+							path=":collectionId"
+							caseSensitive
+							element={<CollectionPage />}
+						/>
+					</Route>
 				</Route>
 				{/* <Route path="/settings" element={<SettingsPage />} /> */}
 				{/*	<Route path="/profile" element={<ProfilePage />} /> */}

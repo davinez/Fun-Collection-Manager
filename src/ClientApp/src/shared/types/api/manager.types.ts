@@ -1,6 +1,7 @@
 import * as z from "zod";
 import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE } from "shared/config";
 import { bytesToMegaBytes } from "shared/utils";
+import { FilterBookmarksEnum, SortEnum } from "shared/types/global.types";
 
 // Components Types //
 
@@ -26,7 +27,7 @@ export type TCollectionGroup = {
 export type TCollection = {
   id: number;
   name: string;
-  icon: string;
+  icon: string | undefined;
   bookmarksCounter: number;
   childCollections: TCollection[];
 }
@@ -57,7 +58,7 @@ export type TGetBookmarksByCollection = {
 
 export type TBookmark = {
   id: number;
-  cover: string;
+  cover: string | undefined;
   title: string;
   description: string;
   websiteURL: string;
@@ -76,7 +77,7 @@ export type TGetAllIcons = {
 type IconsGroups = {
   title: string;
   icons: {
-    url: string;
+    key: string;
   }[];
 }
 
@@ -140,17 +141,21 @@ export const bookmarkUpdateFormPayload = z.object({
         ACCEPTED_IMAGE_TYPES.includes(file.type)
       );
     }, "File type is not supported")
+    // Validate when cover is not undefined
     .optional()
     .or(z.literal('')), // cover?: "" | FileList | undefined;
   title: z
     .string()
-    .min(2, { message: "Title is required" }),
+    .min(2, { message: "Title is required" })
+    .max(100, { message: "Title with max 100 characters" }),
   description: z
     .string()
-    .min(2, { message: "Description is required" }),
+    .min(2, { message: "Description is required" })
+    .max(255, { message: "Title with max 255 characters" }),
   websiteURL: z
     .string()
     .url({ message: "URL address format is required" })
+    .max(2048, { message: "URL adress with max 2048 characters" }),
 });
 export type TBookmarkUpdatePayload = z.infer<typeof bookmarkUpdateFormPayload>;
 
@@ -176,7 +181,7 @@ export const collectionAddFormPayload = z.object({
 export type TCollectionAddFormPayload = z.infer<typeof collectionAddFormPayload>;
 
 export type TCollectionAddExtrasPayload = {
-  icon: string;
+  icon: undefined;
   groupId: number;
   parentCollectionId: number | undefined;
 }
@@ -192,10 +197,11 @@ export type TCollectionUpdateFormPayload = z.infer<typeof collectionUpdateFormPa
 export const collectionUpdateIconFormPayload = z.object({
   isDefaultIcon: z
     .boolean({ message: "isDefaultIcon is required" }),
-  iconURL: z
+  iconKey: z
     .string()
     .trim()
-    .min(1, { message: "URL is required" })
+    .min(1, { message: "Icon Key is required" })
+    .optional()
 });
 export type TCollectionUpdateIconFormPayload = z.infer<typeof collectionUpdateIconFormPayload>;
 
@@ -212,7 +218,8 @@ export type TDeleteCollectionPayload = z.infer<typeof deleteCollectionFormPayloa
 export type TGetBookmarksParams = {
   page: number;
   pageLimit: number;
-  filterType: string;
+  filterType: FilterBookmarksEnum;
   debounceSearchValue: string;
+  selectedSortValueCollectionFilter: SortEnum,
 }
 

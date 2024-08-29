@@ -1,11 +1,5 @@
 // Design
-import {
-	Text,
-	Flex,
-	Icon,
-	Button,
-	Checkbox,
-} from "@chakra-ui/react";
+import { Text, Flex, Icon, Button, Checkbox } from "@chakra-ui/react";
 import { AiFillDelete, AiOutlineClose } from "react-icons/ai";
 // Components
 
@@ -14,9 +8,7 @@ import { AiFillDelete, AiOutlineClose } from "react-icons/ai";
 // Hooks
 
 // Types
-import {
-	FormActionEnum,
-} from "@/shared/types/global.types";
+import { FormActionEnum } from "@/shared/types/global.types";
 // General
 import { useState } from "react";
 import { useStore } from "@/store/UseStore";
@@ -30,7 +22,7 @@ type TSelectOptionsHeadProps = {
 export const SelectOptionsHead = ({
 	headerName,
 	bookmarksCount,
-	onOpenBookmarkModal
+	onOpenBookmarkModal,
 }: TSelectOptionsHeadProps) => {
 	// State Hooks
 	const { managerSlice } = useStore();
@@ -96,7 +88,8 @@ export const SelectOptionsHead = ({
 					}}
 					isChecked={checkedHead}
 					isIndeterminate={
-						(managerSlice.selectedBookmarksCheckbox.length !== 0 &&
+						(bookmarksCount > 0 &&
+							managerSlice.selectAllBookmarks === true &&
 							managerSlice.selectedBookmarksCheckbox.length !==
 								bookmarksCount) ||
 						(managerSlice.selectAllBookmarks === false &&
@@ -110,6 +103,7 @@ export const SelectOptionsHead = ({
 					textStyle="title"
 					color="brandPrimary.150"
 				>
+					{/* headerName not undefined only in collection page, in all coleections page there is no headerName */}
 					{headerName
 						? bookmarksCount === managerSlice.selectedBookmarksCheckbox.length
 							? `All in ${headerName}`

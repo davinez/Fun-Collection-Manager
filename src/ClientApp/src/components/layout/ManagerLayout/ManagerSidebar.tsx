@@ -11,6 +11,13 @@ import {
 	MenuDivider,
 	useToast,
 	useDisclosure,
+	Box,
+	Drawer,
+	DrawerContent,
+	BoxProps,
+	GridItem,
+	CloseButton,
+	useMediaQuery,
 } from "@chakra-ui/react";
 import {
 	AiFillCaretDown,
@@ -31,7 +38,7 @@ import type {
 	TGetCollectionGroups,
 } from "@/shared/types/api/manager.types";
 // General
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useStore } from "@/store/UseStore";
 import { defaultHandlerApiError } from "@/api/useApiClient";
 import { useNavigate } from "react-router-dom";
@@ -50,20 +57,19 @@ const GroupsNavItems = ({
 	onOpenGroupModal,
 }: TGroupsNavItemsProps): React.ReactElement => {
 	// Hooks
-	const [nodesState, setNodesState] = useState<TDynamicCollapseState[]>(
-		renderNodesState(data.groups)
-	);
+	const { managerSlice } = useStore();
+
+	// Update/Set nodes sidebar sate on groups change
+	useEffect(() => {
+		const generatedStateStructure: TDynamicCollapseState[] = renderNodesState(
+			data.groups
+		);
+		managerSlice.setCollectionNodes(generatedStateStructure);
+	}, [data.groups]);
 
 	// Handlers
 	const handleOnClickCollapseAllCollections = () => {
-		setNodesState(
-			[...(nodesState as TDynamicCollapseState[])].map((node) => {
-				return {
-					...node,
-					isOpen: false,
-				};
-			})
-		);
+		managerSlice.closeAllCollectionNodes();
 	};
 
 	// Handle Error
@@ -84,12 +90,6 @@ const GroupsNavItems = ({
 						handleOnClickCollapseAllCollections={
 							handleOnClickCollapseAllCollections
 						}
-						nodesData={{
-							nodesState: nodesState as TDynamicCollapseState[],
-							setNodesState: setNodesState as React.Dispatch<
-								React.SetStateAction<TDynamicCollapseState[]>
-							>,
-						}}
 					>
 						{group.name}
 					</GroupNavItem>
@@ -100,17 +100,29 @@ const GroupsNavItems = ({
 };
 
 type TUpperSectionProps = {
+	onCloseDrawer: () => void;
 	handleOnClickLogOut: () => void;
 	userDisplayName: string | undefined;
 };
 
 const UpperSection = ({
+	onCloseDrawer,
 	handleOnClickLogOut,
 	userDisplayName,
 }: TUpperSectionProps): React.ReactElement => {
+	const [isLargerThan800] = useMediaQuery("(min-width: 800px)");
+
 	// Return handling
 	return (
-		<Flex w="100%" pl="3" py="2" alignItems="center">
+		<Flex
+			aria-label="upper-section"
+			w="100%"
+			pl="3"
+			pr="2"
+			py="2"
+			alignItems="center"
+			justifyContent="space-between"
+		>
 			<Menu>
 				<MenuButton
 					as={Button}
@@ -164,121 +176,164 @@ const UpperSection = ({
 					</MenuItem>
 				</MenuList>
 			</Menu>
+
+			{!isLargerThan800 && (
+				<CloseButton
+					size="lg"
+					color="brandPrimary.100"
+					onClick={onCloseDrawer}
+				/>
+			)}
 		</Flex>
 	);
 };
 
-type TManagerSidebarProps = {};
+type TManagerSidebarContentProps = {
+	data: TGetCollectionGroups;
+	onCloseDrawer: () => void;
+};
 
-export const ManagerSidebar =
-	({}: TManagerSidebarProps): React.ReactElement => {
-		// Hooks
-		const { authSlice } = useStore();
-		const { instance, accounts, inProgress } = useMsal();
-		const {
-			isPending: isPendingGetCollectionGroups,
-			isError: isErrorGetCollectionGroups,
-			error: errorGetCollectionGroups,
-			data: getCollectionGroupsResponse,
-		} = useGetCollectionsQuery();
-		const toast = useToast();
-		const navigate = useNavigate();
-		const {
-			isOpen: isOpenGroupModal,
-			onOpen: onOpenGroupModal,
-			onClose: onCloseGroupModal,
-		} = useDisclosure();
-		const currentAccount = instance.getAccountByHomeId(
-			authSlice.accountIdentifiers.homeAccountId as string
-		) as AccountInfo;
+export const ManagerSidebarContent = ({
+	data,
+	onCloseDrawer,
+}: TManagerSidebarContentProps): React.ReactElement => {
+	// Hooks
+	const { authSlice } = useStore();
+	const { instance, accounts, inProgress } = useMsal();
+	const navigate = useNavigate();
+	const {
+		isOpen: isOpenGroupModal,
+		onOpen: onOpenGroupModal,
+		onClose: onCloseGroupModal,
+	} = useDisclosure();
+	const currentAccount = instance.getAccountByHomeId(
+		authSlice.accountIdentifiers.homeAccountId as string
+	) as AccountInfo;
 
-		useEffect(() => {
-			if (isErrorGetCollectionGroups) {
-				toast({
-					title: "Error",
-					description: "Error in fetching collection groups",
-					status: "error",
-					duration: 5000,
-					isClosable: true,
-				});
-				defaultHandlerApiError(errorGetCollectionGroups);
-			}
-		}, [isErrorGetCollectionGroups]);
+	// Handlers
+	const handleOnClickLogOut = async () => {
+		await instance.logoutPopup({
+			account: currentAccount,
+		});
 
-		// Handlers
-		const handleOnClickLogOut = async () => {
-			await instance.logoutPopup({
-				account: currentAccount,
-			});
+		authSlice.logout();
 
-			authSlice.logout();
-
-			navigate("/");
-		};
-
-		const handleOnClickAllbookmarks = () => {
-			navigate("/my/manager/all");
-		};
-
-		// Return handling
-
-		if (isPendingGetCollectionGroups) {
-			return (
-				<>
-					<GroupModal isOpen={isOpenGroupModal} onClose={onCloseGroupModal} />
-					<UpperSection
-						handleOnClickLogOut={handleOnClickLogOut}
-						userDisplayName={authSlice.userDisplayName}
-					/>
-					<LoadingBox />
-				</>
-			);
-		}
-
-		if (isErrorGetCollectionGroups) {
-			return (
-				<>
-					<GroupModal isOpen={isOpenGroupModal} onClose={onCloseGroupModal} />
-					<UpperSection
-						handleOnClickLogOut={handleOnClickLogOut}
-						userDisplayName={authSlice.userDisplayName}
-					/>
-					<ErrorBox />
-				</>
-			);
-		}
-
-		return (
-			<>
-				<GroupModal isOpen={isOpenGroupModal} onClose={onCloseGroupModal} />
-				<UpperSection
-					handleOnClickLogOut={handleOnClickLogOut}
-					userDisplayName={authSlice.userDisplayName}
-				/>
-				<Flex direction="column" as="nav" aria-label="Main Navigation">
-					{getCollectionGroupsResponse && (
-						<>
-							<GeneralNavItem
-								py={2}
-								px={3}
-								textStyle="primary"
-								color="brandPrimary.100"
-								icon={AiFillCloud}
-								counter={getCollectionGroupsResponse.allBookmarksCounter}
-								_hover={{
-									bg: "brandPrimary.900",
-								}}
-								handleOnClickNavItem={handleOnClickAllbookmarks}
-							>
-								All Bookmarks
-							</GeneralNavItem>
-							<GroupsNavItems
-								data={getCollectionGroupsResponse}
-								onOpenGroupModal={onOpenGroupModal}
-							/>
-						</>
-					)}
-				</Flex>
-			</>
-		);
+		navigate("/");
 	};
+
+	const handleOnClickAllbookmarks = () => {
+		navigate("/my/manager/all");
+	};
+
+	// Return handling
+
+	return (
+		<>
+			<GroupModal isOpen={isOpenGroupModal} onClose={onCloseGroupModal} />
+			<UpperSection
+				onCloseDrawer={onCloseDrawer}
+				handleOnClickLogOut={handleOnClickLogOut}
+				userDisplayName={authSlice.userDisplayName}
+			/>
+			<Flex direction="column" as="nav" aria-label="Main Navigation">
+				{
+					<>
+						<GeneralNavItem
+							py={2}
+							px={3}
+							textStyle="primary"
+							color="brandPrimary.100"
+							icon={AiFillCloud}
+							counter={data.allBookmarksCounter}
+							_hover={{
+								bg: "brandPrimary.900",
+							}}
+							handleOnClickNavItem={handleOnClickAllbookmarks}
+						>
+							All Bookmarks
+						</GeneralNavItem>
+						<GroupsNavItems data={data} onOpenGroupModal={onOpenGroupModal} />
+					</>
+				}
+
+				{/*** Add here extras divisions sections below collection groups ***/}
+			</Flex>
+		</>
+	);
+};
+
+/***** Main Component *****/
+
+type TManagerSidebarProps = {
+	isOpenDrawer: boolean;
+	onCloseDrawer: () => void;
+};
+
+export const ManagerSidebar = ({
+	isOpenDrawer,
+	onCloseDrawer,
+}: TManagerSidebarProps): React.ReactElement => {
+	// Hooks
+	const {
+		isPending: isPendingGetCollectionGroups,
+		isError: isErrorGetCollectionGroups,
+		error: errorGetCollectionGroups,
+		data: getCollectionGroupsResponse,
+	} = useGetCollectionsQuery();
+	const toast = useToast();
+	const [isLargerThan800] = useMediaQuery("(min-width: 800px)");
+
+	useEffect(() => {
+		if (isErrorGetCollectionGroups) {
+			toast({
+				title: "Error",
+				description: "Error in fetching collection groups",
+				status: "error",
+				duration: 5000,
+				isClosable: true,
+			});
+			defaultHandlerApiError(errorGetCollectionGroups);
+		}
+	}, [isErrorGetCollectionGroups]);
+
+	// Handlers
+
+	// Return handling
+
+	// Pending
+	if (isPendingGetCollectionGroups) {
+		return <LoadingBox />;
+	}
+
+	// Erorr
+	if (isErrorGetCollectionGroups) {
+		return <ErrorBox />;
+	}
+
+	// Fetched
+	return (
+		<>
+			{isLargerThan800 && (
+				<ManagerSidebarContent
+					data={getCollectionGroupsResponse}
+					onCloseDrawer={onCloseDrawer}
+				/>
+			)}
+			<Drawer
+				isOpen={isOpenDrawer}
+				placement="left"
+				onClose={onCloseDrawer}
+				returnFocusOnClose={false}
+				onOverlayClick={onCloseDrawer}
+			>
+				{/* Styling according to GridItem sidebar in Layout */}
+				<DrawerContent bg="brandPrimary.900">
+					<ManagerSidebarContent
+						data={getCollectionGroupsResponse}
+						onCloseDrawer={onCloseDrawer}
+					/>
+				</DrawerContent>
+			</Drawer>
+		</>
+	);
+};

@@ -7,6 +7,14 @@ import {
 import { useEffect, useState } from "react"
 import { useStore } from "@/store/UseStore";
 
+ /**
+   * Sort Data according to Enum selected value.
+   *
+   * @remarks
+   * Deprecated, currently the sorting is done on server, we cant have pagination on server and sort on client
+   * https://stackoverflow.com/questions/10721430/should-data-sorting-be-done-on-the-client-or-on-the-server
+   *
+   */
 export default function useBookmarkSort(data: TBookmark[]) {
   // State Hooks
   const { managerSlice } = useStore();
@@ -17,11 +25,11 @@ export default function useBookmarkSort(data: TBookmark[]) {
   // Check use of memo
   useEffect(() => {
     sortData();
-  }, [managerSlice.selectedSortValueCollectionFilter]);
+  }, [managerSlice.getBookmarkParams.selectedSortValueCollectionFilter]);
 
   const sortData = () => {
     let newArray = [...dataSort];
-    switch (managerSlice.selectedSortValueCollectionFilter) {
+    switch (managerSlice.getBookmarkParams.selectedSortValueCollectionFilter) {
       case SortEnum.DateAsc:
         newArray.sort((a, b) => new Date(a.bookmarkDetail.createdAt).getTime() - new Date(b.bookmarkDetail.createdAt).getTime());
         setDataSort(newArray);

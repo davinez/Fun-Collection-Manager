@@ -4,6 +4,11 @@ import type {
   TDynamicCollapseState
 } from "@/shared/types/api/manager.types";
 
+export const getEnumKeyByEnumValue = <T extends { [index: string]: string }>(myEnum: T, enumValue: string): keyof T | undefined => {
+  let keys = Object.keys(myEnum).filter(x => myEnum[x] == enumValue);
+  return keys.length > 0 ? keys[0] : undefined;
+}
+
 export const isNumber = (value?: string | number): boolean => {
   return ((value != null) &&
     (value !== '') &&
@@ -48,7 +53,7 @@ export const renderNodesState = (
       .map((collection) => {
         return collection.childCollections.length > 0
           ? [collection.id, ...getIds(collection.childCollections)]
-          : [];
+          : [collection.id];
       })
       .flat();
 

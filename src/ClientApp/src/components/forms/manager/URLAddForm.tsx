@@ -68,7 +68,10 @@ export const URLAddForm = ({}: TURLAddFormProps) => {
 
 		mutationAddURL.mutate(payload, {
 			onSuccess: (data, variables, context) => {
-				queryClient.invalidateQueries({ queryKey: ["current-collection"] });
+
+				queryClient.invalidateQueries({ queryKey: ["bookmarks", "collection-bookmarks", collectionId] });
+				queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
+
 				toast({
 					title: "URL Added.",
 					status: "success",
