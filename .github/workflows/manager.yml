@@ -1,4 +1,4 @@
-name: FuCoMa App Build and Test
+name: Manager API Build and Test
 
 on:
   push:
