@@ -1,9 +1,11 @@
+# Layer 1
 FROM mcr.microsoft.com/playwright/dotnet:v1.45.0-jammy AS base
 
 ENV ASPNETCORE_HTTP_PORTS=8081
 
 WORKDIR /app
 
+# Layer 2
 FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy AS build
 
 # Config mode of asp net core
@@ -27,12 +29,12 @@ COPY ["src/Manager/Manager.Application", "Manager.Application/"]
 COPY ["src/Manager/Manager.Domain", "Manager.Domain/"]
 COPY ["src/Manager/Manager.Infrastructure", "Manager.Infrastructure/"]
 
+# Layer 3
+FROM build AS publish
+
 RUN dotnet publish "Manager.API/Manager.API.csproj" --no-restore -c ${CONFIG_MODE} -o /app/publish
 
-#FROM build AS publish
-#
-#RUN dotnet publish "Manager.API.csproj" --no-restore -c ${CONFIG_MODE} -o /app/publish
-
+# Layer 4
 FROM base AS final
 
 WORKDIR /app
@@ -44,7 +46,7 @@ RUN groupadd -g 2000 nodeuser \
 
 RUN chown -R  nodeuser /app
 
-COPY --chown=nodeuser:nodeuser --from=build /app/publish .
+COPY --chown=nodeuser:nodeuser --from=publish /app/publish .
 
 USER nodeuser
 

@@ -1,14 +1,12 @@
-version: '3.9'
-
 services:
 
   manager.support.api:
+    # We can use env variable to version :latest or another value
+    image: ghcr.io/davinez/manager-support-api:latest
     container_name: manager-support-api
     build:
       context: src/ManagerSupport
-      dockerfile: Dockerfile
-      args:
-         ENVIRONMENT: prod # prod or dev
+      dockerfile: Dockerfile # Dockerfile.debug
     ports:
       - "8082:8082"
       - "9229:9229"

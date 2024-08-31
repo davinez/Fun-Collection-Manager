@@ -291,3 +291,4 @@ src/**/inf.yaml
 /tests/Manager.IntegrationTests/appsettings.Development.json
 /tests/Manager.IntegrationTests/appsettings.Test.json
 /tests/Manager.IntegrationTests/appsettings.Test.json
+.env

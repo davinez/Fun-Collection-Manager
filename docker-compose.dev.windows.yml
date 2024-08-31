@@ -1,9 +1,9 @@
-version: '3.8'
-
 services:
 
   manager.api:
     container_name: manager-api
+    # We can use env variable to version :latest or another value
+    image: ghcr.io/davinez/manager-api:latest
     build:
       context: .
       dockerfile: src/Manager/Manager.API/Dockerfile
@@ -23,7 +23,7 @@ services:
   manager.db:
     container_name: manager-db
     # Docker uses the default tag latest if there are no tags defined in the pull request.
-    image: postgres
+    image: postgres:16.4
     ports:
       - "5433:5433"
     environment:

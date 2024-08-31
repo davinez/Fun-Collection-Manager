@@ -1,0 +1,98 @@
+services:
+  redis:
+    image: 'redis:7.4.0'
+    container_name: redis
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - ./redis:/redis
+      - ./redis/redis.conf:/etc/redis.conf
+    environment:
+      - REDIS_PASSWORD=localpass
+      #- REDIS_DATABASES=16
+    command: /bin/sh -c 'redis-server --appendonly yes --requirepass $${REDIS_PASSWORD}'
+    networks:
+     - vps
+
+  # nginx:
+  #   restart: always
+  #   image: nginx:1-alpine
+  #   ports:
+  #     - 8089:80
+  #   volumes:
+  #     - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+  #   depends_on:
+  #     - node
+
+  # Windows docker compose file #
+  manager.api:
+    image: ghcr.io/davinez/manager-api:latest
+    container_name: manager-api
+    ports:
+      - "8081:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+       # EntraIDAuthConfig (sensitive information replaced)
+      - EntraIDAuthConfig__TenantId=${EntraIDAuthConfig__TenantId}
+      - EntraIDAuthConfig__ClientId=${EntraIDAuthConfig__ClientId}
+       # EntraID (sensitive information replaced)
+      - EntraID__ManagerApiApp__TenantId=${EntraID__ManagerApiApp__TenantId}
+      - EntraID__ManagerApiApp__ClientId=${EntraID__ManagerApiApp__ClientId}
+      - EntraID__ManagerApiApp__ClientSecret=${EntraID__ManagerApiApp__ClientSecret}
+       # S3Storage (some information replaced)
+      - S3Storage__R2DomainService=${S3Storage__R2DomainService}
+      - S3Storage__R2KeyIcons=${S3Storage__R2KeyIcons}
+      - S3Storage__R2SecretIcons=${S3Storage__R2SecretIcons}
+      - S3Storage__BucketIcons=${S3Storage__BucketIcons}
+      - S3Storage__R2KeyBookmarksCovers=${S3Storage__R2KeyBookmarksCovers}
+      - S3Storage__R2SecretBookmarksCovers=${S3Storage__R2SecretBookmarksCovers}
+      - S3Storage__BucketBookmarksCovers=${S3Storage__BucketBookmarksCovers}
+       # ConnectionStrings (sensitive information replaced)
+      - ConnectionStrings__ManagerDB=${ConnectionStrings__ManagerDB}
+      - ConnectionStrings__Redis=${ConnectionStrings__Redis}
+       # ManagerSupportService
+      - ManagerSupportService__BaseAddress=${ManagerSupportService__BaseAddress}
+       # 4317 is GRPC
+      - OpenTelemetry__OtelCollectorUrl=${OpenTelemetry__OtelCollectorUrl}
+    depends_on:
+     - manager.db
+    networks:
+      - vps
+
+  manager.db:
+    container_name: manager-db
+    # Docker uses the default tag latest if there are no tags defined in the pull request.
+    image: postgres:16.4
+    ports:
+      - "5433:5433"
+    environment:
+      PGPORT: 5433
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ManagerDB
+    restart: unless-stopped
+    volumes:
+      - ./data/manager.db:/var/lib/postgresql/data
+    networks:
+      - vps     
+
+  manager.support.api:
+    # We can use env variable to version :latest or another value
+    image: ghcr.io/davinez/manager-support-api:latest
+    container_name: manager-support-api
+    ports:
+      - "8082:8082"
+      - "9229:9229"
+    environment:
+      - OPENTELEMETRY__OTELCOLLECTORURL=${OPENTELEMETRY__OTELCOLLECTORURL}
+      - LOKI__COLLECTORURL=${LOKI__COLLECTORURL}
+    networks:
+      - vps     
+
+networks:
+  vps:
+    name: vpsnetwork
+    driver: bridge
+
+
