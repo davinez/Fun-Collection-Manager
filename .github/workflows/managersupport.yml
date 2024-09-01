@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
           run:
-            working-directory: './'
+            working-directory: './src/ManagerSupport'
     permissions:
       contents: read
       packages: write
@@ -50,7 +50,6 @@ jobs:
       - name: 'Build, tag, and push image to GitHub Container Registry (Packages)'
         run: |
           docker build . \
-            --build-arg BUILD_CONFIGURATION=${{ env.BUILD_CONFIGURATION }} \
             --tag ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA} \
-            -f src/ManagerSupport/Dockerfile 
+            -f Dockerfile 
           docker push ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA}
