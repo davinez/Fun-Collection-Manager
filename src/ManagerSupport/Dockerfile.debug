@@ -31,7 +31,7 @@ USER nodeuser
 
 EXPOSE 8082
 
-# Expose debugging port
+# Expose debugging Port
 EXPOSE 9229
 
 CMD ["pnpm","run","start:debug"]
