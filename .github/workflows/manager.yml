@@ -23,6 +23,7 @@ env:
   REGISTRY: ghcr.io
   GITHUB_USERNAME: ${{ github.repository_owner }}
   IMAGE_NAME: manager-support-api
+  BUILD_CONFIGURATION: Release
 
 jobs:
  # Id of the job (random string)
@@ -50,10 +51,10 @@ jobs:
       - name: 'Build, tag, and push image to GitHub Container Registry (Packages)'
         # > called a Folded Block Scalar which converts new lines into spaces
         run: >
-          docker build
+          docker build .
+          --build-arg BUILD_CONFIGURATION=${{ env.BUILD_CONFIGURATION }}
           --tag ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA} 
           -f src/Manager/Manager.API
-          .
           docker push ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA}
 
     # - uses: actions/checkout@v2
