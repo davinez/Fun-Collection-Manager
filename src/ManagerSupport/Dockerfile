@@ -1,5 +1,3 @@
-ARG ENVIRONMENT
-
 FROM mcr.microsoft.com/playwright:v1.45.1-jammy AS base
 
 ENV PNPM_HOME="/pnpm"
