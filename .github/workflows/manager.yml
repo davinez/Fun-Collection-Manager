@@ -50,9 +50,10 @@ jobs:
       - name: 'Build, tag, and push image to GitHub Container Registry (Packages)'
         # > called a Folded Block Scalar which converts new lines into spaces
         run: >
-          docker build . 
+          docker build
           --tag ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA} 
           -f src/Manager/Manager.API
+          .
           docker push ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA}
 
     # - uses: actions/checkout@v2
