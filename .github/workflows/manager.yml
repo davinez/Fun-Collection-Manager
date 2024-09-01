@@ -32,6 +32,9 @@ jobs:
     defaults:
           run:
             working-directory: './'
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: 'Checkout repository'
@@ -58,6 +61,7 @@ jobs:
             --tag ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA} \
             -f src/Manager/Manager.API/Dockerfile 
           docker push ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA}
+
 
     # - uses: actions/checkout@v2
     # - name: Setup .NET
