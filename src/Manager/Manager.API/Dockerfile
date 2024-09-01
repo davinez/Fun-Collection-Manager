@@ -1,7 +1,5 @@
 # Layer 1
-FROM mcr.microsoft.com/playwright/dotnet:v1.45.0-jammy AS base
-
-ENV ASPNETCORE_HTTP_PORTS=8081
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-jammy AS base
 
 WORKDIR /app
 
@@ -9,7 +7,7 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy AS build
 
 # Config mode of asp net core
-ARG CONFIG_MODE
+ARG BUILD_CONFIGURATION=Release
 
 WORKDIR /src
 
@@ -32,7 +30,7 @@ COPY ["src/Manager/Manager.Infrastructure", "Manager.Infrastructure/"]
 # Layer 3
 FROM build AS publish
 
-RUN dotnet publish "Manager.API/Manager.API.csproj" --no-restore -c ${CONFIG_MODE} -o /app/publish
+RUN dotnet publish "Manager.API/Manager.API.csproj" --no-restore -c ${BUILD_CONFIGURATION} -o /app/publish
 
 # Layer 4
 FROM base AS final
@@ -50,6 +48,7 @@ COPY --chown=nodeuser:nodeuser --from=publish /app/publish .
 
 USER nodeuser
 
+ENV ASPNETCORE_HTTP_PORTS=8081
 EXPOSE 8081
 
 ENTRYPOINT ["dotnet", "Manager.API.dll"]
