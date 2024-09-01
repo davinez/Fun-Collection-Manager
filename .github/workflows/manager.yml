@@ -48,6 +48,7 @@ jobs:
 
       # If using variable ${{ github.repository }} => The owner and repository name. For example, octocat/Hello-World
       - name: 'Build, tag, and push image to GitHub Container Registry (Packages)'
+        working-directory: ./src/Manager/Manager.API
         run: |
           docker build . --tag ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA}
           docker push ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA}
