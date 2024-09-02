@@ -12,21 +12,24 @@ export class CustomLoggerService implements LoggerService {
   constructor() {
     this.logger = WinstonModule.createLogger({
       level: 'debug',
-      transports: [new LokiTransport({
-        host: process.env.LOKI__COLLECTORURL as string,
-        labels: { 'service_name': 'ManagerSupportWebApi' },
-        json: true,
-        basicAuth: process.env.LOKI__BASICAUTH as string,
-        format: winston.format.json(),
-        replaceTimestamp: true,
-        onConnectionError: (err) => console.log(err),
-      }),
-      new winston.transports.Console({
-        format: winston.format.combine(
-          winston.format.colorize(),
-          winston.format.simple(),
-        )
-      })],
+      transports: [
+      // Not working with grafana cloud, only in loki selfhosted
+      //   new LokiTransport({
+      //   host: process.env.LOKI__COLLECTORURL as string,
+      //   labels: { 'service_name': 'ManagerSupportWebApi' },
+      //   json: true,
+      //   headers: { 'Authorization': `Bearer ${process.env.LOKI__BEARERAUTH as string}`},
+      //   format: winston.format.json(),
+      //   replaceTimestamp: true,
+      //   onConnectionError: (err) => console.log("Error " + err),
+      // }),
+      // new winston.transports.Console({
+      //   format: winston.format.combine(
+      //     winston.format.colorize(),
+      //     winston.format.simple(),
+      //   )
+      // })
+    ],
     });
   }
 
