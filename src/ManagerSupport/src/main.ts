@@ -12,7 +12,7 @@ import { CustomLoggerService } from './shared/logging/customlogger.service';
 async function bootstrap() {
   // Open Telemetry Trace, only works if runs before app create
   // And because is executed before app created, we dont have acces to the config service / loading of env variables through NestJS
-  await tracerSetup(process.env.OPENTELEMETRY__OTELCOLLECTORURL as string);
+  // await tracerSetup(process.env.OPENTELEMETRY__OTELCOLLECTORURL as string);
 
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,

@@ -1,6 +1,6 @@
 # In local we can use a .env file to insert in the shell the env variables
 # but in deploy server we must use env variables injected throught pipeline or
-# other mecanism not a file
+# other mecanism not a file if using a VM as deployes environment
 switch -File .env {
   default {
     $name, $value = $_.Trim() -split '=', 2

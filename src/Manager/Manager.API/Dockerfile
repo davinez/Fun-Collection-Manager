@@ -49,6 +49,7 @@ COPY --chown=nodeuser:nodeuser --from=publish /app/publish .
 USER nodeuser
 
 ENV ASPNETCORE_HTTP_PORTS=8081
+ENV ASPNETCORE_ENVIRONMENT="Production"
 EXPOSE 8081
 
 ENTRYPOINT ["dotnet", "Manager.API.dll"]

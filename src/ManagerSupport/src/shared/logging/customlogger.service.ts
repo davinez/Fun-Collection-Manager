@@ -11,10 +11,12 @@ export class CustomLoggerService implements LoggerService {
 
   constructor() {
     this.logger = WinstonModule.createLogger({
+      level: 'debug',
       transports: [new LokiTransport({
         host: process.env.LOKI__COLLECTORURL as string,
         labels: { 'service_name': 'ManagerSupportWebApi' },
         json: true,
+        basicAuth: process.env.LOKI__BASICAUTH as string,
         format: winston.format.json(),
         replaceTimestamp: true,
         onConnectionError: (err) => console.log(err),
