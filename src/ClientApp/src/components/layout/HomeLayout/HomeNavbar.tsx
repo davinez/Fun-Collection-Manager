@@ -76,6 +76,8 @@ export default function HomeNavbar(): React.ReactElement {
 
 			const managerAPIToken = await instance.acquireTokenSilent(tokenRequest);
 
+			authSlice.setAccessToken(managerAPIToken.accessToken);
+
 			// We dont use react-query because we only required the latest and imperative way data without cache
 			// We pass the access token because the variable apiClient returned from the useApiClient hook
 			// doesnt update the inside get method with the latest access tokenRequest (useStore), until the re-render
