@@ -292,3 +292,5 @@ src/**/inf.yaml
 /tests/Manager.IntegrationTests/appsettings.Test.json
 /tests/Manager.IntegrationTests/appsettings.Test.json
 .env
+
+husky.sh
