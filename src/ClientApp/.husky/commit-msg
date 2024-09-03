@@ -4,7 +4,7 @@ case $OS in
   'Linux')
     OS='Linux'
     . "$(dirname "$0")/_/husky.sh"
-    cd ./src/ClientApp && pnpm run commitlint 
+    cd ./src/ClientApp && pnpm exec commitlint --edit $1
     ;;
   'FreeBSD')
     OS='FreeBSD'
