@@ -39,6 +39,7 @@ import { defaultHandlerApiError } from "@/api/useApiClient";
 
 type TGroupNavItemProps = {
 	group: TCollectionGroup;
+	totalGroups: number;
 	onOpenGroupModal: () => void;
 	handleOnClickCollapseAllCollections: () => void;
 	children: React.ReactNode;
@@ -46,6 +47,7 @@ type TGroupNavItemProps = {
 
 export const GroupNavItem = ({
 	group,
+	totalGroups,
 	onOpenGroupModal,
 	handleOnClickCollapseAllCollections,
 	children,
@@ -100,6 +102,17 @@ export const GroupNavItem = ({
 	};
 
 	const handleOnClickRemoveGroup = async (id: number) => {
+		if (totalGroups <= 1) {
+			toast({
+				title: "Warning",
+				description: "At least 1 group is required",
+				status: "warning",
+				duration: 5000,
+				isClosable: true,
+			});
+			return;
+		}
+
 		try {
 			const payload: TDeleteGroupPayload = {
 				groupId: id,

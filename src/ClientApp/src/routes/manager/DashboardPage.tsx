@@ -1,14 +1,23 @@
-import { Stack, Text, Table } from "@chakra-ui/react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
-import {  useMsal } from "@azure/msal-react";
+import { Image, Flex, Box } from "@chakra-ui/react";
+import imgUrl from "@/assets/images/hobbit.png";
 
 export const DashboardPage = (): React.ReactElement => {
-    const { instance, accounts, inProgress } = useMsal();
-    const activeAccount = instance.getActiveAccount();
-
 	return (
-		<Stack minH={"100vh"} direction={{ base: "column", md: "row" }}>
-			<Text>Dashboard</Text>
-		</Stack>
+		<Flex
+			marginTop={10}
+			w="100%"
+			flexFlow="row wrap"
+			justify="center"
+			align="center"
+			gap={10}
+		>
+			<Image
+				maxW={{ base: "80%", md: "80%", lg: "50%" }}
+				maxH="auto"
+				objectFit="contain"
+				src={imgUrl}
+				alt="Dan"
+			/>
+		</Flex>
 	);
 }

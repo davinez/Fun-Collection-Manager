@@ -53,6 +53,7 @@ export const BookmarkDeleteForm = ({ onClose }: TBookmarkDeleteFormProps) => {
 		deleteBookmarkMutation.mutate(payload, {
 			onSuccess: (data, variables, context) => {
 				managerSlice.resetSelectedBookmarksCheckbox();
+				managerSlice.setSelectAllBookmarks(false);
 				queryClient.invalidateQueries({ queryKey: ["bookmarks"] });
 				queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
 				toast({
