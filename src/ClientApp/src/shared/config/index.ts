@@ -15,5 +15,3 @@ export const API_BASE_URL_AUTH = import.meta.env.VITE_API_BASE_AUTH;
 export const R2_ICONS_DOMAIN = import.meta.env.VITE_R2_ICONS_DOMAIN;
 export const R2_COVERS_DOMAIN = import.meta.env.VITE_R2_COVERS_DOMAIN;
 
-
-
