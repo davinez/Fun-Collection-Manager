@@ -3,7 +3,7 @@ services:
   manager.api:
     container_name: manager-api
     # We can use env variable to version :latest or another value
-    image: ghcr.io/davinez/manager-api:latest
+    image: ghcr.io/davinez/manager-api:latest 
     build:
       context: .
       dockerfile: src/Manager/Manager.API/Dockerfile
@@ -36,8 +36,24 @@ services:
     networks:
       - fucoma-app-network
 
+  redis:
+    image: 'redis:7.4.0'
+    container_name: redis
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - ./data/redis:/redis
+      - ./data/redis/redis.conf:/etc/redis.conf
+    environment:
+      - REDIS_PASSWORD=localpass
+      #- REDIS_DATABASES=16
+    command: /bin/sh -c 'redis-server --appendonly yes --requirepass $${REDIS_PASSWORD}'
+    networks:
+     - fucoma-app-network      
+
 networks:
   fucoma-app-network:
     name: vpsnetwork
-    external: true
+    driver: bridge
      

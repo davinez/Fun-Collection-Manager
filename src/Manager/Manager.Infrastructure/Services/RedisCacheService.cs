@@ -34,8 +34,8 @@ public class RedisCacheService : IRedisCacheService
         // https://code-maze.com/csharp-web-application-caching-redis/
         var options = new DistributedCacheEntryOptions
         {
-            //AbsoluteExpirationRelativeToNow = cacheDuration,
-            //SlidingExpiration = cacheDuration
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20),
+            SlidingExpiration = TimeSpan.FromMinutes(4)
         };
 
         var jsonData = JsonSerializer.Serialize(data);

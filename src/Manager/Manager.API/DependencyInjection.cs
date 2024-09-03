@@ -52,7 +52,7 @@ public static class DependencyInjection
                 options.Endpoint = new Uri($"{otelCollectorUrl}/v1/logs");
                 options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
 
-                if (environment.IsDevelopment())
+                if (!environment.IsDevelopment())
                 {
                     string headerValue = configuration["OpenTelemetry:AccessTokenGateway"] ?? throw new ManagerException("OpenTelemetry:AccessTokenGateway");
                     options.Headers = $"Authorization=Basic {headerValue}";
@@ -83,7 +83,7 @@ public static class DependencyInjection
       //      options.Endpoint = new Uri($"{otelCollectorUrl}/v1/traces");
       //      options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
 
-      //      if (environment.IsDevelopment())
+      //      if (!environment.IsDevelopment())
       //      {
       //          string headerValue = configuration["OpenTelemetry:AccessTokenGateway"] ?? throw new ManagerException("OpenTelemetry:AccessTokenGateway");
       //          options.Headers = $"Authorization=Basic {headerValue}";
@@ -101,7 +101,7 @@ public static class DependencyInjection
       //      options.Endpoint = new Uri($"{otelCollectorUrl}/v1/metrics");
       //      options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
 
-      //      if (environment.IsDevelopment())
+      //      if (!environment.IsDevelopment())
       //      {
       //          string headerValue = configuration["OpenTelemetry:AccessTokenGateway"] ?? throw new ManagerException("OpenTelemetry:AccessTokenGateway");
       //          options.Headers = $"Authorization=Basic {headerValue}";
