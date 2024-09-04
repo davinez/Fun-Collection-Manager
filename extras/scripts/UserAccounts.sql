@@ -15,7 +15,7 @@ select * from manager.user_account ua;
 select * from manager.collection_group cg;
 
 ---- Cascade delete
-delete from manager.user_account ua where ua.id = 4;
+delete from manager.user_account ua where ua.id = 9;
 
 commit TRANSACTION;
 

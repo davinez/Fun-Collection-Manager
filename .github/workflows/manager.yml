@@ -27,6 +27,27 @@ env:
 
 jobs:
  # Id of the job (random string)
+ retrieveWithAction:
+    runs-on: ubuntu-latest
+    defaults:
+          run:
+            working-directory: './'
+
+    steps:  
+    - name: 'Checkout repository'
+      uses: Azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: 'Checkout repository'
+      uses: Azure/get-keyvault-secrets@v1
+      with: 
+        keyvault: 'GitHubKeyVault'
+        secrets: 'GitHubSecret'
+      id: mySecrets
+    # Starting from here you can use the secret using the 
+    # steps.mySecrets.outputs.GitHubSecret variable 
+
  build-and-push-manager-image:
     runs-on: ubuntu-latest
     defaults:

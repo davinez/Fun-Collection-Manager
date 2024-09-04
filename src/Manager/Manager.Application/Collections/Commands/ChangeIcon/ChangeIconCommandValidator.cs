@@ -42,6 +42,8 @@ public class ChangeIconCommandValidator : AbstractValidator<ChangeIconCommand>
 
     }
 
+    // urlDomain is only concated to the key to attemp to form and validate a url string,
+    // though the real url is the custom domain attached to the icons bucket
     public static bool ValidURLFormat(string iconKey, string urlDomain)
     {
         string fullURL = urlDomain + "/" + iconKey;

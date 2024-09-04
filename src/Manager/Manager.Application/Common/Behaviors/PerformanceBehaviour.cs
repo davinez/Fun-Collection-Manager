@@ -32,12 +32,20 @@ public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequ
 
         var elapsedMilliseconds = _timer.ElapsedMilliseconds;
 
-        if (elapsedMilliseconds > 500)
+        if (elapsedMilliseconds > 600)
         {
             var requestName = typeof(TRequest).Name;
             var userIdentityProviderId = _user.HomeAccountId;
 
             _logger.LogWarning("Manager Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@Request}",
+                requestName, elapsedMilliseconds, userIdentityProviderId, request);
+        }
+        else
+        {
+            var requestName = typeof(TRequest).Name;
+            var userIdentityProviderId = _user.HomeAccountId;
+
+            _logger.LogInformation("Manager Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@Request}",
                 requestName, elapsedMilliseconds, userIdentityProviderId, request);
         }
 
