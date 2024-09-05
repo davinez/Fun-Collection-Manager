@@ -16,7 +16,6 @@ env:
   BUILD_CONFIGURATION: Release
   CONTAINER_APP_NAME: manager-support-api
   RESOURCE_GROUP: fucoma-prod-rg
-  CONTAINER_APP_ENVIRONMENT: managedEnvironment-fucomaprod
 
 permissions:
   id-token: write
@@ -76,5 +75,4 @@ jobs:
         registryUsername: ${{ secrets.REGISTRY_USERNAME }}
         registryPassword: ${{ secrets.REGISTRY_TOKEN }} 
         containerAppName: ${{ env.CONTAINER_APP_NAME }}
-        resourceGroup: ${{ env.RESOURCE_GROUP }}
-        containerAppEnvironment: ${{ env.CONTAINER_APP_ENVIRONMENT }}    
+        resourceGroup: ${{ env.RESOURCE_GROUP }}  
