@@ -25,6 +25,8 @@ permissions:
 jobs:
  build-and-push-manager-image:
     runs-on: ubuntu-latest
+    outputs:
+      short-sha: ${{ steps.sha_short.outputs.SHORT_SHA }}
     defaults:
           run:
             working-directory: './src/ManagerSupport'
@@ -72,7 +74,7 @@ jobs:
     - name: Build and deploy Container App
       uses: azure/container-apps-deploy-action@v1
       with:
-        imageToDeploy: ghcr.io/davinez/manager-support-api:${{ needs.build-and-push-manager-image.outputs.SHORT_SHA }}
+        imageToDeploy: ghcr.io/davinez/manager-support-api:${{ needs.build-and-push-manager-image.outputs.short-sha }}
         registryUrl: ${{ env.REGISTRY }}
         registryUsername: ${{ secrets.REGISTRY_USERNAME }}
         registryPassword: ${{ secrets.REGISTRY_TOKEN }} 
