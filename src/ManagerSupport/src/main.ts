@@ -25,6 +25,7 @@ async function bootstrap() {
     .setDescription('API for support utilities of Manager API')
     .setVersion('1.0')
     .addTag('managersupport')
+    .addApiKey({type: 'apiKey', name: 'x-api-key', in: 'header'}, 'Api-Key')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);

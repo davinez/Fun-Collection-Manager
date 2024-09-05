@@ -1,13 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ApiResponse } from '../shared/dto/api-response.dto';
 import { ScrapperService } from './scrapper.service';
 import { GetBookmarkDataDto } from './dto/requests/get-bookmark-data.dto';
 import { BookmarkDataDto } from './dto/responses/bookmark-data.dto';
-import { ApiAcceptedResponse, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiAcceptedResponse, ApiCreatedResponse, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { ManagerSupportException } from 'src/shared/exceptions/manager.support.exception';
+import { AuthGuard } from 'src/auth.guard';
 
 @ApiTags('Scrapper')
+@ApiSecurity('Api-Key')
 @Controller('scrapper')
+@UseGuards(AuthGuard)
 export class ScrapperController {
   constructor(private readonly scrapperService: ScrapperService) { }
 

@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      // envFilePath: ['./env/.env.development'],
+      envFilePath: ['./env/.env.development'],
     }),
     ScrapperModule
   ]
