@@ -41,14 +41,15 @@ jobs:
           password: ${{ secrets.REGISTRY_TOKEN }}       
 
       - name: Add SHORT_SHA env property with commit short sha
-        run: echo "SHORT_SHA=`echo ${{ github.sha }} | cut -c1-8`" >> $GITHUB_ENV
+        id: sha_short
+        run: echo "SHORT_SHA=`echo ${{ github.sha }} | cut -c1-8`" >> $GITHUB_OUTPUT
 
       - name: 'Build, tag, and push image to GitHub Container Registry (Packages)'
         run: |
           docker build . \
-            --tag ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA} \
+            --tag ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.sha_short.outputs.SHORT_SHA }} \
             -f Dockerfile 
-          docker push ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA}
+          docker push ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.sha_short.outputs.SHORT_SHA }}
 
  # Id of the job (random string)
  azure-deploy:
@@ -70,7 +71,7 @@ jobs:
     - name: Build and deploy Container App
       uses: azure/container-apps-deploy-action@v1
       with:
-        imageToDeploy: ghcr.io/davinez/manager-support-api:latest
+        imageToDeploy: ghcr.io/davinez/manager-support-api:${{ needs.build-and-push-manager-image.outputs.SHORT_SHA }}
         registryUrl: ${{ env.REGISTRY }}
         registryUsername: ${{ secrets.REGISTRY_USERNAME }}
         registryPassword: ${{ secrets.REGISTRY_TOKEN }} 
