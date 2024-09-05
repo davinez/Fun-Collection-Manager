@@ -18,6 +18,10 @@ env:
   RESOURCE_GROUP: fucoma-prod-rg
   CONTAINER_APP_ENVIRONMENT: managedEnvironment-fucomaprod
 
+permissions:
+  id-token: write
+  contents: read
+  packages: write
 
 jobs:
  build-and-push-manager-image:
@@ -25,9 +29,6 @@ jobs:
     defaults:
           run:
             working-directory: './src/ManagerSupport'
-    permissions:
-      contents: read
-      packages: write
 
     steps:
       - name: 'Checkout repository'

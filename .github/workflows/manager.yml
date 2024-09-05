@@ -17,6 +17,11 @@ env:
   IMAGE_NAME: manager-api
   BUILD_CONFIGURATION: Release
 
+permissions:
+  id-token: write
+  contents: read
+  packages: write
+
 jobs:
  # Id of the job (random string)
  test-manager:
@@ -97,9 +102,6 @@ jobs:
     defaults:
           run:
             working-directory: './'
-    permissions:
-      contents: read
-      packages: write
 
     steps:
       - name: 'Checkout repository'
