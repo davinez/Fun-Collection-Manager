@@ -70,9 +70,9 @@ jobs:
 
     # Build and deploy the container app
     - name: Build and deploy Container App
-      uses: azure/container-apps-deploy-action@v0
+      uses: azure/container-apps-deploy-action@v1
       with:
-        imageToDeploy: ghcr.io/davinez/manager-api:latest
-        acrName: ghcr.io
+        imageToDeploy: ghcr.io/davinez/manager-support-api:latest
+        acrName: ${{ env.REGISTRY }}
         acrUsername: ${{ secrets.REGISTRY_USERNAME }}
         acrPassword: ${{ secrets.REGISTRY_PASSWORD }}     
