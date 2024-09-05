@@ -44,7 +44,7 @@ jobs:
     # "subscriptionId": "<GUID>",
     # "tenantId": "<GUID>"
     - name: 'Login to Azure'
-      uses: Azure/login@v1
+      uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
