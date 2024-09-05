@@ -54,6 +54,7 @@ jobs:
  # Id of the job (random string)
  azure-deploy:
     runs-on: ubuntu-latest
+    needs: [build-and-push-manager-image]
     defaults:
         run:
           working-directory: './'
