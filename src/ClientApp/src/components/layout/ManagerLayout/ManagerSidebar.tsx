@@ -46,6 +46,7 @@ import { renderNodesState } from "@/shared/utils";
 import { useGetCollectionsQuery } from "@/api/services/manager";
 import { useMsal } from "@azure/msal-react";
 import { AccountInfo } from "@azure/msal-browser";
+import queryClient from "@/api/query-client";
 
 type TGroupsNavItemsProps = {
 	data: TGetCollectionGroups;
@@ -86,6 +87,7 @@ const GroupsNavItems = ({
 						textStyle="primary"
 						color="brandPrimary.150"
 						group={group}
+						totalGroups={data.groups.length}
 						onOpenGroupModal={onOpenGroupModal}
 						handleOnClickCollapseAllCollections={
 							handleOnClickCollapseAllCollections
@@ -191,36 +193,24 @@ const UpperSection = ({
 type TManagerSidebarContentProps = {
 	data: TGetCollectionGroups;
 	onCloseDrawer: () => void;
+	handleOnClickLogOut: () => void;
 };
 
 export const ManagerSidebarContent = ({
 	data,
 	onCloseDrawer,
+	handleOnClickLogOut,
 }: TManagerSidebarContentProps): React.ReactElement => {
 	// Hooks
 	const { authSlice } = useStore();
-	const { instance, accounts, inProgress } = useMsal();
 	const navigate = useNavigate();
 	const {
 		isOpen: isOpenGroupModal,
 		onOpen: onOpenGroupModal,
 		onClose: onCloseGroupModal,
 	} = useDisclosure();
-	const currentAccount = instance.getAccountByHomeId(
-		authSlice.accountIdentifiers.homeAccountId as string
-	) as AccountInfo;
 
 	// Handlers
-	const handleOnClickLogOut = async () => {
-		await instance.logoutPopup({
-			account: currentAccount,
-		});
-
-		authSlice.logout();
-
-		navigate("/");
-	};
-
 	const handleOnClickAllbookmarks = () => {
 		navigate("/my/manager/all");
 	};
@@ -282,6 +272,12 @@ export const ManagerSidebar = ({
 	} = useGetCollectionsQuery();
 	const toast = useToast();
 	const [isLargerThan800] = useMediaQuery("(min-width: 800px)");
+	const { authSlice } = useStore();
+	const { instance, accounts, inProgress } = useMsal();
+	const currentAccount = instance.getAccountByHomeId(
+		authSlice.accountIdentifiers.homeAccountId as string
+	) as AccountInfo;
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (isErrorGetCollectionGroups) {
@@ -297,17 +293,87 @@ export const ManagerSidebar = ({
 	}, [isErrorGetCollectionGroups]);
 
 	// Handlers
+	const handleOnClickLogOut = async () => {
+		await instance.logoutPopup({
+			account: currentAccount,
+		});
+
+		authSlice.logout();
+		queryClient.removeQueries();
+
+		navigate("/");
+	};
 
 	// Return handling
 
 	// Pending
 	if (isPendingGetCollectionGroups) {
-		return <LoadingBox />;
+		return (
+			<>
+				{isLargerThan800 && (
+					<>
+						<UpperSection
+							onCloseDrawer={onCloseDrawer}
+							handleOnClickLogOut={handleOnClickLogOut}
+							userDisplayName={authSlice.userDisplayName}
+						/>
+						<LoadingBox />
+					</>
+				)}
+				<Drawer
+					isOpen={isOpenDrawer}
+					placement="left"
+					onClose={onCloseDrawer}
+					returnFocusOnClose={false}
+					onOverlayClick={onCloseDrawer}
+				>
+					{/* Styling according to GridItem sidebar in Layout */}
+					<DrawerContent bg="brandPrimary.900">
+						<UpperSection
+							onCloseDrawer={onCloseDrawer}
+							handleOnClickLogOut={handleOnClickLogOut}
+							userDisplayName={authSlice.userDisplayName}
+						/>
+						<LoadingBox />
+					</DrawerContent>
+				</Drawer>
+			</>
+		);
 	}
 
 	// Erorr
 	if (isErrorGetCollectionGroups) {
-		return <ErrorBox />;
+		return (
+			<>
+				{isLargerThan800 && (
+					<>
+						<UpperSection
+							onCloseDrawer={onCloseDrawer}
+							handleOnClickLogOut={handleOnClickLogOut}
+							userDisplayName={authSlice.userDisplayName}
+						/>
+						<ErrorBox />
+					</>
+				)}
+				<Drawer
+					isOpen={isOpenDrawer}
+					placement="left"
+					onClose={onCloseDrawer}
+					returnFocusOnClose={false}
+					onOverlayClick={onCloseDrawer}
+				>
+					{/* Styling according to GridItem sidebar in Layout */}
+					<DrawerContent bg="brandPrimary.900">
+						<UpperSection
+							onCloseDrawer={onCloseDrawer}
+							handleOnClickLogOut={handleOnClickLogOut}
+							userDisplayName={authSlice.userDisplayName}
+						/>
+						<ErrorBox />
+					</DrawerContent>
+				</Drawer>
+			</>
+		);
 	}
 
 	// Fetched
@@ -317,6 +383,7 @@ export const ManagerSidebar = ({
 				<ManagerSidebarContent
 					data={getCollectionGroupsResponse}
 					onCloseDrawer={onCloseDrawer}
+					handleOnClickLogOut={handleOnClickLogOut}
 				/>
 			)}
 			<Drawer
@@ -331,6 +398,7 @@ export const ManagerSidebar = ({
 					<ManagerSidebarContent
 						data={getCollectionGroupsResponse}
 						onCloseDrawer={onCloseDrawer}
+						handleOnClickLogOut={handleOnClickLogOut}
 					/>
 				</DrawerContent>
 			</Drawer>

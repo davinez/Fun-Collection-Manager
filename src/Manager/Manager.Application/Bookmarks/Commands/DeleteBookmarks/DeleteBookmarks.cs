@@ -50,13 +50,17 @@ public class DeleteBookmarksCommandHandler : IRequestHandler<DeleteBookmarksComm
 
         Guard.Against.NotFound(string.Join(",", bookmarks), bookmarks);
 
-        string bucketName = _configuration["S3Storage:BucketBookmarksCovers"] ?? throw new ManagerException($"Empty config section in {nameof(CreateBookmark)} bookmarks bucket");
+        // Delete from R2
+        if (bookmarks.Any(b => b.Cover != null))
+        {
+            string bucketName = _configuration["S3Storage:BucketBookmarksCovers"] ?? throw new ManagerException($"Empty config section in {nameof(CreateBookmark)} bookmarks bucket");
 
-        string[] keysToDelete = bookmarks.Where(p => p.Cover != null).Select(b => b.Cover).ToArray()!;
+            string[] keysToDelete = bookmarks.Where(p => p.Cover != null).Select(b => b.Cover).ToArray()!;
 
-        // TODO: Manage to send list of success and list of errors in deleting covers
-        // Optional: console app to sync database covers and R2 covers (delete in R2 non existen keys in DB)
-        string[] keysDeleted = await _storageService.DeleteFilesAsync(bucketName, keysToDelete);
+            // TODO: Manage to send list of success and list of errors in deleting covers
+            // Optional: console app to sync database covers and R2 covers (delete in R2 non existen keys in DB)
+            string[] keysDeleted = await _storageService.DeleteFilesAsync(bucketName, keysToDelete);
+        }
 
         _context.Bookmarks.RemoveRange(bookmarks);
 

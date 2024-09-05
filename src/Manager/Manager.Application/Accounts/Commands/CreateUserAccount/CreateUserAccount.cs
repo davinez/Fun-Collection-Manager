@@ -12,7 +12,7 @@ namespace Manager.Application.Accounts.Commands.CreateUserAccount;
 public record CreateUserAccountCommand : IRequest<Unit>
 {
     public required string IdentityProviderId { get; init; }
-    public CreateSubscription CreateSubscription { get; init; } = new CreateSubscription(); 
+    public CreateSubscription CreateSubscription { get; init; } = new CreateSubscription();
 }
 
 public record CreateSubscription
@@ -46,7 +46,7 @@ public class CreateUserAccountCommandHandler : IRequestHandler<CreateUserAccount
 
         User userEntra = await _microsoftGraphService.GetUserById(request.IdentityProviderId);
 
-        var newUserAccount = new UserAccount
+        var newUserAccount = new Domain.Entities.UserAccount
         {
             IdentityProviderId = request.IdentityProviderId,
             DisplayName = userEntra.DisplayName,
@@ -76,10 +76,16 @@ public class CreateUserAccountCommandHandler : IRequestHandler<CreateUserAccount
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        // TODO: Add default / empty collection group
+        var defaultCollectionGroup = new CollectionGroup
+        {
+            Name = "First Group",
+            UserAccountId = newUserAccount.Id,
+        };
 
+        _context.CollectionGroups.Add(defaultCollectionGroup);
 
+        await _context.SaveChangesAsync(cancellationToken);
 
-       return Unit.Value;
+        return Unit.Value;
     }
 }

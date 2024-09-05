@@ -46,6 +46,7 @@ public partial class Testing
     private static string _authority = null!;
     private static string _tenantId = null!;
     private static string _clientIdTestApp = null!;
+    private static string _clientIdManagerApp = null!;
 
     private static string _adminFucomaUsername = null!;
     private static string _adminFucomaPassword = null!;
@@ -83,6 +84,8 @@ public partial class Testing
             _authority = _config.GetValue<string>("EntraIDAuthConfig:Instance") ?? throw new ArgumentNullException($"Null value for Authority in {nameof(Testing)}");
             _tenantId = _config.GetValue<string>("EntraID:ManagerApiApp:TenantId") ?? throw new ArgumentNullException($"Null value for TenantId in {nameof(Testing)}");
             _clientIdTestApp = _config.GetValue<string>("EntraID:Testing:ManagerTestApp:ClientId") ?? throw new ArgumentNullException($"Null value for ClientId in {nameof(Testing)}");
+            _clientIdManagerApp = _config.GetValue<string>("EntraID:ManagerApiApp:ClientId") ?? throw new ArgumentNullException($"Null value for ClientId in {nameof(Testing)}");
+
 
             _adminFucomaUsername = _config.GetValue<string>("EntraID:Testing:AdminUser:Email") ?? throw new ArgumentNullException($"Null value for AdminFucomaUsername in {nameof(Testing)}");
             _adminFucomaPassword = _config.GetValue<string>("EntraID:Testing:AdminUser:Password") ?? throw new ArgumentNullException($"Null value for AdminFucomaPassword in {nameof(Testing)}");
@@ -218,8 +221,8 @@ public partial class Testing
 
             string[] scopesManagerAPI =
                   [
-                  "api://156687b4-4e89-4f20-b99a-97120bab635f/Manager.Read",
-                  "api://156687b4-4e89-4f20-b99a-97120bab635f/Manager.Write"
+                  $"api://{_clientIdManagerApp}/Manager.Read",
+                  $"api://{_clientIdManagerApp}/Manager.Write"
                   ];
 
             result = await _azureAD.AcquireTokenSilent(scopesManagerAPI, result.Account).ExecuteAsync();

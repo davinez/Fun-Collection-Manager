@@ -47,7 +47,7 @@ export const createUserAccountPayload = z.object({
   identityProviderId: z
     .string()
     .trim()
-    .uuid(),
+    .min(1, { message: "Invalid identityProviderId" }),
   createSubscription: z
     .object({
       isTrialPeriod: z.boolean(),

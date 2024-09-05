@@ -3,7 +3,10 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       suspense: false,
-      retry: false
+      retry: false,
+      // Set to infinity for app fucoma / single user purpose
+      staleTime: Infinity,
+      gcTime: 10*(60*1000), // 10 mins
     },
   },
 });

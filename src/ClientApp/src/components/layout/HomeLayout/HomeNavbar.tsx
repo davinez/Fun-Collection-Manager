@@ -76,7 +76,9 @@ export default function HomeNavbar(): React.ReactElement {
 
 			const managerAPIToken = await instance.acquireTokenSilent(tokenRequest);
 
-			// We dont use react-query because we onnly required the latest and imperative way data without cache
+			authSlice.setAccessToken(managerAPIToken.accessToken);
+
+			// We dont use react-query because we only required the latest and imperative way data without cache
 			// We pass the access token because the variable apiClient returned from the useApiClient hook
 			// doesnt update the inside get method with the latest access tokenRequest (useStore), until the re-render
 			const userAccount = (
@@ -114,27 +116,27 @@ export default function HomeNavbar(): React.ReactElement {
 
 				createUserAccountMutation.mutate(payload, {
 					onSuccess: async (data, variables, context) => {
-						// const activeAccount = instance.getActiveAccount();
+						const activeAccount = instance.getActiveAccount();
 
-						// if (activeAccount === null) {
-						// 	toast({
-						// 		title: "Error",
-						// 		description:
-						// 			"Error after account creation. Please log in again",
-						// 		status: "error",
-						// 		duration: 5000,
-						// 		isClosable: true,
-						// 	});
-						// 	return;
-						// }
+						if (activeAccount === null) {
+							toast({
+								title: "Error",
+								description:
+									"Error after account creation. Please log in again",
+								status: "error",
+								duration: 5000,
+								isClosable: true,
+							});
+							return;
+						}
 
-						// const tokenRequest = {
-						// 	account: activeAccount,
-						// 	scopes: [...managerAPIRequest.scopes],
-						// };
+						const tokenRequest = {
+							account: activeAccount,
+							scopes: [...managerAPIRequest.scopes],
+						};
 
-						// const managerAPIToken =
-						// 	await instance.acquireTokenSilent(tokenRequest);
+						const managerAPIToken =
+							await instance.acquireTokenSilent(tokenRequest);
 
 						const newIdTokenClaims = managerAPIToken.account.idTokenClaims;
 

@@ -1,0 +1,79 @@
+name: Manager Support API Build
+
+on:
+  push:
+    paths:
+      - 'src/ManagerSupport/**'
+    branches:    
+      - main
+ 
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  GITHUB_USERNAME: ${{ github.repository_owner }}
+  IMAGE_NAME: manager-support-api
+  BUILD_CONFIGURATION: Release
+  CONTAINER_APP_NAME: manager-support-api
+  RESOURCE_GROUP: fucoma-prod-rg
+  CONTAINER_APP_ENVIRONMENT: managedEnvironment-fucomaprod
+
+
+jobs:
+ build-and-push-manager-image:
+    runs-on: ubuntu-latest
+    defaults:
+          run:
+            working-directory: './src/ManagerSupport'
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.REGISTRY_TOKEN }}       
+
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "SHORT_SHA=`echo ${{ github.sha }} | cut -c1-8`" >> $GITHUB_ENV
+
+      - name: 'Build, tag, and push image to GitHub Container Registry (Packages)'
+        run: |
+          docker build . \
+            --tag ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA} \
+            -f Dockerfile 
+          docker push ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA}
+
+ # Id of the job (random string)
+ azure-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+        run:
+          working-directory: './'
+
+    steps:  
+
+    - name: 'Login to Azure'
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    # Build and deploy the container app
+    - name: Build and deploy Container App
+      uses: azure/container-apps-deploy-action@v1
+      with:
+        imageToDeploy: ghcr.io/davinez/manager-support-api:latest
+        registryUrl: ${{ env.REGISTRY }}
+        registryUsername: ${{ secrets.REGISTRY_USERNAME }}
+        registryPassword: ${{ secrets.REGISTRY_TOKEN }} 
+        containerAppName: ${{ env.CONTAINER_APP_NAME }}
+        resourceGroup: ${{ env.RESOURCE_GROUP }}
+        containerAppEnvironment: ${{ env.RCONTAINER_APP_ENVIRONMENT }}    

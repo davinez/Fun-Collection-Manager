@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using Manager.API.Endpoints;
 using Manager.API.Infrastructure;
@@ -48,8 +47,15 @@ public static class DependencyInjection
             // The rest of your setup code goes here
             logging.AddOtlpExporter(options =>
             {
-                options.Endpoint = new Uri(otelCollectorUrl);
-                options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                options.Endpoint = new Uri($"{otelCollectorUrl}/v1/logs");
+                options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
+
+                if (!environment.IsDevelopment())
+                {
+                    string headerValue = configuration["OpenTelemetry:AccessTokenGateway"] ?? throw new ManagerException("OpenTelemetry:AccessTokenGateway");
+                    options.Headers = $"Authorization=Basic {headerValue}";
+                }
+
             });
 
             logging.SetResourceBuilder(loggingResource);
@@ -60,32 +66,45 @@ public static class DependencyInjection
 
     public static IServiceCollection AddAPIServices(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
-        string otelCollectorUrl = configuration["OpenTelemetry:OtelCollectorUrl"] ?? throw new ManagerException("OpenTelemetry:OtelCollectorUrl");
+        // Not in use until a grafana alloy or otel collector is deployed (selfhosted)
+        //  string otelCollectorUrl = configuration["OpenTelemetry:OtelCollectorUrl"] ?? throw new ManagerException("OpenTelemetry:OtelCollectorUrl");
 
-        services.AddOpenTelemetry()
-      .WithTracing(tracing => tracing
-        .AddSource("ManagerWebApi")
-        .ConfigureResource(resource => resource
-          .AddService("ManagerWebApi"))
-        .AddAspNetCoreInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddOtlpExporter(options =>
-        {
-            options.Endpoint = new Uri(otelCollectorUrl);
-            options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
-        }))
-      .WithMetrics(metrics => metrics
-        .ConfigureResource(resource => resource
-            .AddService("ManagerWebApi"))
-        .AddRuntimeInstrumentation()
-        .AddAspNetCoreInstrumentation()
-        .AddProcessInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddOtlpExporter(options =>
-        {
-            options.Endpoint = new Uri(otelCollectorUrl);
-            options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
-        }));
+        //  services.AddOpenTelemetry()
+        //.WithTracing(tracing => tracing
+        //  .AddSource("ManagerWebApi")
+        //  .ConfigureResource(resource => resource
+        //    .AddService("ManagerWebApi"))
+        //  .AddAspNetCoreInstrumentation()
+        //  .AddHttpClientInstrumentation()
+        //  .AddOtlpExporter(options =>
+        //  {
+        //      options.Endpoint = new Uri($"{otelCollectorUrl}/v1/traces");
+        //      options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
+
+        //      if (!environment.IsDevelopment())
+        //      {
+        //          string headerValue = configuration["OpenTelemetry:AccessTokenGateway"] ?? throw new ManagerException("OpenTelemetry:AccessTokenGateway");
+        //          options.Headers = $"Authorization=Basic {headerValue}";
+        //      }
+        //  }))
+        //.WithMetrics(metrics => metrics
+        //  .ConfigureResource(resource => resource
+        //      .AddService("ManagerWebApi"))
+        //  .AddRuntimeInstrumentation()
+        //  .AddAspNetCoreInstrumentation()
+        //  .AddProcessInstrumentation()
+        //  .AddHttpClientInstrumentation()
+        //  .AddOtlpExporter(options =>
+        //  {
+        //      options.Endpoint = new Uri($"{otelCollectorUrl}/v1/metrics");
+        //      options.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
+
+        //      if (!environment.IsDevelopment())
+        //      {
+        //          string headerValue = configuration["OpenTelemetry:AccessTokenGateway"] ?? throw new ManagerException("OpenTelemetry:AccessTokenGateway");
+        //          options.Headers = $"Authorization=Basic {headerValue}";
+        //      }
+        //  }));
 
         bool isDevelop = environment.IsDevelopment();
 
@@ -176,7 +195,7 @@ public static class DependencyInjection
             //options.AddPolicy("General.Level1", policy => policy.RequireRole("General.Level1"));
 
             options.AddPolicy("All", policy =>
-            {               
+            {
                 policy.RequireAssertion(context =>
                              context.User.HasClaim(ClaimTypes.Role, "Administrator") ||
                              context.User.HasClaim(ClaimTypes.Role, "General.Level1"));
