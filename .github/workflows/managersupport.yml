@@ -73,6 +73,6 @@ jobs:
       uses: azure/container-apps-deploy-action@v1
       with:
         imageToDeploy: ghcr.io/davinez/manager-support-api:latest
-        acrName: ${{ env.REGISTRY }}
-        acrUsername: ${{ secrets.REGISTRY_USERNAME }}
-        acrPassword: ${{ secrets.REGISTRY_PASSWORD }}     
+        registryUrl: ${{ env.REGISTRY }}
+        registryUsername: ${{ secrets.REGISTRY_USERNAME }}
+        registryPassword: ${{ secrets.REGISTRY_TOKEN }}       
