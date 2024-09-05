@@ -53,3 +53,26 @@ jobs:
             --tag ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA} \
             -f Dockerfile 
           docker push ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA}
+
+ # Id of the job (random string)
+ azure-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+        run:
+          working-directory: './'
+
+    steps:  
+
+    - name: 'Login to Azure'
+      uses: Azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}  
+
+    # Build and deploy the container app
+    - name: Build and deploy Container App
+      uses: azure/container-apps-deploy-action@v0
+      with:
+        imageToDeploy: ghcr.io/davinez/manager-api:latest
+        acrName: ghcr.io
+        acrUsername: ${{ secrets.REGISTRY_USERNAME }}
+        acrPassword: ${{ secrets.REGISTRY_PASSWORD }}     
