@@ -27,29 +27,79 @@ env:
 
 jobs:
  # Id of the job (random string)
- retrieveWithAction:
+ test-manager:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '8.0.x' ]
     defaults:
           run:
             working-directory: './'
 
     steps:  
-    - name: 'Checkout repository'
+
+    # Using the credentials of the app registered (service principal) as "GitHubActions" in EntraID   
+    # "clientId": "<GUID>",
+    # "clientSecret": "<PrincipalSecret>",
+    # "subscriptionId": "<GUID>",
+    # "tenantId": "<GUID>"
+    - name: 'Login to Azure'
       uses: Azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    - name: Retrieve secret from Key Vault
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          Azure-KeyVault-Endpoint=$(az keyvault secret show --name "Azure-KeyVault-Endpoint" --vault-name "fucoma-config-vault" --query "value" -o tsv)
+          echo "::add-mask::$Azure-KeyVault-Endpoint"
+          echo "AZURE_KEY_VAULT_ENDPOINT="$Azure-KeyVault-Endpoint >> $GITHUB_ENV
+
+          Azure-Client-Id=$(az keyvault secret show --name "Azure-Client-Id" --vault-name "fucoma-config-vault" --query "value" -o tsv)
+          echo "::add-mask::$Azure-Client-Id"
+          echo "AZURE_CLIENT_ID="$Azure-Client-Id >> $GITHUB_ENV
+
+          Azure-Client-Secret=$(az keyvault secret show --name "Azure-Client-Secret" --vault-name "fucoma-config-vault" --query "value" -o tsv)
+          echo "::add-mask::$Azure-Client-Secret"
+          echo "AZURE_CLIENT_SECRET="$Azure-Client-Secret >> $GITHUB_ENV
+
+          Azure-Tenant-Id=$(az keyvault secret show --name "Azure-Tenant-Id" --vault-name "fucoma-config-vault" --query "value" -o tsv)
+          echo "::add-mask::$Azure-Tenant-Id"
+          echo "AZURE_CLIENT_SECRET="$Azure-Tenant-Id >> $GITHUB_ENV
+
     - name: 'Checkout repository'
-      uses: Azure/get-keyvault-secrets@v1
-      with: 
-        keyvault: 'GitHubKeyVault'
-        secrets: 'GitHubSecret'
-      id: mySecrets
-    # Starting from here you can use the secret using the 
-    # steps.mySecrets.outputs.GitHubSecret variable 
+      uses: actions/checkout@v4
+
+    - name: Setup dotnet ${{ matrix.dotnet-version }}
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+
+    # You can test your matrix by printing the current dotnet version
+    - name: Display dotnet version
+      run: dotnet --version  
+     
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build
+
+    - name: Test with the dotnet CLI
+      run: dotnet test --no-restore --results-directory "TestResults-${{ matrix.dotnet-version }}" --configuration Release
+
+    - name: Upload dotnet test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: dotnet-results-${{ matrix.dotnet-version }}
+        path: TestResults-${{ matrix.dotnet-version }}
+        # Use always() to always run this step to publish test results when there are test failures
+        if: ${{ always() }}
 
  build-and-push-manager-image:
     runs-on: ubuntu-latest
+    needs: [test-manager]
     defaults:
           run:
             working-directory: './'

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
-using Ardalis.GuardClauses;
-using Docker.DotNet.Models;
+using Azure.Identity;
 using Manager.Application.Common.Interfaces.Services;
 using Manager.FunctionalTests.Database;
 using Manager.Infrastructure.Data;
@@ -14,7 +13,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
-using Testcontainers.PostgreSql;
 
 namespace Manager.FunctionalTests;
 
@@ -36,14 +34,36 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         var baseConfigPath = Directory.GetCurrentDirectory();
 
         // Add config sources from lowest priority to highest
-        var config = new ConfigurationBuilder()
+        var preConfig = new ConfigurationBuilder()
+            .AddEnvironmentVariables()
+            .Build();
+
+        // Only add in CI the env variables to activate the use of Key Vault
+        var keyVaultUri = preConfig["AZURE_KEY_VAULT_ENDPOINT"];
+
+        // Add config sources from lowest priority to highest
+        var configBuilder = new ConfigurationBuilder()
             // .AddJsonFile("appsettings.json") // Taken from main wep api project
             // Set the base path to the integration tests build output directory
             // where the integration tests' config files will be copied into.
             .SetBasePath(baseConfigPath)
             .AddJsonFile("appsettings.Test.json")
-            .AddEnvironmentVariables()
-            .Build();
+            .AddJsonFile("appsettings.Test.Development.json", true)
+            .AddEnvironmentVariables();
+
+        // We need the environment variables:
+        // AZURE_CLIENT_ID,
+        // AZURE_TENANT_ID,
+        // AZURE_CLIENT_SECRET
+        // to make sure the DefaultAzureCredential could also work.
+        if (!string.IsNullOrWhiteSpace(keyVaultUri))
+        {
+            configBuilder.AddAzureKeyVault(
+                  new Uri(keyVaultUri),
+                  new DefaultAzureCredential());
+        }
+
+        var config = configBuilder.Build();
 
         builder
             // This configuration is used during the creation of the application

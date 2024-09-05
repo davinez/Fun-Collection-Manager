@@ -294,3 +294,4 @@ src/**/inf.yaml
 .env
 
 husky.sh
+/tests/Manager.IntegrationTests/appsettings.Test.Development.json
