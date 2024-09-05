@@ -7,16 +7,8 @@ on:
       - 'tests/Manager.IntegrationTests/**'
     branches:    
       - main
-      - release/*
 
-  pull_request:
-    paths:
-      - 'src/Manager/**'
-      - 'tests/Manager.IntegrationTests/**'
-    branches:    
-      - main
-      - release/*
-  
+  # Allow manually trigger of the jobs
   workflow_dispatch:
 
 env:
@@ -46,7 +38,9 @@ jobs:
     - name: 'Login to Azure'
       uses: azure/login@v2
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Retrieve secret from Key Vault
       uses: azure/CLI@v1

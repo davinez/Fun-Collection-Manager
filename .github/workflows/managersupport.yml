@@ -6,15 +6,7 @@ on:
       - 'src/ManagerSupport/**'
     branches:    
       - main
-      - release/*
-
-  pull_request:
-    paths:
-      - 'src/ManagerSupport/**'
-    branches:    
-      - main
-      - release/*
-  
+ 
   workflow_dispatch:
 
 env:
@@ -22,6 +14,10 @@ env:
   GITHUB_USERNAME: ${{ github.repository_owner }}
   IMAGE_NAME: manager-support-api
   BUILD_CONFIGURATION: Release
+  CONTAINER_APP_NAME: manager-support-api
+  RESOURCE_GROUP: fucoma-prod-rg
+  CONTAINER_APP_ENVIRONMENT: managedEnvironment-fucomaprod
+
 
 jobs:
  build-and-push-manager-image:
@@ -66,7 +62,9 @@ jobs:
     - name: 'Login to Azure'
       uses: azure/login@v2
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     # Build and deploy the container app
     - name: Build and deploy Container App
@@ -75,4 +73,7 @@ jobs:
         imageToDeploy: ghcr.io/davinez/manager-support-api:latest
         registryUrl: ${{ env.REGISTRY }}
         registryUsername: ${{ secrets.REGISTRY_USERNAME }}
-        registryPassword: ${{ secrets.REGISTRY_TOKEN }}       
+        registryPassword: ${{ secrets.REGISTRY_TOKEN }} 
+        containerAppName: ${{ env.CONTAINER_APP_NAME }}
+        resourceGroup: ${{ env.RESOURCE_GROUP }}
+        containerAppEnvironment: ${{ env.RCONTAINER_APP_ENVIRONMENT }}    
