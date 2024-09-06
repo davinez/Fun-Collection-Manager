@@ -31,9 +31,13 @@ jobs:
     strategy:
       matrix:
         dotnet-version: [ '8.0.x' ]
+    defaults:
+          run:
+            working-directory: './'
 
-
-    steps:  
+    steps: 
+    - name: 'Checkout repository'
+      uses: actions/checkout@v4 
 
     # Login With OpenID Connect (OIDC) 
     # more https://github.com/marketplace/actions/azure-login#login-with-openid-connect-oidc-recommended
@@ -46,21 +50,18 @@ jobs:
 
     - name: Retrieve secret from Key Vault
       run: |
-          KeyVault-Test-Endpoint=$(az keyvault secret show --name "KeyVault-Test-Endpoint" --vault-name "fucoma-config-vault" --query "value" -o tsv)
-          echo "::add-mask::$KeyVault-Test-Endpoint"
-          echo "KEY_VAULT_TEST_ENDPOINT="$KeyVault-Test-Endpoint >> $GITHUB_ENV
-          Azure-Client-Id=$(az keyvault secret show --name "Azure-Client-Id" --vault-name "fucoma-config-vault" --query "value" -o tsv)
-          echo "::add-mask::$Azure-Client-Id"
-          echo "AZURE_CLIENT_ID="$Azure-Client-Id >> $GITHUB_ENV
-          Azure-Client-Secret=$(az keyvault secret show --name "Azure-Client-Secret" --vault-name "fucoma-config-vault" --query "value" -o tsv)
-          echo "::add-mask::$Azure-Client-Secret"
-          echo "AZURE_CLIENT_SECRET="$Azure-Client-Secret >> $GITHUB_ENV
-          Azure-Tenant-Id=$(az keyvault secret show --name "Azure-Tenant-Id" --vault-name "fucoma-config-vault" --query "value" -o tsv)
-          echo "::add-mask::$Azure-Tenant-Id"
-          echo "AZURE_CLIENT_SECRET="$Azure-Tenant-Id >> $GITHUB_ENV
-
-    - name: 'Checkout repository'
-      uses: actions/checkout@v4
+        testvault_endpoint=$(az keyvault secret show --name "KeyVault-Test-Endpoint" --vault-name "fucoma-config-vault" --query "value" -o tsv)
+        echo "::add-mask::$testvault_endpoint"
+        echo "KEY_VAULT_TEST_ENDPOINT="$testvault_endpoint >> $GITHUB_ENV
+        client_id=$(az keyvault secret show --name "Azure-Client-Id" --vault-name "fucoma-config-vault" --query "value" -o tsv)
+        echo "::add-mask::$client_id"
+        echo "AZURE_CLIENT_ID="$client_id >> $GITHUB_ENV
+        client_secret=$(az keyvault secret show --name "Azure-Client-Secret" --vault-name "fucoma-config-vault" --query "value" -o tsv)
+        echo "::add-mask::$client_secret"
+        echo "AZURE_CLIENT_SECRET="$client_secret >> $GITHUB_ENV
+        tenant_id=$(az keyvault secret show --name "Azure-Tenant-Id" --vault-name "fucoma-config-vault" --query "value" -o tsv)
+        echo "::add-mask::$tenant_id"
+        echo "AZURE_CLIENT_SECRET="$tenant_id >> $GITHUB_ENV
 
     - name: Setup dotnet ${{ matrix.dotnet-version }}
       uses: actions/setup-dotnet@v3
