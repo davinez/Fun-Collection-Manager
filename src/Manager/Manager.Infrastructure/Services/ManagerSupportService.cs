@@ -23,6 +23,8 @@ public class ManagerSupportService : IManagerSupportService
         // _client.Timeout = new TimeSpan(0, 0, 30);
         _client.DefaultRequestHeaders.Clear();
 
+        _client.DefaultRequestHeaders.Add("x-api-key", configuration["ManagerSupportService:ApiKey"] ?? throw new ManagerException($"Empty config section in {nameof(ManagerSupportService)} Api Key"));
+
         _options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, PropertyNameCaseInsensitive = false };
     }
 

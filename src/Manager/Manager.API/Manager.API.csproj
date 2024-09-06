@@ -23,6 +23,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" />
 
     <!-- Open Telemetry -->
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
@@ -31,8 +32,6 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Process" />
-
-    <!-- Logging -->
 
   </ItemGroup>
   

@@ -39,7 +39,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             .Build();
 
         // Only add in CI the env variables to activate the use of Key Vault
-        var keyVaultUri = preConfig["AZURE_KEY_VAULT_ENDPOINT"];
+        var keyVaultUri = preConfig["KEY_VAULT_TEST_ENDPOINT"];
 
         // Add config sources from lowest priority to highest
         var configBuilder = new ConfigurationBuilder()
@@ -55,7 +55,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         // AZURE_CLIENT_ID,
         // AZURE_TENANT_ID,
         // AZURE_CLIENT_SECRET
-        // to make sure the DefaultAzureCredential could also work.
+        // to make sure the DefaultAzureCredential will work.
         if (!string.IsNullOrWhiteSpace(keyVaultUri))
         {
             configBuilder.AddAzureKeyVault(

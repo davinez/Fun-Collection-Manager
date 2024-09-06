@@ -16,6 +16,8 @@ env:
   GITHUB_USERNAME: ${{ github.repository_owner }}
   IMAGE_NAME: manager-api
   BUILD_CONFIGURATION: Release
+  CONTAINER_APP_NAME: manager-api
+  RESOURCE_GROUP: fucoma-prod-rg
 
 permissions:
   id-token: write
@@ -35,11 +37,8 @@ jobs:
 
     steps:  
 
-    # Using the credentials of the app registered (service principal) as "GitHubActions" in EntraID   
-    # "clientId": "<GUID>",
-    # "clientSecret": "<PrincipalSecret>",
-    # "subscriptionId": "<GUID>",
-    # "tenantId": "<GUID>"
+    # Login With OpenID Connect (OIDC) 
+    # more https://github.com/marketplace/actions/azure-login#login-with-openid-connect-oidc-recommended
     - name: 'Login to Azure'
       uses: azure/login@v2
       with:
@@ -51,9 +50,9 @@ jobs:
       uses: azure/CLI@v1
       with:
         inlineScript: |
-          Azure-KeyVault-Endpoint=$(az keyvault secret show --name "Azure-KeyVault-Endpoint" --vault-name "fucoma-config-vault" --query "value" -o tsv)
-          echo "::add-mask::$Azure-KeyVault-Endpoint"
-          echo "AZURE_KEY_VAULT_ENDPOINT="$Azure-KeyVault-Endpoint >> $GITHUB_ENV
+          KeyVault-Test-Endpoint=$(az keyvault secret show --name "KeyVault-Test-Endpoint" --vault-name "fucoma-config-vault" --query "value" -o tsv)
+          echo "::add-mask::$KeyVault-Test-Endpoint"
+          echo "KEY_VAULT_TEST_ENDPOINT="$KeyVault-Test-Endpoint >> $GITHUB_ENV
 
           Azure-Client-Id=$(az keyvault secret show --name "Azure-Client-Id" --vault-name "fucoma-config-vault" --query "value" -o tsv)
           echo "::add-mask::$Azure-Client-Id"
@@ -98,6 +97,8 @@ jobs:
 
  build-and-push-manager-image:
     runs-on: ubuntu-latest
+    outputs:
+      short-sha: ${{ steps.sha_short.outputs.SHORT_SHA }}
     needs: [test-manager]
     defaults:
           run:
@@ -115,7 +116,8 @@ jobs:
           password: ${{ secrets.REGISTRY_TOKEN }}       
 
       - name: Add SHORT_SHA env property with commit short sha
-        run: echo "SHORT_SHA=`echo ${{ github.sha }} | cut -c1-8`" >> $GITHUB_ENV
+        id: sha_short
+        run: echo "SHORT_SHA=`echo ${{ github.sha }} | cut -c1-8`" >> $GITHUB_OUTPUT
 
       # If using variable ${{ github.repository }} => The owner and repository name. For example, octocat/Hello-World
       - name: 'Build, tag, and push image to GitHub Container Registry (Packages)'
@@ -125,23 +127,36 @@ jobs:
         run: |
           docker build . \
             --build-arg BUILD_CONFIGURATION=${{ env.BUILD_CONFIGURATION }} \
-            --tag ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA} \
+            --tag ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.sha_short.outputs.SHORT_SHA }} \
             -f src/Manager/Manager.API/Dockerfile 
-          docker push ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${SHORT_SHA}
+          docker push ${{ env.REGISTRY }}/${{ env.GITHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ steps.sha_short.outputs.SHORT_SHA }}
 
+# Id of the job (random string)
+ azure-deploy:
+    runs-on: ubuntu-latest
+    needs: [build-and-push-manager-image]
+    defaults:
+        run:
+          working-directory: './'
 
-    # - uses: actions/checkout@v2
-    # - name: Setup .NET
-    #   uses: actions/setup-dotnet@v1
-    #   with:
-    #     dotnet-version: '8.0.x'
-    #     include-prerelease: true
+    steps:  
 
-    # - name: Build with dotnet
-    #   run: dotnet build ./eShopOnWeb.sln --configuration Release
-    
-    # - name: Test with dotnet
-    #   run: dotnet test ./eShopOnWeb.sln --configuration Release
+    - name: 'Login to Azure'
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+    # Build and deploy the container app
+    - name: Build and deploy Container App
+      uses: azure/container-apps-deploy-action@v1
+      with:
+        imageToDeploy: ghcr.io/davinez/manager-support-api:${{ needs.build-and-push-manager-image.outputs.short-sha }}
+        registryUrl: ${{ env.REGISTRY }}
+        registryUsername: ${{ secrets.REGISTRY_USERNAME }}
+        registryPassword: ${{ secrets.REGISTRY_TOKEN }} 
+        containerAppName: ${{ env.CONTAINER_APP_NAME }}
+        resourceGroup: ${{ env.RESOURCE_GROUP }} 
 
 

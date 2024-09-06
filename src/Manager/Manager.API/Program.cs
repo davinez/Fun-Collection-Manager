@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Logging;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddKeyVaultIfConfigured(builder.Environment, builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddAPIServices(builder.Configuration, builder.Environment);
