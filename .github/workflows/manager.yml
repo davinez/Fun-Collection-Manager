@@ -45,9 +45,7 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Retrieve secret from Key Vault
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
+      run: |
           KeyVault-Test-Endpoint=$(az keyvault secret show --name "KeyVault-Test-Endpoint" --vault-name "fucoma-config-vault" --query "value" -o tsv)
           echo "::add-mask::$KeyVault-Test-Endpoint"
           echo "KEY_VAULT_TEST_ENDPOINT="$KeyVault-Test-Endpoint >> $GITHUB_ENV
