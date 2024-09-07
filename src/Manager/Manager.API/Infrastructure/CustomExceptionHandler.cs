@@ -55,7 +55,7 @@ public class CustomExceptionHandler : IExceptionHandler
         var exception = (ValidationException)ex;
 
         _logger.LogError(
-              "Error Message: {exceptionMessage}, Time of occurrence {time} of type {exceptionType}",
+              "Error Message: {0}, Time of occurrence {1} of type {2}",
               ex.Message, DateTime.UtcNow, "ValidationException");
 
         httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
@@ -84,7 +84,7 @@ public class CustomExceptionHandler : IExceptionHandler
         var exception = (NotFoundException)ex;
 
         _logger.LogError(
-              "Error Message: {exceptionMessage}, Time of occurrence {time} of type {exceptionType}",
+              "Error Message: {0}, Time of occurrence {1} of type {2}",
               ex.Message, DateTime.UtcNow, "NotFoundException");
 
         httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
@@ -113,7 +113,7 @@ public class CustomExceptionHandler : IExceptionHandler
     private async Task HandleUnauthorizedAccessException(HttpContext httpContext, Exception ex)
     {
         _logger.LogError(
-              "Error Message: {exceptionMessage}, Time of occurrence {time} of type {exceptionType}",
+              "Error Message: {0}, Time of occurrence {1} of type {2}",
               ex.Message, DateTime.UtcNow, "UnauthorizedAccessException");
 
         httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -142,7 +142,7 @@ public class CustomExceptionHandler : IExceptionHandler
     private async Task HandleForbiddenAccessException(HttpContext httpContext, Exception ex)
     {
         _logger.LogError(
-               "Error Message: {exceptionMessage}, Time of occurrence {time} of type {exceptionType}",
+               "Error Message: {0}, Time of occurrence {1} of type {2}",
                ex.Message, DateTime.UtcNow, "ForbiddenAccessException");
 
         httpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
@@ -171,7 +171,7 @@ public class CustomExceptionHandler : IExceptionHandler
     private async Task HandleRemoteServiceException(HttpContext httpContext, Exception ex)
     {
         _logger.LogError(
-               "Error Message: {exceptionMessage}, Time of occurrence {time} of type {exceptionType}",
+               "Error Message: {0}, Time of occurrence {1} of type {2}",
                ex.Message, DateTime.UtcNow, "RemoteServiceException");
 
         httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
@@ -202,7 +202,7 @@ public class CustomExceptionHandler : IExceptionHandler
         var exception = (ManagerException)ex;
 
         _logger.LogError(
-                "Error Message: {exceptionMessage}, Time of occurrence {time} of type {exceptionType}",
+                "Error Message: {0}, Time of occurrence {1} of type {2}",
                 ex.Message, DateTime.UtcNow, "ManagerException");
 
         httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
@@ -230,11 +230,10 @@ public class CustomExceptionHandler : IExceptionHandler
 
     private async Task UnhandledException(HttpContext httpContext, Exception ex)
     {
-        var exceptionMessage = ex.Message;
-
         _logger.LogError(
-                "Error Message: {exceptionMessage}, Time of occurrence {time} of type {exceptionType}",
-                ex.Message, DateTime.UtcNow, "UnhandledException");
+                "Error Message: {0}, Time of occurrence {1} of type {2}, Inner Exception: {3}",
+                ex.Message, DateTime.UtcNow, "UnhandledException", 
+                ex.InnerException == null ? "empty": ex.InnerException.Message);
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 

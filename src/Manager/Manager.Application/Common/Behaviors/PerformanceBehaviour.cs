@@ -37,7 +37,7 @@ public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequ
             var requestName = typeof(TRequest).Name;
             var userIdentityProviderId = _user.HomeAccountId;
 
-            _logger.LogWarning("Manager Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@Request}",
+            _logger.LogWarning("Manager Long Running Request: {0} ({1} milliseconds) {3} {4}",
                 requestName, elapsedMilliseconds, userIdentityProviderId, request);
         }
         else
@@ -45,7 +45,7 @@ public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequ
             var requestName = typeof(TRequest).Name;
             var userIdentityProviderId = _user.HomeAccountId;
 
-            _logger.LogInformation("Manager Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@Request}",
+            _logger.LogInformation("Manager Running Request: {0} ({1} milliseconds) {2} {3}",
                 requestName, elapsedMilliseconds, userIdentityProviderId, request);
         }
 
