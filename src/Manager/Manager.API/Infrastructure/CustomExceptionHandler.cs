@@ -231,7 +231,9 @@ public class CustomExceptionHandler : IExceptionHandler
 
     private async Task UnhandledException(HttpContext httpContext, Exception ex)
     {
-        _logger.LogError(ex, "Error while processing request of type UnhandledException");
+        _logger.LogError("Error while processing request of type UnhandledException 1");
+        _logger.LogError("Error while processing request of type UnhandledException 2 " + ex.Message);
+        _logger.LogError(ex, "Error while processing request of type UnhandledException 3");
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 

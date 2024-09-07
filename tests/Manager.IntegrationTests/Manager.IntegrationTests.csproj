@@ -1,9 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <RootNamespace>Manager.FunctionalTests</RootNamespace>
-    <AssemblyName>Manager.FunctionalTests</AssemblyName>
-  </PropertyGroup>
+
 
   <ItemGroup>
     <None Remove="appsettings.Test.Development.json" />
