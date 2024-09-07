@@ -146,7 +146,7 @@ jobs:
     - name: Build and deploy Container App
       uses: azure/container-apps-deploy-action@v1
       with:
-        imageToDeploy: ghcr.io/davinez/manager-support-api:${{ needs.build-and-push-manager-image.outputs.short-sha }}
+        imageToDeploy: ghcr.io/davinez/${{ env.IMAGE_NAME }}:${{ needs.build-and-push-manager-image.outputs.short-sha }}
         registryUrl: ${{ env.REGISTRY }}
         registryUsername: ${{ secrets.REGISTRY_USERNAME }}
         registryPassword: ${{ secrets.REGISTRY_TOKEN }} 
