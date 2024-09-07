@@ -68,8 +68,13 @@ public class CreateBookmark : BaseTestFixture
 
         var response = await client.PostAsJsonAsync("/api/bookmarks", request);
 
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
+        }
+       
         // Assert
-        response.EnsureSuccessStatusCode();
+        response.Should().BeSuccessful();
 
         var bookmarks = await dbContext.Bookmarks
                                   .AsNoTracking()
