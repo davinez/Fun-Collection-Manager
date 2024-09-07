@@ -16,12 +16,13 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="appsettings.Test.Development.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="appsettings.Test.Development.json" Condition="Exists('appsettings.Test.Development.json')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
+  
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Identity.Client" />
