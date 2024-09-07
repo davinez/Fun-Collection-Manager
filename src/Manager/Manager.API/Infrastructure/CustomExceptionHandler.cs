@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon.Runtime.Internal.Util;
 using Ardalis.GuardClauses;
 using Manager.Application.Common.Exceptions;
 using Manager.Application.Common.Models;
@@ -230,10 +231,7 @@ public class CustomExceptionHandler : IExceptionHandler
 
     private async Task UnhandledException(HttpContext httpContext, Exception ex)
     {
-        _logger.LogError(
-                "Error Message: {0}, Time of occurrence {1} of type {2}, Inner Exception: {3}",
-                ex.Message, DateTime.UtcNow, "UnhandledException", 
-                ex.InnerException == null ? "empty": ex.InnerException.Message);
+        _logger.LogError(ex, "Error while processing request of type UnhandledException");
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
