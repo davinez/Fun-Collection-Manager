@@ -57,7 +57,7 @@ public class CustomExceptionHandler : IExceptionHandler
         string detailedException = $"Source: {exception.Source} Inner Exception: {exception.InnerException?.Message}";
 
         _logger.LogError(
-               "Error Message: {message}, Detailed Message: {detailedException} Type: ValidationException",
+               "Error Message: {Message}, Detailed Message: {DetailedException} Type: ValidationException",
                exception.Message, detailedException);
 
         httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
@@ -88,7 +88,7 @@ public class CustomExceptionHandler : IExceptionHandler
         string detailedException = $"Source: {exception.Source} Inner Exception: {exception.InnerException?.Message}";
 
         _logger.LogError(
-               "Error Message: {message}, Detailed Message: {detailedException} Type: NotFoundException",
+               "Error Message: {Message}, Detailed Message: {DetailedException} Type: NotFoundException",
                exception.Message, detailedException);
 
         httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
@@ -119,7 +119,7 @@ public class CustomExceptionHandler : IExceptionHandler
         string detailedException = $"Source: {ex.Source} Inner Exception: {ex.InnerException?.Message}";
 
         _logger.LogError(
-               "Error Message: {message}, Detailed Message: {detailedException} Type: UnauthorizedAccessException",
+               "Error Message: {Message}, Detailed Message: {DetailedException} Type: UnauthorizedAccessException",
                ex.Message, detailedException);
 
         httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -150,7 +150,7 @@ public class CustomExceptionHandler : IExceptionHandler
         string detailedException = $"Source: {ex.Source} Inner Exception: {ex.InnerException?.Message}";
 
         _logger.LogError(
-               "Error Message: {message}, Detailed Message: {detailedException} Type: ForbiddenAccessException",
+               "Error Message: {Message}, Detailed Message: {DetailedException} Type: ForbiddenAccessException",
                ex.Message, detailedException);
 
         httpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
@@ -181,7 +181,7 @@ public class CustomExceptionHandler : IExceptionHandler
         string detailedException = $"Source: {ex.Source} Inner Exception: {ex.InnerException?.Message}";
 
         _logger.LogError(
-               "Error Message: {message}, Detailed Message: {detailedException} Type: RemoteServiceException",
+               "Error Message: {Message}, Detailed Message: {DetailedException} Type: RemoteServiceException",
                ex.Message, detailedException);
 
         httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
@@ -214,7 +214,7 @@ public class CustomExceptionHandler : IExceptionHandler
         string detailedException = $"Source: {exception.Source} Inner Exception: {exception.InnerException?.Message}";
 
         _logger.LogError(
-               "Error Message: {message}, Detailed Message: {detailedException} Type: ManagerException",
+               "Error Message: {Message}, Detailed Message: {DetailedException} Type: ManagerException",
                exception.Message, detailedException);
 
         httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
@@ -245,7 +245,7 @@ public class CustomExceptionHandler : IExceptionHandler
         string detailedException = $"Source: {ex.Source} Inner Exception: {ex.InnerException?.Message}";
 
         _logger.LogError(
-               "Error Message: {message}, Detailed Message: {detailedException} Type: UnhandledException",
+               "Error Message: {Message}, Detailed Message: {DetailedException} Type: UnhandledException",
                ex.Message, detailedException);
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;

@@ -1,9 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-
-
   <ItemGroup>
-    <None Remove="appsettings.Test.Development.json" />
     <None Remove="appsettings.Test.json" />
   </ItemGroup>
 
@@ -14,7 +11,7 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Include="appsettings.Test.Development.json" Condition="Exists('appsettings.Test.Development.json')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
