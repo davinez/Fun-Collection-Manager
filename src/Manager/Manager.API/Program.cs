@@ -28,6 +28,14 @@ if (app.Environment.IsDevelopment())
 
     IdentityModelEventSource.ShowPII = false;
 }
+else if (app.Environment.IsProduction())
+{
+    // For prod environment, ideally we want a script migration not auto-migration using EF Core
+    // example dotnet ef migrations script --idempotent --output EFCore/migrations.sql
+    await app.InitialiseDatabaseAsync();
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
 else
 {
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
