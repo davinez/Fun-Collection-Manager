@@ -79,7 +79,7 @@ jobs:
       run: dotnet build
 
     - name: Test with the dotnet CLI
-      run: dotnet test --no-restore --results-directory "TestResults-${{ matrix.dotnet-version }}" --configuration Release
+      run: dotnet test --no-restore --logger trx --results-directory "TestResults-${{ matrix.dotnet-version }}" --configuration Release
 
     - name: Upload dotnet test results
       # Use always() to always run this step to publish test results when there are test failures
