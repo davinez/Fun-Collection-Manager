@@ -143,10 +143,11 @@ public static class DependencyInjection
                                   }
                                   else
                                   {
-                                      policy.WithOrigins("http://localhost:5173", 
-                                          "https://fucoma.davidnez.work")
-                                            .AllowAnyHeader()
-                                            .AllowAnyMethod();
+                                      policy
+                                       .SetIsOriginAllowedToAllowWildcardSubdomains()
+                                       .WithOrigins("https://*.davidnez.work", "http://localhost:5173")
+                                       .AllowAnyHeader()
+                                       .AllowAnyMethod();
                                   }
                               });
         });
