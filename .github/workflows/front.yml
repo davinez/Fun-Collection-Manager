@@ -1,1 +1,69 @@
 name: Frontend Build
+
+on:
+  push:
+    paths:
+      - 'src/ClientApp/**'
+    branches:    
+      - main
+
+  workflow_dispatch:
+ 
+jobs:
+ # Id of the job (random string)
+ build-and-push-front:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        node-version: [20]
+    permissions:
+      contents: read
+      deployments: write
+    defaults:
+          run:
+            working-directory: 'src/ClientApp'
+
+    steps: 
+    - name: 'Checkout repository'
+      uses: actions/checkout@v4 
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install dependencies
+      run: pnpm install
+
+    # Project's build step
+    - name: Build
+      run: pnpm run build      
+
+    - name: Publish to Cloudfare Pages
+      uses: cloudflare/pages-action@v1
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        projectName: 'fucoma-app'
+        directory: dist
+        # Optional: Enable this if you want to have GitHub Deployments triggered
+        gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+      env:      
+       VITE_ENTRA_CLIENTID: ${{ secrets.VITE_ENTRA_CLIENTID }}
+       VITE_ENTRA_CLIENTID_MANAGER: ${{ secrets.VITE_ENTRA_CLIENTID_MANAGER }}
+       VITE_ENTRA_AUTHORITY: ${{ secrets.VITE_ENTRA_AUTHORITY }}
+       VITE_API_BASE_AUTH: ${{ secrets.VITE_API_BASE_AUTH }}
+       VITE_API_BASE_MANAGER: ${{ secrets.VITE_API_BASE_MANAGER }}
+       # Icons - Covers R2
+       VITE_R2_ICONS_DOMAIN: ${{ secrets.VITE_R2_ICONS_DOMAIN }}
+       VITE_R2_COVERS_DOMAIN: ${{ secrets.VITE_R2_COVERS_DOMAIN }}
+         
+
+
+  
+
