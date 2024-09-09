@@ -30,7 +30,7 @@ export const defaultHandlerApiError = (error: Error | unknown) => {
   }
 
   if (error instanceof Error) {
-    console.error(`General error: ${error.name} ${error.message}`);
+    console.error(`General error: ${error.name}, Message:  ${error.message}, Stack: ${error.stack}`);
     return;
   }
 
