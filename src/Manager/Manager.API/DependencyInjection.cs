@@ -136,16 +136,15 @@ public static class DependencyInjection
                               {
                                   if (isDevelop)
                                   {
-
-                                      policy.WithOrigins("http://localhost:5173",
-                                                         "http://www.contoso.com")
+                                      policy.AllowAnyOrigin()
                                             .AllowAnyMethod()
                                             .AllowAnyHeader()
                                             .AllowCredentials();
                                   }
                                   else
                                   {
-                                      policy.WithOrigins("http://www.contoso.com")
+                                      policy.WithOrigins("http://localhost:5173", 
+                                          "https://fucoma.davidnez.work")
                                             .AllowAnyHeader()
                                             .AllowAnyMethod();
                                   }
