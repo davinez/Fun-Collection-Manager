@@ -21,6 +21,7 @@ export const msalConfig: Configuration = {
     },
     system: {
         loggerOptions: {
+            logLevel: import.meta.env.PROD ? LogLevel.Warning : LogLevel.Info,
             loggerCallback: (level: LogLevel, message: string, containsPii: boolean) => {
                 if (containsPii) {
                     return;
