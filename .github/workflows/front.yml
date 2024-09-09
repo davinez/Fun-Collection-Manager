@@ -21,7 +21,7 @@ jobs:
       deployments: write
     defaults:
           run:
-            working-directory: 'src/ClientApp'
+            working-directory: '/src/ClientApp'
 
     steps: 
     - name: 'Checkout repository'
@@ -50,7 +50,7 @@ jobs:
         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         projectName: 'fucoma-app'
-        directory: dist
+        directory: '/src/ClientApp/dist'
         # Optional: Enable this if you want to have GitHub Deployments triggered
         gitHubToken: ${{ secrets.GITHUB_TOKEN }}
       env:      
