@@ -53,15 +53,6 @@ jobs:
         directory: 'src/ClientApp/dist'
         # Optional: Enable this if you want to have GitHub Deployments triggered
         gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-      env:      
-       VITE_ENTRA_CLIENTID: ${{ secrets.VITE_ENTRA_CLIENTID }}
-       VITE_ENTRA_CLIENTID_MANAGER: ${{ secrets.VITE_ENTRA_CLIENTID_MANAGER }}
-       VITE_ENTRA_AUTHORITY: ${{ secrets.VITE_ENTRA_AUTHORITY }}
-       VITE_API_BASE_AUTH: ${{ secrets.VITE_API_BASE_AUTH }}
-       VITE_API_BASE_MANAGER: ${{ secrets.VITE_API_BASE_MANAGER }}
-       # Icons - Covers R2
-       VITE_R2_ICONS_DOMAIN: ${{ secrets.VITE_R2_ICONS_DOMAIN }}
-       VITE_R2_COVERS_DOMAIN: ${{ secrets.VITE_R2_COVERS_DOMAIN }}
          
 
 
