@@ -21,7 +21,7 @@ jobs:
       deployments: write
     defaults:
           run:
-            working-directory: '/src/ClientApp'
+            working-directory: 'src/ClientApp'
 
     steps: 
     - name: 'Checkout repository'
