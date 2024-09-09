@@ -51,8 +51,6 @@ export default function HomeNavbar(): React.ReactElement {
 		// https://stackoverflow.com/questions/65958941/msal-js-loginpopup-vs-acquiretokenpop
 
 		try {
-			console.log(import.meta.env.VITE_ENTRA_AUTHORITY);
-
 			const loginResponse = await instance.loginPopup(loginRequest);
 			// const json = JSON.stringify(loginResponse);
 
