@@ -17,7 +17,10 @@ public class Accounts : EndpointGroupBase
     {
         app.MapGroup(this)
             .RequireAuthorization("All")
-            .MapPost(CreateUserAccount)
+            .MapPost(CreateUserAccount);
+
+        app.MapGroup(this)
+            .AllowAnonymous()
             .MapGet(GetUserAccountByIdP);
     }
 
