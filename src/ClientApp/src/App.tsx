@@ -13,8 +13,6 @@ import {
 // Pages
 import NotFoundPage from "@/routes/NotFoundPage";
 import HomePage from "@/routes/HomePage";
-import LoginPage from "@/routes/LoginPage";
-import SignupPage from "@/routes/SignupPage";
 import { DashboardPage } from "@/routes/manager/DashboardPage";
 import { AllBookmarksPage } from "@/routes/manager/AllBookmarksPage";
 import { CollectionPage } from "@/routes/manager/CollectionPage";
@@ -35,8 +33,6 @@ export const App = createBrowserRouter(
 
 			<Route element={<HomeLayout />}>
 				<Route path="/" element={<HomePage />} />
-				<Route path="/login" element={<LoginPage />} />
-				<Route path="/signup" element={<SignupPage />} />
 			</Route>
 
 			<Route path="/my">

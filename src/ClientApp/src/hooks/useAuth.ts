@@ -10,7 +10,7 @@ export default function useAuth(): TuseAuth {
 	const { authSlice } = useStore();
 	const navigate = useNavigate();
 
-	const currentUser = (): string | undefined => authSlice.username;
+	const currentUser = (): string | undefined => authSlice.userEmail;
 
 	const logout = (): void => {
 		authSlice.logout();

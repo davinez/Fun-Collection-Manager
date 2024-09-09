@@ -17,6 +17,9 @@ import {
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
+  /**
+   * DEPRECATED  login flow for use of Entra ID
+   */
 export default function SignupPage(): React.ReactElement {
 	const [showPassword, setShowPassword] = useState(false);
 

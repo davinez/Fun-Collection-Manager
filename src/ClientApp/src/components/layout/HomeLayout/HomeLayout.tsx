@@ -14,11 +14,6 @@ import { useOutlet, Navigate } from "react-router-dom";
 
 export const HomeLayout = (): JSX.Element => {
 	const outlet = useOutlet();
-	const { authSlice } = useStore();
-
-	if (authSlice.username) {
-		return <Navigate to="/my/manager/dashboard" replace />;
-	}
 
 	return (
 		<Grid
