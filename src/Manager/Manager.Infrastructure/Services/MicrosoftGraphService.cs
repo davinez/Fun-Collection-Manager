@@ -42,6 +42,7 @@ public class MicrosoftGraphService : IMicrosoftGraphService
         _configuration = configuration;
     }
 
+    // Currently assigns role to app not to group
     public async Task<bool> AssignRoleToUser(string userHomeAccountId)
     {
         string userUniqueId = userHomeAccountId.Remove(userHomeAccountId.IndexOf("."));
@@ -62,10 +63,10 @@ public class MicrosoftGraphService : IMicrosoftGraphService
             requestConfiguration.Headers.Add("ConsistencyLevel", "eventual");
         });
 
-        bool roleExists = userRoles == null ?
-            false : userRoles.Value == null ?
-            false : userRoles.Value.FirstOrDefault(r => r.AppRoleId == defaultRoleAppId) == null ?
-            false : true;
+        bool roleExists = userRoles != null && 
+            userRoles.Value != null &&
+            userRoles.Value.Where(r => r.AppRoleId == defaultRoleAppId).Any() == true ?
+            true : false;
 
         if (roleExists)
             return true;
