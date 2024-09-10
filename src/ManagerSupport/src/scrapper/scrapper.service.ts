@@ -25,18 +25,45 @@ export class ScrapperService {
     this.logger.log('Gettting Bookmark Data...');
 
     const bookmarkContext = await this.playwrightService.Browser.newContext();
-    bookmarkContext.setDefaultTimeout(0);
+    bookmarkContext.setDefaultTimeout(1000);
 
     const page: Page = await bookmarkContext.newPage();
 
     try {
-      const gotoResponse = await page.goto(getBookmarkDataDto.webUrl);
+
+      const gotoResponse = await page.goto(getBookmarkDataDto.webUrl, {
+        timeout: 5000, // 6 seconds
+        waitUntil: "domcontentloaded"
+      });
 
       if (!gotoResponse || !gotoResponse.ok())
         throw new ManagerSupportException(`Failure`);
 
+      // Cover
+      const pageCover: string = await this.getCover(page);
+
+      // Title
+      const pageTitle: string = await this.getPageTitle(page);
+
+      // Description
+      const pageDescription: string = await this.getPageDescription(page);
+
+      // Test Image 
+      // const buffer = Buffer.from(pageCover);
+      // const base64String = buffer.toString('base64');
+
+      bookmarkContext.close();
+
+      return {
+        pageCover: pageCover,
+        pageTitle: pageTitle,
+        pageDescription: pageDescription
+      };
+
     } catch (e) {
-      this.logger.error(`Failure in page load for webURL ${getBookmarkDataDto.webUrl}`);
+      this.logger.error(`Error: ${JSON.stringify(e)}, Failure in page load for webURL: ${getBookmarkDataDto.webUrl}`);
+
+      bookmarkContext.close();
 
       return {
         pageCover: undefined,
@@ -44,25 +71,6 @@ export class ScrapperService {
         pageDescription: this.defaultPageDescription
       };
     }
-
-    // Cover
-    const pageCover: string = await this.getCover(page);
-
-    // Title
-    const pageTitle: string = await this.getPageTitle(page);
-
-    // Description
-    const pageDescription: string = await this.getPageDescription(page);
-
-    // Test Image 
-    // const buffer = Buffer.from(pageCover);
-    // const base64String = buffer.toString('base64');
-
-    return {
-      pageCover: pageCover,
-      pageTitle: pageTitle,
-      pageDescription: pageDescription
-    };
   }
 
   private async getCover(page: Page) {
