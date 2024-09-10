@@ -16,11 +16,11 @@ public class Accounts : EndpointGroupBase
     public override void Map(WebApplication app)
     {
         app.MapGroup(this)
-            .RequireAuthorization("All")
+            .RequireAuthorization()
             .MapPost(CreateUserAccount);
 
         app.MapGroup(this)
-            .AllowAnonymous()
+            .RequireAuthorization()
             .MapGet(GetUserAccountByIdP);
     }
 

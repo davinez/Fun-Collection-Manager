@@ -138,8 +138,7 @@ public static class DependencyInjection
                                   {
                                       policy.AllowAnyOrigin()
                                             .AllowAnyMethod()
-                                            .AllowAnyHeader()
-                                            .AllowCredentials();
+                                            .AllowAnyHeader();
                                   }
                                   else
                                   {
