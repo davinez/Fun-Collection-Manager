@@ -11,8 +11,7 @@ import { ValidationException } from '../exceptions/validation.exception';
 import { ManagerSupportException } from '../exceptions/manager.support.exception';
 import { ApiErrorResponseDto } from '../dto/api-error-response.dto';
 import { Request, Response } from 'express';
-import { CustomLoggerService } from '../logging/customlogger.service';
-
+import { json } from 'stream/consumers';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -84,7 +83,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
             {
               domain: "ManagerSupport Unhandled HttpException",
               reason: "",
-              message: ""
+              message: JSON.stringify(exception)
             }
           ]
         }

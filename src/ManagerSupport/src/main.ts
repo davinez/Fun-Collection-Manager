@@ -7,7 +7,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AllExceptionsFilter } from './shared/filters/all.filter';
-import { CustomLoggerService } from './shared/logging/customlogger.service';
+import { WinstonModule } from 'nest-winston';
+import { format, transports } from 'winston';
 
 async function bootstrap() {
   // Open Telemetry Trace, only works if runs before app create
@@ -16,7 +17,21 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
-    logger: new CustomLoggerService()
+    logger: WinstonModule.createLogger({
+      transports: [
+        // to see logs in our console
+        new transports.Console({
+         format: format.combine(
+           format.cli(),
+           format.splat(),
+           format.timestamp(),
+           format.printf((info) => {
+             return `${info.timestamp} ${info.level}: ${info.message}`;
+           }),
+          ),
+      }),
+      ],
+    })
   });
   
   // Swagger
@@ -38,3 +53,4 @@ async function bootstrap() {
   await app.listen(8082);
 }
 bootstrap();
+
