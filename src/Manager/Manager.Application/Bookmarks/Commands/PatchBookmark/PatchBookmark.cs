@@ -60,9 +60,6 @@ public class PatchBookmarkCommandHandler : IRequestHandler<PatchBookmarkCommand>
 
         Guard.Against.NotFound(request.BookmarkId, bookmark);
 
-        // Cover
-        string? newObjectKey = null;
-
         if (request.Cover != null && request.Cover.Length > 0)
         {
             // Keeping size ratio of 16:9
@@ -78,8 +75,7 @@ public class PatchBookmarkCommandHandler : IRequestHandler<PatchBookmarkCommand>
             //newFileContent.Seek(0, SeekOrigin.Begin);
 
             string bucketName = _configuration["S3Storage:BucketBookmarksCovers"] ?? throw new ManagerException($"Empty config section in {nameof(PatchBookmarkCommand)} bookmarks bucket");
-            newObjectKey = $"{_user.HomeAccountId}/{bookmark.CollectionId}/{Nanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 8)}";
-
+            string newObjectKey = $"{_user.HomeAccountId}/{bookmark.CollectionId}/{Nanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 8)}";
             await _storageService.UploadImageAsync(bucketName, newObjectKey, "image/webp", newFileContent);
 
             // Delete existent cover image
@@ -88,12 +84,12 @@ public class PatchBookmarkCommandHandler : IRequestHandler<PatchBookmarkCommand>
                 await _storageService.DeleteFileAsync(bucketName, bookmark.Cover);
             }
 
+            bookmark.Cover = newObjectKey;
         }
 
         bookmark.Title = request.Title;
         bookmark.Description = request.Description;
         bookmark.WebsiteUrl = request.WebsiteURL;
-        bookmark.Cover = newObjectKey;
 
         await _context.SaveChangesAsync(cancellationToken);
 
