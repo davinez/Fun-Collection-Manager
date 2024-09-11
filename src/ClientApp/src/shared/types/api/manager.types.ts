@@ -111,7 +111,7 @@ export const addURLFormPayload = z.object({
   newURL: z
     .string()
     .min(11, { message: "URL address is required" })
-    .max(255, { message: "URL address too large" })
+    .max(2048, { message: "URL address too large" })
     .url({ message: "URL address format is required" })
 });
 export type TAddURLPayload = z.infer<typeof addURLFormPayload>;
