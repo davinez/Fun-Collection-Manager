@@ -41,7 +41,8 @@ export const getUrlHostname = (value: string) => {
 }
 
 export const renderNodesState = (
-  groups: TCollectionGroup[]
+  groups: TCollectionGroup[],
+  previousState: TDynamicCollapseState[] | undefined
 ): TDynamicCollapseState[] => {
   const initialNodes: TCollection[] = groups.flatMap((group) => {
     return group.collections ? (group.collections as TCollection[]) : []
@@ -59,10 +60,14 @@ export const renderNodesState = (
 
   // From final arrays of ids return the array of objects 
   // with each id having its state object
-  const state = getIds(initialNodes).map((id) => ({
-    nodeId: id,
-    isOpen: false,
-  }));
+  const state = getIds(initialNodes).map((id) => {
+    const previousNodeState = previousState?.find(e => e.nodeId == id);
+
+    return {
+      nodeId: id,
+      isOpen: previousNodeState ? previousNodeState.isOpen : false,
+    }
+  });
 
   return state;
 }

@@ -71,7 +71,7 @@ export const URLAddForm = ({}: TURLAddFormProps) => {
 
 				queryClient.invalidateQueries({ queryKey: ["bookmarks", "collection-bookmarks", collectionId] });
 				queryClient.invalidateQueries({ queryKey: ["collection-groups"] });
-
+        
 				toast({
 					title: "URL Added.",
 					status: "success",

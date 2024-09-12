@@ -60,10 +60,10 @@ const GroupsNavItems = ({
 	// Hooks
 	const { managerSlice } = useStore();
 
-	// Update/Set nodes sidebar sate on groups change
+	// Update/Set nodes sidebar state on groups change
 	useEffect(() => {
 		const generatedStateStructure: TDynamicCollapseState[] = renderNodesState(
-			data.groups
+			data.groups, managerSlice.collectionsNodeState
 		);
 		managerSlice.setCollectionNodes(generatedStateStructure);
 	}, [data.groups]);
