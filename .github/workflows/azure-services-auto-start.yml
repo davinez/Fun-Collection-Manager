@@ -1,0 +1,49 @@
+name: Cron Job Example
+
+# +-------------------------------------------+
+# |          GitHub Actions Cron Job          |
+# |                                           |
+# |    Schedule: 0 0 * * * (Every midnight)   |
+# |                                           |
+# |       ┌───────────── Minute (0 - 59)      |
+# |       │ ┌───────────── Hour (0 - 23)      |
+# |       │ │ ┌───────────── Day of month     |
+# |       │ │ │ ┌───────────── Month (1-12)   |
+# |       │ │ │ │ ┌───────────── Day of week  |
+# |       │ │ │ │ │                           |
+# |       │ │ │ │ │                           |
+# |       0 0 * * *                           |
+# +-------------------------------------------+
+
+on:
+  schedule:
+    # Example cron expressions:
+    # - '0 0 * * *'   # Run every day at midnight UTC
+    # - '15 3 * * *'  # Run every day at 3:15 AM UTC
+    # - '0 */6 * * *' # Run every 6 hours
+    - cron: '30 13 * * *'  # Run every day at 7:30 am mexico central time
+
+env:
+  CONTAINER_APP_NAME: manager-api
+  RESOURCE_GROUP: fucoma-prod-rg
+
+jobs:
+  cron_job:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: 'Login to Azure'
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        enable-AzPSSession: true
+
+    - name: Run Azure PowerShell inline script 
+      uses: azure/powershell@v2
+      with:
+        inlineScript: |
+          Start-AzContainerApp -Name ${{ env.CONTAINER_APP_NAME }} -ResourceGroupName ${{ env.RESOURCE_GROUP }} -SubscriptionId ${{ secrets.AZURE_SUBSCRIPTION_ID }}  
+        azPSVersion: "latest"
