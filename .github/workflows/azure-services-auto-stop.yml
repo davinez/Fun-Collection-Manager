@@ -1,4 +1,4 @@
-name: Cron Job Example
+name: Cron Job Stop Services
 
 # +-------------------------------------------+
 # |          GitHub Actions Cron Job          |
@@ -26,6 +26,11 @@ on:
 env:
   CONTAINER_APP_NAME: manager-api
   RESOURCE_GROUP: fucoma-prod-rg
+
+permissions:
+  id-token: write
+  contents: read
+  packages: write
 
 jobs:
   cron_job:
