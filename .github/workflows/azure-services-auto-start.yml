@@ -25,6 +25,7 @@ on:
 
 env:
   CONTAINER_APP_NAME: manager-api
+  CONTAINER_APP_NAME_SUPPORT: manager-support-api
   RESOURCE_GROUP: fucoma-prod-rg
 
 permissions:
@@ -46,9 +47,16 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         enable-AzPSSession: true
 
-    - name: Run Azure PowerShell inline script 
+    - name: Run Azure PowerShell inline script, Container Manager
       uses: azure/powershell@v2
       with:
         inlineScript: |
           Start-AzContainerApp -Name ${{ env.CONTAINER_APP_NAME }} -ResourceGroupName ${{ env.RESOURCE_GROUP }} -SubscriptionId ${{ secrets.AZURE_SUBSCRIPTION_ID }}  
+        azPSVersion: "latest"
+
+    - name: Run Azure PowerShell inline script, Container Manager Support
+      uses: azure/powershell@v2
+      with:
+        inlineScript: |
+          Start-AzContainerApp -Name ${{ env.CONTAINER_APP_NAME_SUPPORT }} -ResourceGroupName ${{ env.RESOURCE_GROUP }} -SubscriptionId ${{ secrets.AZURE_SUBSCRIPTION_ID }}  
         azPSVersion: "latest"

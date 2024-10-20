@@ -25,14 +25,14 @@ export class ScrapperService {
     this.logger.log('Gettting Bookmark Data...');
 
     const bookmarkContext = await this.playwrightService.Browser.newContext();
-    bookmarkContext.setDefaultTimeout(1000);
+    bookmarkContext.setDefaultTimeout(800);
 
     const page: Page = await bookmarkContext.newPage();
 
     try {
 
       const gotoResponse = await page.goto(getBookmarkDataDto.webUrl, {
-        timeout: 5000, // 6 seconds
+        timeout: 5000, // 5 seconds
         waitUntil: "domcontentloaded"
       });
 

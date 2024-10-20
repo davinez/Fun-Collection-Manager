@@ -164,7 +164,7 @@ export const BookmarkCard = ({
 										? "6px"
 										: "0px"
 								}
-								objectFit="cover"
+								objectFit="contain"
 								src={!bookmark.cover ? DEFAULT_BOOKMARK_COVER : R2_COVERS_DOMAIN + "/" + bookmark.cover}
 								fallbackSrc={DEFAULT_BOOKMARK_COVER}
 								alt="Default Icon"
