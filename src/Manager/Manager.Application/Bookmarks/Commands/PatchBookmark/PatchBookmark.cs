@@ -62,8 +62,8 @@ public class PatchBookmarkCommandHandler : IRequestHandler<PatchBookmarkCommand>
 
         if (request.Cover != null && request.Cover.Length > 0)
         {
-            // Keeping size ratio of 16:9
-            using Stream newFileContent = ImageHelpers.Resize(await request.Cover.GetBytes(), 635, 357);
+            // Size ratio of 16:10
+            using Stream newFileContent = ImageHelpers.Resize(await request.Cover.GetBytes(), 1280, 800);
 
             // Testing Purpose
             //using (var memoryStream = new MemoryStream())

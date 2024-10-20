@@ -79,8 +79,8 @@ public class CreateBookmarkCommandHandler : IRequestHandler<CreateBookmarkComman
         {
             byte[] pageCover = Convert.FromBase64String(pageCoverBase64);
 
-            // Keeping size ratio of 16:9
-            using Stream newFileContent = ImageHelpers.Resize(pageCover, 635, 357);
+            // Size ratio of 16:10
+            using Stream newFileContent = ImageHelpers.Resize(pageCover, 1280, 800);
 
             // Testing Purpose
             //using (var memoryStream = new MemoryStream())
