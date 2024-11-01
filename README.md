@@ -1,6 +1,17 @@
 # FuCoMa Bookmark Manager
 
 
+## Architecture 
+
+- Using Azure and Cloudfare Services
+
+![Arch](./extras/diagrams/FuCoMa_Arch-Architecture.drawio.png)
+
+## Deployment
+
+![Deployment](./extras/diagrams/FuCoMa_Arch-Despliegue.drawio.png)
+
+
 ## Build
 
 Run `dotnet build` to build the solution.
