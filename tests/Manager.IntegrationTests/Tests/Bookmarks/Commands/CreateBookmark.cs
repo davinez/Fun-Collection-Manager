@@ -9,7 +9,7 @@ using Manager.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 
-namespace Manager.FunctionalTests.Tests.Bookmarks.Commands;
+namespace Manager.IntegrationTests.Tests.Bookmarks.Commands;
 
 using static Testing;
 
@@ -72,7 +72,7 @@ public class CreateBookmark : BaseTestFixture
         {
             Console.WriteLine(await response.Content.ReadAsStringAsync());
         }
-       
+
         // Assert
         response.Should().BeSuccessful();
 

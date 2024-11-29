@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using Azure.Identity;
+using Manager.API.Config;
+using Manager.API.Config.Extensions;
 using Manager.API.Endpoints;
-using Manager.API.Infrastructure;
-using Manager.API.Infrastructure.Extensions;
 using Manager.API.Services;
 using Manager.Application.Common.Exceptions;
 using Manager.Application.Common.Interfaces.Services;

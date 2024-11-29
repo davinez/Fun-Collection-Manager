@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Manager.API.Infrastructure;
-using Manager.API.Infrastructure.Extensions;
+using Manager.API.Config;
+using Manager.API.Config.Extensions;
+using Manager.API.Extensions;
 using Manager.Application.CollectionGroups.Commands.CreateCollectionGroup;
 using Manager.Application.CollectionGroups.Commands.DeleteCollectionGroup;
 using Manager.Application.CollectionGroups.Commands.PatchCollectionGroup;

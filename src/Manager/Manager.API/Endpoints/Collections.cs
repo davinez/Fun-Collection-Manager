@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Manager.API.Infrastructure;
-using Manager.API.Infrastructure.Extensions;
+using Manager.API.Config;
+using Manager.API.Config.Extensions;
 using Manager.Application.Collections.Commands.ChangeIcon;
 using Manager.Application.Collections.Commands.CreateCollection;
 using Manager.Application.Collections.Commands.DeleteCollection;

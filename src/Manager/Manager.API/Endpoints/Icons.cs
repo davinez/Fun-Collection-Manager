@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Manager.API.Infrastructure;
-using Manager.API.Infrastructure.Extensions;
+using Manager.API.Config;
+using Manager.API.Config.Extensions;
 using Manager.Application.Common.Models;
 using Manager.Application.Icons.Dto;
 using Manager.Application.Icons.Queries;

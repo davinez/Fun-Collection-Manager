@@ -3,8 +3,8 @@ using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using Manager.Domain.Entities;
-using Manager.FunctionalTests.Database;
 using Manager.Infrastructure.Data;
+using Manager.IntegrationTests.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +14,7 @@ using NUnit.Framework;
 using Respawn;
 using Respawn.Graph;
 
-namespace Manager.FunctionalTests;
+namespace Manager.IntegrationTests;
 
 /*
 Static Fields and Properties
@@ -113,7 +113,7 @@ public partial class Testing
         _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
         {
             DbAdapter = DbAdapter.Postgres,
-            TablesToIgnore = new Respawn.Graph.Table[] {
+            TablesToIgnore = new Table[] {
                  new Table("manager", "__EFMigrationsHistory"),
                  new Table("manager", "plan")
             }
@@ -249,7 +249,7 @@ public partial class Testing
             City = "Test City",
         };
 
-        var newSubscription = new Domain.Entities.Subscription()
+        var newSubscription = new Subscription()
         {
             CurrentPlanId = 1,
             DateSubscribed = DateTime.UtcNow,

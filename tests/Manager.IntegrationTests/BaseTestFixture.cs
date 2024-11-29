@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using NUnit.Framework;
 
-namespace Manager.FunctionalTests;
+namespace Manager.IntegrationTests;
 
 using static Testing;
 

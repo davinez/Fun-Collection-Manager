@@ -3,9 +3,9 @@ using System.Diagnostics.CodeAnalysis;
 using System;
 using Microsoft.AspNetCore.Builder;
 using Ardalis.GuardClauses;
-using Manager.API.Infrastructure.Extensions;
+using Manager.API.Config.Extensions;
 
-namespace Manager.API.Infrastructure.Extensions;
+namespace Manager.API.Config.Extensions;
 
 public static class IEndpointRouteBuilderExtensions
 {

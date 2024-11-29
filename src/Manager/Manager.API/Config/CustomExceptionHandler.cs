@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace Manager.API.Infrastructure;
+namespace Manager.API.Config;
 
 public class CustomExceptionHandler : IExceptionHandler
 {

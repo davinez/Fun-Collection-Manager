@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Manager.API.Infrastructure;
-using Manager.API.Infrastructure.Extensions;
+using Manager.API.Config;
+using Manager.API.Config.Extensions;
 using Manager.Application.Bookmarks.Commands.CreateBookmark;
 using Manager.Application.Bookmarks.Commands.DeleteBookmarks;
 using Manager.Application.Bookmarks.Commands.PatchBookmark;

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Ardalis.GuardClauses;
 
-namespace Manager.API.Infrastructure.Extensions;
+namespace Manager.API.Config.Extensions;
 
 public static class MethodInfoExtensions
 {

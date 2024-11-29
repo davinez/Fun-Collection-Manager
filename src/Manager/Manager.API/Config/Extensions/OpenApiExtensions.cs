@@ -7,7 +7,7 @@ using Microsoft.OpenApi.Models;
 using NSwag;
 using NSwag.Generation.Processors.Security;
 
-namespace Manager.API.Infrastructure.Extensions;
+namespace Manager.API.Config.Extensions;
 
 public static partial class OpenApiExtensions
 {

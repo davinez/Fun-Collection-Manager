@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Manager.FunctionalTests.Database;
+namespace Manager.IntegrationTests.Database;
 
 public static class DatabaseFactory
 {

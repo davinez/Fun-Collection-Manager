@@ -1,5 +1,5 @@
 ﻿using Manager.API;
-using Manager.API.Infrastructure.Extensions;
+using Manager.API.Config.Extensions;
 using Manager.Application;
 using Manager.Infrastructure;
 using Manager.Infrastructure.Data;

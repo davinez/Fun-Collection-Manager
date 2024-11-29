@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Respawn;
 
-namespace Manager.FunctionalTests.Database;
+namespace Manager.IntegrationTests.Database;
 
 public class PostgresDatabase : ITestDatabase
 {

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Manager.API.Config.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Manager.API.Infrastructure.Extensions;
+namespace Manager.API.Config.Extensions;
 
 public static class WebApplicationExtensions
 {

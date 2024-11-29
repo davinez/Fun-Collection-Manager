@@ -2,7 +2,7 @@
 using DotNet.Testcontainers.Builders;
 using Testcontainers.PostgreSql;
 
-namespace Manager.FunctionalTests.Database;
+namespace Manager.IntegrationTests.Database;
 
 public class TestContainerDatabase : ITestDatabase
 {

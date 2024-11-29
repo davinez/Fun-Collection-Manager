@@ -2,8 +2,8 @@
 using System.IO;
 using Azure.Identity;
 using Manager.Application.Common.Interfaces.Services;
-using Manager.FunctionalTests.Database;
 using Manager.Infrastructure.Data;
+using Manager.IntegrationTests.Database;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 
-namespace Manager.FunctionalTests;
+namespace Manager.IntegrationTests;
 
 using static Testing;
 

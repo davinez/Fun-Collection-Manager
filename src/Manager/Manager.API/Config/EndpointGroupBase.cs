@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace Manager.API.Infrastructure;
+namespace Manager.API.Config;
 
 public abstract class EndpointGroupBase
 {
