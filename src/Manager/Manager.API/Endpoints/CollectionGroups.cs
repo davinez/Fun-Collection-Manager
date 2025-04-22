@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Manager.API.Config;
 using Manager.API.Config.Extensions;
-using Manager.API.Extensions;
 using Manager.Application.CollectionGroups.Commands.CreateCollectionGroup;
 using Manager.Application.CollectionGroups.Commands.DeleteCollectionGroup;
 using Manager.Application.CollectionGroups.Commands.PatchCollectionGroup;
@@ -12,8 +10,6 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Identity.Web;
 
 namespace Manager.API.Endpoints;
 
